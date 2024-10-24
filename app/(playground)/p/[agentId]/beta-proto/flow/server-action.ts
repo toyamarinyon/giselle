@@ -22,7 +22,7 @@ import {
 	webSearchItemStatus,
 	webSearchStatus,
 } from "../web-search/types";
-import { type FlowActionId, flowStatuses } from "./types";
+import { type FlowAction, type FlowActionId, flowStatuses } from "./types";
 
 type Source = Artifact | TextContent | StructuredData | WebSearchItem;
 interface GatherInstructionSourcesInput {
@@ -103,6 +103,7 @@ interface RunActionInput {
 	actionId: FlowActionId;
 }
 export async function runAction(input: RunActionInput) {
+	console.log("runAction");
 	const agent = await db.query.agents.findFirst({
 		where: eq(agents.id, input.agentId),
 	});
@@ -114,14 +115,27 @@ export async function runAction(input: RunActionInput) {
 		throw new Error(`Agent with id ${input.agentId} is not running`);
 	}
 
+	let action: FlowAction | undefined;
+	for (const actionLayer of graph.flow.actionLayers) {
+		action = actionLayer.actions.find((action) => action.id === input.actionId);
+		if (action !== null) {
+			break;
+		}
+	}
+	if (action === undefined) {
+		throw new Error(`Action with id ${input.actionId} not found`);
+	}
+
 	const instructionConnector = graph.connectors.find(
 		(connector) =>
-			connector.target === input.nodeId &&
+			connector.target === action.nodeId &&
 			connector.sourceNodeCategory === giselleNodeCategories.instruction,
 	);
 
 	if (instructionConnector === undefined) {
-		throw new Error(`No instruction connector found for node ${input.nodeId}`);
+		throw new Error(
+			`No instruction connector found for node ${input.actionId}`,
+		);
 	}
 
 	const instructionNode = graph.nodes.find(

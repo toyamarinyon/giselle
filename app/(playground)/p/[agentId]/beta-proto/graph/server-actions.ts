@@ -33,7 +33,7 @@ export async function generateArtifactStream(
 	const stream = createStreamableValue();
 
 	(async () => {
-		const model = "gpt-4o";
+		const model = "gpt-4o-mini";
 		const generation = trace.generation({
 			input: params.userPrompt,
 			model,

@@ -47,7 +47,7 @@ export default async function AgentPlaygroundPage({
 				uploadFileToPromptNodeFlag,
 				webSearchNodeFlag,
 				debugFlag,
-				viewFlag,
+				viewFlag: true,
 			}}
 		/>
 	);

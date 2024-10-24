@@ -1,3 +1,4 @@
+import { put } from "@vercel/blob";
 import type { GiselleNode } from "../giselle-node/types";
 import type { ThunkAction } from "../graph/context";
 import { playgroundModes } from "../graph/types";
@@ -30,6 +31,11 @@ export function runFlow(finalNode: GiselleNode): ThunkAction {
 			state.graph.connectors,
 			finalNode.id,
 		);
+		const markdownBlob = new Blob([markdown], { type: "text/markdown" });
+		const vercelBlob = await put(`files/${args.id}/markdown.md`, markdownBlob, {
+			access: "public",
+			contentType: markdownBlob.type,
+		});
 		dispatch(
 			setFlow({
 				input: {
@@ -44,7 +50,7 @@ export function runFlow(finalNode: GiselleNode): ThunkAction {
 			await Promise.all(
 				actionLayer.actions.map(async (action) => {
 					await runAction({
-						nodeId: action.nodeId,
+						actionId: action.id,
 						agentId: state.graph.agentId,
 					});
 				}),

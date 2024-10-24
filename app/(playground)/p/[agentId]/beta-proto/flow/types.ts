@@ -73,4 +73,4 @@ interface RunningFlowAction extends BaseFlowAction {
 	status: Extract<FlowActionStatus, "running">;
 }
 
-type FlowAction = QueuedFlowAction | RunningFlowAction;
+export type FlowAction = QueuedFlowAction | RunningFlowAction;

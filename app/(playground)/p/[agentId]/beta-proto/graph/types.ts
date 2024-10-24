@@ -18,7 +18,7 @@ export type Graph = {
 	artifacts: Artifact[];
 	webSearches: WebSearch[];
 	mode: PlaygroundMode;
-	flow?: Flow | null | undefined;
+	flow: Flow | null | undefined;
 };
 
 export type GraphState = {

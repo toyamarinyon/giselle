@@ -3,7 +3,6 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"predev": "bun prepare-font.js",
 		"dev": "SENTRY_SUPPRESS_TURBOPACK_WARNING=1 next dev --turbo",
 		"prebuild": "node prepare-font.js",
 		"build": "next build",

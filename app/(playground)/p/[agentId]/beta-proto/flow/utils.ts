@@ -114,6 +114,19 @@ export function resolveActionLayers(
 			})),
 		});
 	}
+	result.push({
+		id: createFlowActionStackId(),
+		object: "flow.actionLayer",
+		status: flowActionLayerStatuses.queued,
+		actions: [
+			{
+				id: createFlowActionId(),
+				object: "flow.action",
+				status: flowActionStatuses.queued,
+				nodeId: targetNode,
+			},
+		],
+	});
 
 	return result;
 }
