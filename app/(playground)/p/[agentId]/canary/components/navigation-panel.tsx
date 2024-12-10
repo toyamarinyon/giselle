@@ -219,8 +219,10 @@ export function Structure() {
 				{subGraphs.map((subGraph) => (
 					<div key={subGraph.id}>
 						<p className="text-[14px]">{subGraph.name}</p>
-						<div className="pl-[8px] flex flex-col gap-[4px]">
-							{subGraph.nodes.map((node) => node.name)}
+						<div className="pl-[8px] pt-[4px] flex flex-col gap-[4px] text-[14px]">
+							{subGraph.nodes.map((node) => (
+								<div key={node.id}>{node.name}</div>
+							))}
 						</div>
 					</div>
 				))}
