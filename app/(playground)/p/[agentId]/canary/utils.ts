@@ -149,7 +149,7 @@ export function initGraph(): Graph {
 		nodes: [],
 		connections: [],
 		artifacts: [],
-		version: "2024-12-10" satisfies LatestGraphVersion,
+		version: "2024-12-11" satisfies LatestGraphVersion,
 		subGraphs: [],
 	};
 }

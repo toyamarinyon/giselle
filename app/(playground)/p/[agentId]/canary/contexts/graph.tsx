@@ -9,6 +9,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { deriveSubGraphs } from "../graph";
 import type {
 	Artifact,
 	Connection,
@@ -116,6 +117,10 @@ function applyActions(
 	for (const action of actions) {
 		currentGraph = graphReducer(currentGraph, action);
 	}
+	currentGraph = {
+		...currentGraph,
+		subGraphs: deriveSubGraphs(currentGraph),
+	};
 	return currentGraph;
 }
 

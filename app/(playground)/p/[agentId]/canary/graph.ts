@@ -72,8 +72,8 @@ export function deriveSubGraphs(graph: Graph): SubGraph[] {
 			const subGraph: SubGraph = {
 				id: createSubgraphId(),
 				name: `SubGraph ${subGraphs.length + 1}`,
-				nodes: connectedNodes,
-				connections: subGraphConnections,
+				nodes: Array.from(connectedNodes),
+				connections: Array.from(subGraphConnections),
 			};
 
 			subGraphs.push(subGraph);
@@ -85,8 +85,8 @@ export function deriveSubGraphs(graph: Graph): SubGraph[] {
 			const subGraph: SubGraph = {
 				id: createSubgraphId(),
 				name: `SubGraph ${subGraphs.length + 1}`,
-				nodes: new Set([node.id]),
-				connections: new Set(),
+				nodes: [node.id],
+				connections: [],
 			};
 
 			subGraphs.push(subGraph);
@@ -134,6 +134,14 @@ export function migrateGraph(graph: Graph): Graph {
 					} satisfies Files;
 				})
 				.filter((node) => node !== null),
+		};
+	}
+
+	if (newGraph.version === "2024-12-10") {
+		newGraph = {
+			...newGraph,
+			version: "2024-12-11",
+			subGraphs: deriveSubGraphs(newGraph),
 		};
 	}
 

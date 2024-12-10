@@ -166,8 +166,8 @@ interface TextStreamArtifact extends StreamAtrifact {
 export type Artifact = TextArtifact | TextStreamArtifact;
 
 export type GraphId = `grph_${string}`;
-type GraphVersion = "2024-12-09" | "2024-12-10";
-export type LatestGraphVersion = "2024-12-10";
+type GraphVersion = "2024-12-09" | "2024-12-10" | "2024-12-11";
+export type LatestGraphVersion = "2024-12-11";
 export interface Graph {
 	id: GraphId;
 	nodes: Node[];
@@ -209,8 +209,8 @@ export type SubGraphId = `sbgrph_${string}`;
 export interface SubGraph {
 	id: SubGraphId;
 	name: string;
-	nodes: Set<NodeId>;
-	connections: Set<ConnectionId>;
+	nodes: NodeId[];
+	connections: ConnectionId[];
 }
 
 export type AgentId = `agnt_${string}`;

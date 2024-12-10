@@ -129,8 +129,8 @@ describe("deriveSubGraphs", () => {
 		expect(subGraphs.length).toBe(2);
 	});
 	test("one subgraph has two nodes while the other has three", () => {
-		expect(subGraphs[0].nodes.size).toBe(2);
-		expect(subGraphs[1].nodes.size).toBe(3);
+		expect(subGraphs[0].nodes.length).toBe(2);
+		expect(subGraphs[1].nodes.length).toBe(3);
 	});
 });
 
