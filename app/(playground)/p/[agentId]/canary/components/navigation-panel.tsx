@@ -1,11 +1,18 @@
 import * as Tabs from "@radix-ui/react-tabs";
 import { getDownloadUrl, head } from "@vercel/blob";
-import { DownloadIcon, GithubIcon, HammerIcon, XIcon } from "lucide-react";
+import {
+	DownloadIcon,
+	GithubIcon,
+	HammerIcon,
+	ListTreeIcon,
+	XIcon,
+} from "lucide-react";
 import {
 	type ComponentProps,
 	type ReactNode,
 	createContext,
 	useContext,
+	useMemo,
 	useState,
 } from "react";
 import { LayersIcon } from "../../beta-proto/components/icons/layers";
@@ -68,6 +75,9 @@ export function NavigationPanel() {
 					{/* <TabsTrigger value="github">
 					<GithubIcon className="w-[18px] h-[18px] stroke-black-30" />
 				</TabsTrigger> */}
+					<TabsTrigger value="structure">
+						<ListTreeIcon className="w-[18px] h-[18px] stroke-black-30" />
+					</TabsTrigger>
 
 					{developerMode && (
 						<TabsTrigger value="developer">
@@ -81,6 +91,9 @@ export function NavigationPanel() {
 				{/* <TabsContent value="github">
 				<GitHubIntegration />
 			</TabsContent> */}
+				<TabsContent value="structure">
+					<Structure />
+				</TabsContent>
 				<TabsContent value="developer">
 					<Developer />
 				</TabsContent>
@@ -182,6 +195,35 @@ function Developer() {
 						Download the graph
 					</a>
 				</div>
+			</div>
+		</ContentPanel>
+	);
+}
+
+export function Structure() {
+	const { graph } = useGraph();
+	const subGraphs = useMemo(
+		() =>
+			graph.subGraphs.map((subGraph) => ({
+				...subGraph,
+				nodes: subGraph.nodes
+					.map((nodeId) => graph.nodes.find((node) => node.id === nodeId))
+					.filter((node) => node !== undefined),
+			})),
+		[graph],
+	);
+	return (
+		<ContentPanel>
+			<ContentPanelHeader>Structure</ContentPanelHeader>
+			<div className="flex flex-col gap-[8px]">
+				{subGraphs.map((subGraph) => (
+					<div key={subGraph.id}>
+						<p className="text-[14px]">{subGraph.name}</p>
+						<div className="pl-[8px] flex flex-col gap-[4px]">
+							{subGraph.nodes.map((node) => node.name)}
+						</div>
+					</div>
+				))}
 			</div>
 		</ContentPanel>
 	);
