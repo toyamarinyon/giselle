@@ -2,18 +2,18 @@ import type {
 	Connection,
 	ConnectionId,
 	Files,
+	Flow,
 	Graph,
 	Job,
 	Node,
 	NodeId,
 	Step,
-	SubGraph,
 } from "./types";
-import { createJobId, createStepId, createSubgraphId } from "./utils";
+import { createFlowId, createJobId, createStepId } from "./utils";
 
-export function deriveSubGraphs(graph: Graph): SubGraph[] {
+export function deriveFlows(graph: Graph): Flow[] {
 	const processedNodes = new Set<NodeId>();
-	const subGraphs: SubGraph[] = [];
+	const flows: Flow[] = [];
 	const connectionMap = new Map<NodeId, Set<NodeId>>();
 
 	for (const connection of graph.connections) {
@@ -56,19 +56,19 @@ export function deriveSubGraphs(graph: Graph): SubGraph[] {
 
 		return connectedNodes;
 	}
-	function findSubGraphConnections(nodes: Set<NodeId>): Set<ConnectionId> {
-		const subGraphConnections = new Set<ConnectionId>();
+	function findFlowConnections(nodes: Set<NodeId>): Set<ConnectionId> {
+		const flowConnections = new Set<ConnectionId>();
 
 		for (const connection of graph.connections) {
 			if (
 				nodes.has(connection.sourceNodeId) &&
 				nodes.has(connection.targetNodeId)
 			) {
-				subGraphConnections.add(connection.id);
+				flowConnections.add(connection.id);
 			}
 		}
 
-		return subGraphConnections;
+		return flowConnections;
 	}
 	/**
 	 * Converts a directed graph into a sequence of jobs with steps based on topological sorting.
@@ -230,45 +230,45 @@ export function deriveSubGraphs(graph: Graph): SubGraph[] {
 		const connectedNodes = findConnectedComponent(node.id);
 
 		if (connectedNodes.size > 0) {
-			const subGraphConnections = findSubGraphConnections(connectedNodes);
+			const flowConnections = findFlowConnections(connectedNodes);
 
-			const subGraph: SubGraph = {
-				id: createSubgraphId(),
-				name: `Flow ${subGraphs.length + 1}`,
+			const flow: Flow = {
+				id: createFlowId(),
+				name: `Flow ${flows.length + 1}`,
 				nodes: Array.from(connectedNodes),
-				connections: Array.from(subGraphConnections),
+				connections: Array.from(flowConnections),
 				jobs: createJobsFromGraph(
 					graph.nodes.filter((node) => connectedNodes.has(node.id)),
 					graph.connections.filter((connection) =>
-						subGraphConnections.has(connection.id),
+						flowConnections.has(connection.id),
 					),
 				),
 			};
 
-			subGraphs.push(subGraph);
+			flows.push(flow);
 
 			for (const nodeId of connectedNodes) {
 				processedNodes.add(nodeId);
 			}
 		} else {
-			const subGraph: SubGraph = {
-				id: createSubgraphId(),
-				name: `SubGraph ${subGraphs.length + 1}`,
+			const flow: Flow = {
+				id: createFlowId(),
+				name: `Flow ${flows.length + 1}`,
 				nodes: [node.id],
 				connections: [],
 				jobs: createJobsFromGraph([node], []),
 			};
 
-			subGraphs.push(subGraph);
+			flows.push(flow);
 			processedNodes.add(node.id);
 		}
 	}
 
-	return subGraphs;
+	return flows;
 }
 
 export function isLatestVersion(graph: Graph): boolean {
-	return graph.version === "2024-12-10";
+	return graph.version === "20241212";
 }
 
 export function migrateGraph(graph: Graph): Graph {
@@ -278,7 +278,7 @@ export function migrateGraph(graph: Graph): Graph {
 		newGraph = {
 			...newGraph,
 			version: "2024-12-09",
-			subGraphs: deriveSubGraphs(newGraph),
+			flows: deriveFlows(newGraph),
 		};
 	}
 
@@ -307,11 +307,11 @@ export function migrateGraph(graph: Graph): Graph {
 		};
 	}
 
-	if (newGraph.version === "2024-12-10") {
+	if (newGraph.version === "2024-12-10" || newGraph.version === "2024-12-11") {
 		newGraph = {
 			...newGraph,
-			version: "2024-12-11",
-			subGraphs: deriveSubGraphs(newGraph),
+			version: "20241212",
+			flows: deriveFlows(newGraph),
 		};
 	}
 

@@ -212,7 +212,7 @@ function StructureNodeItem({
 	return (
 		<div
 			className={clsx(
-				"hover:bg-white/10 flex items-center gap-[14px] px-[4px] py-[1px]",
+				"hover:bg-white/10 flex items-center gap-[14px] px-[4px] py-[1px] cursor-default",
 				className,
 			)}
 		>
@@ -249,11 +249,11 @@ function StructureStepItem({
 }
 export function Structure() {
 	const { graph } = useGraph();
-	const subGraphs = useMemo(
+	const flows = useMemo(
 		() =>
-			graph.subGraphs.map((subGraph) => ({
-				...subGraph,
-				jobs: subGraph.jobs.map((job) => ({
+			graph.flows.map((flow) => ({
+				...flow,
+				jobs: flow.jobs.map((job) => ({
 					...job,
 					steps: job.steps
 						.map((step) => {
@@ -279,14 +279,14 @@ export function Structure() {
 		<ContentPanel>
 			<ContentPanelHeader>Structure</ContentPanelHeader>
 			<div className="flex flex-col gap-[8px]">
-				{subGraphs.map((subGraph) => (
-					<div key={subGraph.id}>
+				{flows.map((flow) => (
+					<div key={flow.id}>
 						<div className="flex items-center gap-[14px] hover:bg-white/10 px-[4px] py-[1px] rounded-[2px]">
 							<WilliIcon className="w-[16px] h-[16px] fill-current" />
-							<p className="text-[14px]">{subGraph.name}</p>
+							<p className="text-[14px]">{flow.name}</p>
 						</div>
 						<div className="pt-[4px] flex flex-col gap-[4px] text-[14px]">
-							{subGraph.jobs.map((job) => (
+							{flow.jobs.map((job) => (
 								<div key={job.id}>
 									{job.steps.length === 1 ? (
 										<StructureStepItem

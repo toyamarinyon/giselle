@@ -6,6 +6,7 @@ import type {
 	File,
 	FileId,
 	Files,
+	FlowId,
 	Graph,
 	GraphId,
 	JobId,
@@ -14,7 +15,6 @@ import type {
 	NodeHandleId,
 	NodeId,
 	StepId,
-	SubGraphId,
 	Text,
 	TextGenerateActionContent,
 	TextGeneration,
@@ -43,8 +43,8 @@ export function createFileId(): FileId {
 	return `fl_${createId()}`;
 }
 
-export function createSubgraphId(): SubGraphId {
-	return `sbgrph_${createId()}`;
+export function createFlowId(): FlowId {
+	return `flw_${createId()}`;
 }
 
 export function createJobId(): JobId {
@@ -159,8 +159,8 @@ export function initGraph(): Graph {
 		nodes: [],
 		connections: [],
 		artifacts: [],
-		version: "2024-12-11" satisfies LatestGraphVersion,
-		subGraphs: [],
+		version: "20241212" satisfies LatestGraphVersion,
+		flows: [],
 	};
 }
 

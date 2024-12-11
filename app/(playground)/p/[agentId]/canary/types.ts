@@ -166,15 +166,15 @@ interface TextStreamArtifact extends StreamAtrifact {
 export type Artifact = TextArtifact | TextStreamArtifact;
 
 export type GraphId = `grph_${string}`;
-type GraphVersion = "2024-12-09" | "2024-12-10" | "2024-12-11";
-export type LatestGraphVersion = "2024-12-11";
+type GraphVersion = "2024-12-09" | "2024-12-10" | "2024-12-11" | "20241212";
+export type LatestGraphVersion = "20241212";
 export interface Graph {
 	id: GraphId;
 	nodes: Node[];
 	connections: Connection[];
 	artifacts: Artifact[];
 	version: GraphVersion;
-	subGraphs: SubGraph[];
+	flows: Flow[];
 }
 
 interface ToolBase {
@@ -204,7 +204,7 @@ export type Tool =
 	| AddTextGenerationNodeTool
 	| MoveTool;
 
-export type SubGraphId = `sbgrph_${string}`;
+export type FlowId = `flw_${string}`;
 
 export type StepId = `stp_${string}`;
 export interface Step {
@@ -217,8 +217,8 @@ export interface Job {
 	id: JobId;
 	steps: Step[];
 }
-export interface SubGraph {
-	id: SubGraphId;
+export interface Flow {
+	id: FlowId;
 	name: string;
 	jobs: Job[];
 	nodes: NodeId[];

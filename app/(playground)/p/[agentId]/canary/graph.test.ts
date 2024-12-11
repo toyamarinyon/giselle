@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { deriveSubGraphs, isLatestVersion, migrateGraph } from "./graph";
+import { deriveFlows, isLatestVersion, migrateGraph } from "./graph";
 import type { Graph } from "./types";
 
 // graph is the following structure
@@ -120,17 +120,17 @@ const graph: Graph = {
 	],
 	artifacts: [],
 	version: "2024-12-09",
-	subGraphs: [],
+	flows: [],
 };
 
-describe("deriveSubGraphs", () => {
-	const subGraphs = deriveSubGraphs(graph);
-	test("two sub graphs", () => {
-		expect(subGraphs.length).toBe(2);
+describe("deriveFlows", () => {
+	const flows = deriveFlows(graph);
+	test("two sub flows", () => {
+		expect(flows.length).toBe(2);
 	});
-	test("one subgraph has two nodes while the other has three", () => {
-		expect(subGraphs[0].nodes.length).toBe(2);
-		expect(subGraphs[1].nodes.length).toBe(3);
+	test("one flow has two nodes while the other has three", () => {
+		expect(flows[0].nodes.length).toBe(2);
+		expect(flows[1].nodes.length).toBe(3);
 	});
 });
 

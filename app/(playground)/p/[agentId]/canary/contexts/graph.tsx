@@ -9,7 +9,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { deriveSubGraphs } from "../graph";
+import { deriveFlows } from "../graph";
 import type {
 	Artifact,
 	Connection,
@@ -119,7 +119,7 @@ function applyActions(
 	}
 	currentGraph = {
 		...currentGraph,
-		subGraphs: deriveSubGraphs(currentGraph),
+		flows: deriveFlows(currentGraph),
 	};
 	return currentGraph;
 }
