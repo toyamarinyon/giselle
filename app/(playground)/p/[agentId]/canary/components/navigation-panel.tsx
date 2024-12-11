@@ -1,7 +1,9 @@
 import * as Tabs from "@radix-ui/react-tabs";
 import { getDownloadUrl, head } from "@vercel/blob";
+import clsx from "clsx/lite";
 import {
 	DownloadIcon,
+	FrameIcon,
 	GithubIcon,
 	HammerIcon,
 	ListTreeIcon,
@@ -20,6 +22,7 @@ import { WilliIcon } from "../../beta-proto/components/icons/willi";
 import { useAgentName } from "../contexts/agent-name";
 import { useDeveloperMode } from "../contexts/developer-mode";
 import { useGraph } from "../contexts/graph";
+import type { Node } from "../types";
 import { ContentTypeIcon } from "./content-type-icon";
 
 function TabsTrigger(
@@ -202,15 +205,46 @@ function Developer() {
 	);
 }
 
+function StructureNodeItem({
+	node,
+	className,
+}: { node: Node; className?: string }) {
+	return (
+		<div
+			className={clsx(
+				"hover:bg-white/10 flex items-center gap-[14px] px-[4px] py-[1px]",
+				className,
+			)}
+		>
+			<ContentTypeIcon
+				contentType={node.content.type}
+				className="w-[16px] h-[16px] fill-current"
+			/>
+			<p>{node.name}</p>
+		</div>
+	);
+}
 export function Structure() {
 	const { graph } = useGraph();
 	const subGraphs = useMemo(
 		() =>
 			graph.subGraphs.map((subGraph) => ({
 				...subGraph,
-				nodes: subGraph.nodes
-					.map((nodeId) => graph.nodes.find((node) => node.id === nodeId))
-					.filter((node) => node !== undefined),
+				jobs: subGraph.jobs.map((job) => ({
+					...job,
+					steps: job.steps
+						.map((step) => {
+							const node = graph.nodes.find((node) => node.id === step.nodeId);
+							if (node === undefined) {
+								return null;
+							}
+							return {
+								...step,
+								node,
+							};
+						})
+						.filter((step) => step !== null),
+				})),
 			})),
 		[graph],
 	);
@@ -225,16 +259,29 @@ export function Structure() {
 							<p className="text-[14px]">{subGraph.name}</p>
 						</div>
 						<div className="pt-[4px] flex flex-col gap-[4px] text-[14px]">
-							{subGraph.nodes.map((node) => (
-								<div
-									key={node.id}
-									className="pl-[34px] hover:bg-white/10 flex items-center gap-[14px]"
-								>
-									<ContentTypeIcon
-										contentType={node.content.type}
-										className="w-[16px] h-[16px] fill-current"
-									/>
-									{node.name}
+							{subGraph.jobs.map((job) => (
+								<div key={job.id}>
+									{job.steps.length === 1 ? (
+										<StructureNodeItem
+											node={job.steps[0].node}
+											className="pl-[34px]"
+										/>
+									) : (
+										<div>
+											<div className="pl-[34px] hover:bg-white/10 px-[4px] py-[1px] gap-[14px] flex items-center">
+												<FrameIcon className="w-[16px] h-[16px] fill-current" />
+												<p>Subflow</p>
+											</div>
+
+											{job.steps.map((step) => (
+												<StructureNodeItem
+													key={step.id}
+													node={job.steps[0].node}
+													className="pl-[64px]"
+												/>
+											))}
+										</div>
+									)}
 								</div>
 							))}
 						</div>

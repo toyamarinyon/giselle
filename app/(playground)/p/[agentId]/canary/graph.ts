@@ -221,7 +221,7 @@ export function deriveSubGraphs(graph: Graph): SubGraph[] {
 
 			const subGraph: SubGraph = {
 				id: createSubgraphId(),
-				name: `SubGraph ${subGraphs.length + 1}`,
+				name: `Flow ${subGraphs.length + 1}`,
 				nodes: Array.from(connectedNodes),
 				connections: Array.from(subGraphConnections),
 				jobs: createJobsFromGraph(
