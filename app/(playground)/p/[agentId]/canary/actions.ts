@@ -15,6 +15,7 @@ import { UnstructuredClient } from "unstructured-client";
 import { Strategy } from "unstructured-client/sdk/models/shared";
 import * as v from "valibot";
 import { vercelBlobFileFolder, vercelBlobGraphFolder } from "./constants";
+import { textGenerationPrompt } from "./lib/prompts";
 import {
 	buildGraphPath,
 	elementsToMarkdown,
@@ -22,7 +23,6 @@ import {
 	pathJoin,
 	toErrorWithMessage,
 } from "./lib/utils";
-import { textGenerationPrompt } from "./prompts";
 import type {
 	AgentId,
 	ArtifactId,

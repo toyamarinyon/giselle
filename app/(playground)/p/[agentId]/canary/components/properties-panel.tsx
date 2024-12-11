@@ -46,6 +46,7 @@ import {
 } from "../contexts/graph";
 import { usePropertiesPanel } from "../contexts/properties-panel";
 import { useToast } from "../contexts/toast";
+import { textGenerationPrompt } from "../lib/prompts";
 import {
 	createArtifactId,
 	createConnectionId,
@@ -60,7 +61,6 @@ import {
 	pathJoin,
 	toErrorWithMessage,
 } from "../lib/utils";
-import { textGenerationPrompt } from "../prompts";
 import type {
 	FileContent,
 	FileData,
