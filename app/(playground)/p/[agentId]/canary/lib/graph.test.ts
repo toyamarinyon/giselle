@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import type { Graph } from "../types";
 import { deriveFlows, isLatestVersion, migrateGraph } from "./graph";
-import type { Graph } from "./types";
 
 // graph is the following structure
 // ┌────────────────────────┐          ┌───────────────────┐

@@ -9,7 +9,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { deriveFlows } from "../graph";
+import { deriveFlows } from "../lib/graph";
 import type {
 	Artifact,
 	Connection,

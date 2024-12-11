@@ -14,7 +14,7 @@ import { MousePositionProvider } from "./contexts/mouse-position";
 import { PropertiesPanelProvider } from "./contexts/properties-panel";
 import { ToastProvider } from "./contexts/toast";
 import { ToolbarContextProvider } from "./contexts/toolbar";
-import { isLatestVersion, migrateGraph } from "./graph";
+import { isLatestVersion, migrateGraph } from "./lib/graph";
 import { buildGraphFolderPath } from "./lib/utils";
 import type { AgentId, ArtifactId, Graph, NodeId } from "./types";
 

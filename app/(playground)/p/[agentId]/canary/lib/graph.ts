@@ -1,4 +1,3 @@
-import { createFlowId, createJobId, createStepId } from "./lib/utils";
 import type {
 	Connection,
 	ConnectionId,
@@ -9,7 +8,8 @@ import type {
 	Node,
 	NodeId,
 	Step,
-} from "./types";
+} from "../types";
+import { createFlowId, createJobId, createStepId } from "./utils";
 
 export function deriveFlows(graph: Graph): Flow[] {
 	const processedNodes = new Set<NodeId>();
