@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 // import { RunButton } from "./flow/components/run-button";
 import { SparklesIcon } from "./icons/sparkles";
+import { Button } from "./ui/button";
 
 function SelectionIndicator() {
 	return (
@@ -75,10 +76,12 @@ export function Header() {
 				<ModeButton mode={"edit"}>edit</ModeButton>
 				<ModeButton mode={"view"}>view</ModeButton>
 			</div>
-			<div className="flex-1" />
-			{/* <div>
-					<RunButton />
-				</div> */}
+			<div className="flex-1 flex justify-end">
+				<Button type="button">
+					<SparklesIcon className="w-[18px] h-[18px] fill-white drop-shadow-[0.66px_1.32px_2.64px_hsla(0,0%,100%,0.25)]" />
+					<span>Run</span>
+				</Button>
+			</div>
 		</div>
 	);
 }
