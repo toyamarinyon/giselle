@@ -4,6 +4,7 @@ import type {
 	Files,
 	Graph,
 	Job,
+	Node,
 	NodeId,
 	Step,
 	SubGraph,
@@ -81,7 +82,7 @@ export function deriveSubGraphs(graph: Graph): SubGraph[] {
 	 * @returns Array of jobs where each job contains steps that can be executed in parallel
 	 */
 	function createJobsFromGraph(
-		nodeIds: NodeId[],
+		nodes: Node[],
 		connections: Connection[],
 	): Job[] {
 		/**
@@ -182,36 +183,48 @@ export function deriveSubGraphs(graph: Graph): SubGraph[] {
 			return levels;
 		};
 
-		/**
-		 * Converts topologically sorted levels into job structures.
-		 *
-		 * Input levels:        Output jobs:
-		 * [[A], [B,C], [D]]   [{jobId: 1, steps: [{nodeId: "A"}]},
-		 *                      {jobId: 2, steps: [{nodeId: "B"}, {nodeId: "C"}]},
-		 *                      {jobId: 3, steps: [{nodeId: "D"}]}]
-		 */
-		function createJobs(levels: NodeId[][]): Job[] {
-			return levels.map(
-				(level) =>
-					({
-						id: createJobId(),
-						steps: level.map(
-							(nodeId) =>
-								({
-									nodeId,
-									id: createStepId(),
-									variableNodeIds: [],
-								}) satisfies Step,
-						),
-					}) satisfies Job,
+		function resolveVariableNodeIds(nodeId: NodeId) {
+			const variableConnections = new Set(
+				connections
+					.filter(
+						(connection) =>
+							connection.targetNodeId === nodeId &&
+							connection.sourceNodeType === "variable",
+					)
+					.map((connection) => connection.sourceNodeId),
 			);
+			const variableNodes = nodes.filter((node) =>
+				variableConnections.has(node.id),
+			);
+			return variableNodes.map((node) => node.id);
 		}
 
-		const levels = topologicalSort(nodeIds, connections);
-		return createJobs(levels);
+		const actionNodeIds = nodes
+			.filter((node) => node.type === "action")
+			.map((node) => node.id);
+		const levels = topologicalSort(
+			actionNodeIds,
+			connections.filter(
+				(connection) => connection.sourceNodeType === "action",
+			),
+		);
+		return levels.map(
+			(level) =>
+				({
+					id: createJobId(),
+					steps: level.map(
+						(nodeId) =>
+							({
+								nodeId,
+								id: createStepId(),
+								variableNodeIds: resolveVariableNodeIds(nodeId),
+							}) satisfies Step,
+					),
+				}) satisfies Job,
+		);
 	}
 
-	for (const node of graph.nodes) {
+	for (const node of graph.nodes.filter((node) => node.type === "action")) {
 		if (processedNodes.has(node.id)) continue;
 
 		const connectedNodes = findConnectedComponent(node.id);
@@ -225,7 +238,7 @@ export function deriveSubGraphs(graph: Graph): SubGraph[] {
 				nodes: Array.from(connectedNodes),
 				connections: Array.from(subGraphConnections),
 				jobs: createJobsFromGraph(
-					Array.from(connectedNodes),
+					graph.nodes.filter((node) => connectedNodes.has(node.id)),
 					graph.connections.filter((connection) =>
 						subGraphConnections.has(connection.id),
 					),
@@ -243,7 +256,7 @@ export function deriveSubGraphs(graph: Graph): SubGraph[] {
 				name: `SubGraph ${subGraphs.length + 1}`,
 				nodes: [node.id],
 				connections: [],
-				jobs: createJobsFromGraph([node.id], []),
+				jobs: createJobsFromGraph([node], []),
 			};
 
 			subGraphs.push(subGraph);

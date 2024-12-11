@@ -22,7 +22,7 @@ import { WilliIcon } from "../../beta-proto/components/icons/willi";
 import { useAgentName } from "../contexts/agent-name";
 import { useDeveloperMode } from "../contexts/developer-mode";
 import { useGraph } from "../contexts/graph";
-import type { Node } from "../types";
+import type { Node, Step } from "../types";
 import { ContentTypeIcon } from "./content-type-icon";
 
 function TabsTrigger(
@@ -224,6 +224,29 @@ function StructureNodeItem({
 		</div>
 	);
 }
+
+function StructureStepItem({
+	step,
+	stepClassName,
+	variableNodesClassName,
+}: {
+	step: Step & { node: Node; variableNodes: Node[] };
+	stepClassName?: string;
+	variableNodesClassName?: string;
+}) {
+	return (
+		<div>
+			<StructureNodeItem node={step.node} className={stepClassName} />
+			{step.variableNodes.map((node) => (
+				<StructureNodeItem
+					key={node.id}
+					node={node}
+					className={variableNodesClassName}
+				/>
+			))}
+		</div>
+	);
+}
 export function Structure() {
 	const { graph } = useGraph();
 	const subGraphs = useMemo(
@@ -235,12 +258,16 @@ export function Structure() {
 					steps: job.steps
 						.map((step) => {
 							const node = graph.nodes.find((node) => node.id === step.nodeId);
+							const variableNodes = step.variableNodeIds
+								.map((nodeId) => graph.nodes.find((node) => node.id === nodeId))
+								.filter((node) => node !== undefined);
 							if (node === undefined) {
 								return null;
 							}
 							return {
 								...step,
 								node,
+								variableNodes,
 							};
 						})
 						.filter((step) => step !== null),
@@ -262,9 +289,10 @@ export function Structure() {
 							{subGraph.jobs.map((job) => (
 								<div key={job.id}>
 									{job.steps.length === 1 ? (
-										<StructureNodeItem
-											node={job.steps[0].node}
-											className="pl-[34px]"
+										<StructureStepItem
+											step={job.steps[0]}
+											stepClassName="pl-[34px]"
+											variableNodesClassName="pl-[64px]"
 										/>
 									) : (
 										<div>
@@ -274,10 +302,11 @@ export function Structure() {
 											</div>
 
 											{job.steps.map((step) => (
-												<StructureNodeItem
+												<StructureStepItem
+													step={step}
 													key={step.id}
-													node={job.steps[0].node}
-													className="pl-[64px]"
+													stepClassName="pl-[64px]"
+													variableNodesClassName="pl-[94px]"
 												/>
 											))}
 										</div>
