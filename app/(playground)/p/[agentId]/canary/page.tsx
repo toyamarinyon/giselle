@@ -5,12 +5,13 @@ import { ReactFlowProvider } from "@xyflow/react";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { action, putGraph } from "./actions";
-import { Editor } from "./components/editor";
+import { Playground } from "./components/playground";
 import { AgentNameProvider } from "./contexts/agent-name";
 import { DeveloperModeProvider } from "./contexts/developer-mode";
 import { ExecutionProvider } from "./contexts/execution";
 import { GraphContextProvider } from "./contexts/graph";
 import { MousePositionProvider } from "./contexts/mouse-position";
+import { PlaygroundModeProvider } from "./contexts/playground-mode";
 import { PropertiesPanelProvider } from "./contexts/properties-panel";
 import { ToastProvider } from "./contexts/toast";
 import { ToolbarContextProvider } from "./contexts/toolbar";
@@ -108,9 +109,11 @@ export default async function Page({
 										defaultValue={agent.name ?? "Unnamed Agent"}
 										updateAgentNameAction={updateAgentName}
 									>
-										<ExecutionProvider executeAction={execute}>
-											<Editor />
-										</ExecutionProvider>
+										<PlaygroundModeProvider>
+											<ExecutionProvider executeAction={execute}>
+												<Playground />
+											</ExecutionProvider>
+										</PlaygroundModeProvider>
 									</AgentNameProvider>
 								</ToastProvider>
 							</MousePositionProvider>
