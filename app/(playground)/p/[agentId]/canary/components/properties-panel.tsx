@@ -46,6 +46,20 @@ import {
 } from "../contexts/graph";
 import { usePropertiesPanel } from "../contexts/properties-panel";
 import { useToast } from "../contexts/toast";
+import {
+	createArtifactId,
+	createConnectionId,
+	createFileId,
+	createNodeHandleId,
+	createNodeId,
+	formatTimestamp,
+	isFile,
+	isFiles,
+	isText,
+	isTextGeneration,
+	pathJoin,
+	toErrorWithMessage,
+} from "../lib/utils";
 import { textGenerationPrompt } from "../prompts";
 import type {
 	FileContent,
@@ -60,20 +74,6 @@ import type {
 	TextContent,
 	TextGenerateActionContent,
 } from "../types";
-import {
-	createArtifactId,
-	createConnectionId,
-	createFileId,
-	createNodeHandleId,
-	createNodeId,
-	formatTimestamp,
-	isFile,
-	isFiles,
-	isText,
-	isTextGeneration,
-	pathJoin,
-	toErrorWithMessage,
-} from "../utils";
 import { Block } from "./block";
 import ClipboardButton from "./clipboard-button";
 import { ContentTypeIcon } from "./content-type-icon";

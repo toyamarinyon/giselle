@@ -6,7 +6,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { putGraph } from "../../(playground)/p/[agentId]/canary/actions";
-import { initGraph } from "../../(playground)/p/[agentId]/canary/utils";
+import { initGraph } from "../../(playground)/p/[agentId]/canary/lib/utils";
 import { CreateAgentButton } from "./components";
 
 export default function Layout({

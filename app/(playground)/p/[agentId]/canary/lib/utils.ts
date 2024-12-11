@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import { vercelBlobGraphFolder } from "./constants";
+import { vercelBlobGraphFolder } from "../constants";
 import type {
 	ArtifactId,
 	ConnectionId,
@@ -18,7 +18,7 @@ import type {
 	Text,
 	TextGenerateActionContent,
 	TextGeneration,
-} from "./types";
+} from "../types";
 
 export function createNodeId(): NodeId {
 	return `nd_${createId()}`;

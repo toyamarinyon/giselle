@@ -2,8 +2,8 @@
 
 import { type StreamableValue, readStreamableValue } from "ai/rsc";
 import { type ReactNode, createContext, useCallback, useContext } from "react";
+import { createArtifactId, toErrorWithMessage } from "../lib/utils";
 import type { ArtifactId, NodeId, TextArtifactObject } from "../types";
-import { createArtifactId, toErrorWithMessage } from "../utils";
 import { useGraph } from "./graph";
 import { usePropertiesPanel } from "./properties-panel";
 import { useToast } from "./toast";

@@ -15,8 +15,8 @@ import { PropertiesPanelProvider } from "./contexts/properties-panel";
 import { ToastProvider } from "./contexts/toast";
 import { ToolbarContextProvider } from "./contexts/toolbar";
 import { isLatestVersion, migrateGraph } from "./graph";
+import { buildGraphFolderPath } from "./lib/utils";
 import type { AgentId, ArtifactId, Graph, NodeId } from "./types";
-import { buildGraphFolderPath } from "./utils";
 
 // Extend the max duration of the server actions from this page to 5 minutes
 // https://vercel.com/docs/functions/runtimes#max-duration
