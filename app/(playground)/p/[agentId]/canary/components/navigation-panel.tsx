@@ -16,9 +16,11 @@ import {
 	useState,
 } from "react";
 import { LayersIcon } from "../../beta-proto/components/icons/layers";
+import { WilliIcon } from "../../beta-proto/components/icons/willi";
 import { useAgentName } from "../contexts/agent-name";
 import { useDeveloperMode } from "../contexts/developer-mode";
 import { useGraph } from "../contexts/graph";
+import { ContentTypeIcon } from "./content-type-icon";
 
 function TabsTrigger(
 	props: Omit<ComponentProps<typeof Tabs.Trigger>, "className">,
@@ -218,10 +220,22 @@ export function Structure() {
 			<div className="flex flex-col gap-[8px]">
 				{subGraphs.map((subGraph) => (
 					<div key={subGraph.id}>
-						<p className="text-[14px]">{subGraph.name}</p>
-						<div className="pl-[8px] pt-[4px] flex flex-col gap-[4px] text-[14px]">
+						<div className="flex items-center gap-[14px] hover:bg-white/10 px-[4px] py-[1px] rounded-[2px]">
+							<WilliIcon className="w-[16px] h-[16px] fill-current" />
+							<p className="text-[14px]">{subGraph.name}</p>
+						</div>
+						<div className="pt-[4px] flex flex-col gap-[4px] text-[14px]">
 							{subGraph.nodes.map((node) => (
-								<div key={node.id}>{node.name}</div>
+								<div
+									key={node.id}
+									className="pl-[34px] hover:bg-white/10 flex items-center gap-[14px]"
+								>
+									<ContentTypeIcon
+										contentType={node.content.type}
+										className="w-[16px] h-[16px] fill-current"
+									/>
+									{node.name}
+								</div>
 							))}
 						</div>
 					</div>

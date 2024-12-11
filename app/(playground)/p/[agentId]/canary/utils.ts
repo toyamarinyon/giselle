@@ -8,10 +8,12 @@ import type {
 	Files,
 	Graph,
 	GraphId,
+	JobId,
 	LatestGraphVersion,
 	Node,
 	NodeHandleId,
 	NodeId,
+	StepId,
 	SubGraphId,
 	Text,
 	TextGenerateActionContent,
@@ -43,6 +45,14 @@ export function createFileId(): FileId {
 
 export function createSubgraphId(): SubGraphId {
 	return `sbgrph_${createId()}`;
+}
+
+export function createJobId(): JobId {
+	return `jb_${createId()}`;
+}
+
+export function createStepId(): StepId {
+	return `stp_${createId()}`;
 }
 
 export function isTextGeneration(node: Node): node is TextGeneration {

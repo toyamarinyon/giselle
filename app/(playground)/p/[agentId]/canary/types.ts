@@ -206,9 +206,21 @@ export type Tool =
 
 export type SubGraphId = `sbgrph_${string}`;
 
+export type StepId = `stp_${string}`;
+export interface Step {
+	id: StepId;
+	nodeId: NodeId;
+	variableNodeIds: NodeId[];
+}
+export type JobId = `jb_${string}`;
+export interface Job {
+	id: JobId;
+	steps: Step[];
+}
 export interface SubGraph {
 	id: SubGraphId;
 	name: string;
+	jobs: Job[];
 	nodes: NodeId[];
 	connections: ConnectionId[];
 }
