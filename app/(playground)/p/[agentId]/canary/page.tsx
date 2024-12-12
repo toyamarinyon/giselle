@@ -15,9 +15,18 @@ import { PlaygroundModeProvider } from "./contexts/playground-mode";
 import { PropertiesPanelProvider } from "./contexts/properties-panel";
 import { ToastProvider } from "./contexts/toast";
 import { ToolbarContextProvider } from "./contexts/toolbar";
+import { executeStep } from "./lib/execution";
 import { isLatestVersion, migrateGraph } from "./lib/graph";
 import { buildGraphFolderPath } from "./lib/utils";
-import type { AgentId, ArtifactId, Graph, NodeId } from "./types";
+import type {
+	AgentId,
+	ArtifactId,
+	ExecutionId,
+	FlowId,
+	Graph,
+	NodeId,
+	StepId,
+} from "./types";
 
 // Extend the max duration of the server actions from this page to 5 minutes
 // https://vercel.com/docs/functions/runtimes#max-duration
@@ -93,6 +102,15 @@ export default async function Page({
 		return await action(artifactId, agentId, nodeId);
 	}
 
+	async function executeStepAction(
+		flowId: FlowId,
+		executionId: ExecutionId,
+		stepId: StepId,
+	) {
+		"use server";
+		return await executeStep(agentId, flowId, executionId, stepId);
+	}
+
 	return (
 		<DeveloperModeProvider developerMode={developerMode}>
 			<GraphContextProvider
@@ -110,7 +128,10 @@ export default async function Page({
 										updateAgentNameAction={updateAgentName}
 									>
 										<PlaygroundModeProvider>
-											<ExecutionProvider executeAction={execute}>
+											<ExecutionProvider
+												executeAction={execute}
+												executeStepAction={executeStepAction}
+											>
 												<Playground />
 											</ExecutionProvider>
 										</PlaygroundModeProvider>
