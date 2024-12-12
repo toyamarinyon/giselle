@@ -226,3 +226,73 @@ export interface Flow {
 }
 
 export type AgentId = `agnt_${string}`;
+
+export type StepExecutionId = `stex_${string}`;
+interface StepExecutionBase {
+	id: StepExecutionId;
+	nodeId: NodeId;
+	status: string;
+}
+interface PendingStepExecution extends StepExecutionBase {
+	status: "pending";
+}
+
+interface RunningStepExecution extends StepExecutionBase {
+	status: "running";
+	runStartedAt: number;
+}
+
+interface CompletedStepExecution extends StepExecutionBase {
+	status: "completed";
+	runStartedAt: number;
+	durationMs: number;
+}
+export type StepExecution =
+	| PendingStepExecution
+	| RunningStepExecution
+	| CompletedStepExecution;
+
+export type JobExecutionId = `jbex_${string}`;
+interface JobExecutionBase {
+	id: JobExecutionId;
+	stepExecutions: StepExecution[];
+	status: string;
+}
+interface PendingJobExecution extends JobExecutionBase {
+	status: "pending";
+}
+interface RunningJobExecution extends JobExecutionBase {
+	status: "running";
+	runStartedAt: number;
+}
+interface CompletedJobExecution extends JobExecutionBase {
+	status: "completed";
+	runStartedAt: number;
+	durationMs: number;
+}
+export type JobExecution =
+	| PendingJobExecution
+	| RunningJobExecution
+	| CompletedJobExecution;
+export type ExecutionId = `exct_${string}`;
+interface ExecutionBase {
+	id: ExecutionId;
+	flowId?: FlowId;
+	jobExecutions: JobExecution[];
+}
+interface PendingExecution extends ExecutionBase {
+	status: "pending";
+}
+interface RunningExecution extends ExecutionBase {
+	status: "running";
+	runStartedAt: number;
+}
+interface CompletedExecution extends ExecutionBase {
+	status: "completed";
+	runStartedAt: number;
+	durationMs: number;
+}
+export type Execution =
+	| PendingExecution
+	| RunningExecution
+	| CompletedExecution;

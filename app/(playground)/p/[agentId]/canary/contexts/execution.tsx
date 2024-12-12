@@ -1,15 +1,36 @@
 "use client";
 
 import { type StreamableValue, readStreamableValue } from "ai/rsc";
-import { type ReactNode, createContext, useCallback, useContext } from "react";
-import { createArtifactId, toErrorWithMessage } from "../lib/utils";
-import type { ArtifactId, NodeId, TextArtifactObject } from "../types";
+import {
+	type ReactNode,
+	createContext,
+	useCallback,
+	useContext,
+	useState,
+} from "react";
+import {
+	createArtifactId,
+	createExecutionId,
+	createJobExecutionId,
+	createStepExecutionId,
+	toErrorWithMessage,
+} from "../lib/utils";
+import type {
+	ArtifactId,
+	Execution,
+	FlowId,
+	NodeId,
+	TextArtifactObject,
+} from "../types";
 import { useGraph } from "./graph";
+import { usePlaygroundMode } from "./playground-mode";
 import { usePropertiesPanel } from "./properties-panel";
 import { useToast } from "./toast";
 
 interface ExecutionContextType {
+	execution: Execution | null;
 	execute: (nodeId: NodeId) => Promise<void>;
+	executeFlow: (flowId: FlowId) => Promise<void>;
 }
 
 const ExecutionContext = createContext<ExecutionContextType | undefined>(
@@ -28,9 +49,12 @@ export function ExecutionProvider({
 	children,
 	executeAction,
 }: ExecutionProviderProps) {
-	const { dispatch, flush } = useGraph();
+	const { dispatch, flush, graph } = useGraph();
 	const { setTab } = usePropertiesPanel();
 	const { addToast } = useToast();
+	const { setPlaygroundMode } = usePlaygroundMode();
+	const [execution, setExecution] = useState<Execution | null>(null);
+
 	const execute = useCallback(
 		async (nodeId: NodeId) => {
 			const artifactId = createArtifactId();
@@ -119,8 +143,33 @@ export function ExecutionProvider({
 		},
 		[executeAction, dispatch, flush, setTab, addToast],
 	);
+
+	const executeFlow = useCallback(
+		async (flowId: FlowId) => {
+			const flow = graph.flows.find((flow) => flow.id === flowId);
+			if (flow === undefined) {
+				throw new Error("Flow not found");
+			}
+			setPlaygroundMode("viewer");
+			setExecution({
+				id: createExecutionId(),
+				status: "pending",
+				flowId,
+				jobExecutions: flow.jobs.map((job) => ({
+					id: createJobExecutionId(),
+					status: "pending",
+					stepExecutions: job.steps.map((step) => ({
+						id: createStepExecutionId(),
+						nodeId: step.nodeId,
+						status: "pending",
+					})),
+				})),
+			});
+		},
+		[setPlaygroundMode, graph.flows],
+	);
 	return (
-		<ExecutionContext.Provider value={{ execute }}>
+		<ExecutionContext.Provider value={{ execution, execute, executeFlow }}>
 			{children}
 		</ExecutionContext.Provider>
 	);
@@ -131,5 +180,5 @@ export function useExecution() {
 	if (!context) {
 		throw new Error("useExecution must be used within an ExecutionProvider");
 	}
-	return context.execute;
+	return context;
 }

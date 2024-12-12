@@ -3,17 +3,20 @@ import { vercelBlobGraphFolder } from "../constants";
 import type {
 	ArtifactId,
 	ConnectionId,
+	ExecutionId,
 	File,
 	FileId,
 	Files,
 	FlowId,
 	Graph,
 	GraphId,
+	JobExecutionId,
 	JobId,
 	LatestGraphVersion,
 	Node,
 	NodeHandleId,
 	NodeId,
+	StepExecutionId,
 	StepId,
 	Text,
 	TextGenerateActionContent,
@@ -53,6 +56,18 @@ export function createJobId(): JobId {
 
 export function createStepId(): StepId {
 	return `stp_${createId()}`;
+}
+
+export function createStepExecutionId(): StepExecutionId {
+	return `stex_${createId()}`;
+}
+
+export function createJobExecutionId(): JobExecutionId {
+	return `jbex_${createId()}`;
+}
+
+export function createExecutionId(): ExecutionId {
+	return `exct_${createId()}`;
 }
 
 export function isTextGeneration(node: Node): node is TextGeneration {

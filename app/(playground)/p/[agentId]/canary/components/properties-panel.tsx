@@ -288,7 +288,7 @@ export function PropertiesPanel() {
 	const { graph, dispatch, flush } = useGraph();
 	const selectedNode = useSelectedNode();
 	const { open, setOpen, tab, setTab } = usePropertiesPanel();
-	const execute = useExecution();
+	const { execute } = useExecution();
 	return (
 		<div
 			className={clsx(

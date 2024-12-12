@@ -1,6 +1,8 @@
 import { GiselleLogo } from "@/components/giselle-logo";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { useExecution } from "../contexts/execution";
+import { useGraph } from "../contexts/graph";
 import {
 	type PlaygroundMode,
 	usePlaygroundMode,
@@ -53,6 +55,8 @@ function ModeButton(props: ModeButtonProps) {
 }
 
 export function Header() {
+	const { graph } = useGraph();
+	const { executeFlow } = useExecution();
 	return (
 		<div className="h-[60px] flex items-center justify-between mx-[20px]">
 			<div className="flex gap-[8px] items-center flex-1">
@@ -60,29 +64,18 @@ export function Header() {
 					<GiselleLogo className="fill-white w-[70px] h-auto mt-[6px]" />
 				</Link>
 				<div className="font-rosart text-[18px] text-black--30">Playground</div>
-				{/**
-									<div className="flex items-center gap-[10px] group">
-										<label className="w-[30px] h-[18px] border border-black-70 rounded-full relative bg-black-80 cursor-pointer group has-[:checked]:bg-black-70 ">
-											<div className="absolute bg-black-100 rounded-full w-[16px] h-[16px] group-has-[:checked]:translate-x-[12px]  transition-all" />
-											<input type="checkbox" name="previewMode" className="hidden" />
-										</label>
-										<div className="relative font-avenir h-[18px] text-[12px]">
-											<div className="h-[18px] flex items-center absolute top-0 text-black--30 opacity-100 group-has-[:checked]:opacity-0 transition-opacity duration-400">
-												Edit
-											</div>
-											<div className="h-[18px] flex items-center  absolute text-black--30 opacity-0 group-has-[:checked]:opacity-100 transition-opacity duration-400">
-												Preview
-											</div>
-										</div>
-									</div>
-								 */}
 			</div>
 			<div className="flex items-center gap-[10px] flex-1 justify-center">
 				<ModeButton mode="editor">edit</ModeButton>
 				<ModeButton mode="viewer">view</ModeButton>
 			</div>
 			<div className="flex-1 flex justify-end">
-				<Button type="button">
+				<Button
+					type="button"
+					onClick={() => {
+						executeFlow(graph.flows[0].id);
+					}}
+				>
 					<SparklesIcon className="w-[18px] h-[18px] fill-white drop-shadow-[0.66px_1.32px_2.64px_hsla(0,0%,100%,0.25)]" />
 					<span>Run</span>
 				</Button>
