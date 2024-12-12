@@ -10,6 +10,7 @@ import type { Execution, Node, StepExecution } from "../types";
 import bg from "./bg.png";
 import { ContentTypeIcon } from "./content-type-icon";
 import { Header } from "./header";
+import { Markdown } from "./markdown";
 import { EmptyState } from "./ui/empty-state";
 
 interface StepExecutionButtonProps
@@ -71,9 +72,13 @@ function ExecutionViewer({
 						if (node === undefined) {
 							return null;
 						}
+						const artifact = tmpExecution.artifacts.find((artifact) => {
+							return artifact.creatorNodeId === node.id;
+						});
 						return {
 							...stepExecution,
 							node,
+							artifact,
 						};
 					})
 					.filter((stepExecution) => stepExecution !== null),
@@ -114,7 +119,11 @@ function ExecutionViewer({
 				{execution.jobExecutions.flatMap((jobExecution) =>
 					jobExecution.stepExecutions.map((stepExecution) => (
 						<Tabs.Content key={stepExecution.id} value={stepExecution.id}>
-							{stepExecution.id},{stepExecution.status}
+							{stepExecution.artifact == null ? (
+								<p>Pending</p>
+							) : (
+								<Markdown>{stepExecution.artifact.object.content}</Markdown>
+							)}
 						</Tabs.Content>
 					)),
 				)}
