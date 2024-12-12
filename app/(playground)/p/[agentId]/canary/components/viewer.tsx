@@ -111,6 +111,13 @@ function ExecutionViewer({
 				</Tabs.List>
 			</div>
 			<div className="overflow-y-scroll flex-1">
+				{execution.jobExecutions.flatMap((jobExecution) =>
+					jobExecution.stepExecutions.map((stepExecution) => (
+						<Tabs.Content key={stepExecution.id} value={stepExecution.id}>
+							{stepExecution.id},{stepExecution.status}
+						</Tabs.Content>
+					)),
+				)}
 				{/* {state.flow.jobs.flatMap((job) =>
 					job.steps
 						.filter(
