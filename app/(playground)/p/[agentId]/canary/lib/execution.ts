@@ -276,7 +276,7 @@ export async function executeStep(
 		);
 		if (
 			generatedArtifact === undefined ||
-			generatedArtifact.type === "generatedArtifact"
+			generatedArtifact.type !== "generatedArtifact"
 		) {
 			return null;
 		}

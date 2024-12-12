@@ -149,6 +149,7 @@ const executeStep = async (
 	const stepDurationMs = Date.now() - stepRunStartedAt;
 	updateExecution((prev) => {
 		if (!prev || prev.status !== "running") return null;
+
 		return {
 			...prev,
 			jobExecutions: prev.jobExecutions.map((job) => ({
@@ -382,28 +383,30 @@ export function ExecutionProvider({
 			const flowRunStartedAt = Date.now();
 
 			// Initialize flow execution
-			setExecution(createInitialExecution(flowId, executionId, jobExecutions));
+			let currentExecution = createInitialExecution(
+				flowId,
+				executionId,
+				jobExecutions,
+			);
+			setExecution(currentExecution);
 
 			let totalFlowDurationMs = 0;
-			let currentArtifacts: Artifact[] = [];
 
 			// Execute jobs sequentially
 			for (const jobExecution of jobExecutions) {
+				console.log(`job: ${jobExecution.id}`);
 				const jobDurationMs = await executeJob(
 					flowId,
 					executionId,
 					jobExecution,
-					currentArtifacts,
+					currentExecution.artifacts,
 					executeStepAction,
 					(updater) => {
-						// Update both state and our local artifacts array
-						setExecution((prev) => {
-							const updated = updater(prev);
-							if (updated) {
-								currentArtifacts = updated.artifacts; // Keep local array in sync
-							}
-							return updated;
-						});
+						const updated = updater(currentExecution);
+						if (updated) {
+							currentExecution = updated;
+							setExecution(updated);
+						}
 					},
 				);
 				totalFlowDurationMs += jobDurationMs;
