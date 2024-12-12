@@ -19,9 +19,11 @@ import type {
 	ArtifactId,
 	Execution,
 	ExecutionId,
+	Flow,
 	FlowId,
 	JobExecution,
 	NodeId,
+	StepExecution,
 	StepId,
 	TextArtifactObject,
 } from "../types";
@@ -29,6 +31,215 @@ import { useGraph } from "./graph";
 import { usePlaygroundMode } from "./playground-mode";
 import { usePropertiesPanel } from "./properties-panel";
 import { useToast } from "./toast";
+
+// Helper functions for execution state management
+const createInitialJobExecutions = (flow: Flow): JobExecution[] => {
+	return flow.jobs.map((job) => ({
+		id: createJobExecutionId(),
+		jobId: job.id,
+		status: "pending",
+		stepExecutions: job.steps.map((step) => ({
+			id: createStepExecutionId(),
+			stepId: step.id,
+			nodeId: step.nodeId,
+			status: "pending",
+		})),
+	}));
+};
+
+const createInitialExecution = (
+	flowId: FlowId,
+	executionId: ExecutionId,
+	jobExecutions: JobExecution[],
+): Execution => ({
+	id: executionId,
+	status: "running",
+	runStartedAt: Date.now(),
+	flowId,
+	jobExecutions,
+	artifacts: [],
+});
+
+const processStreamContent = async (
+	stream: StreamableValue<TextArtifactObject, unknown>,
+	updateArtifact: (content: TextArtifactObject) => void,
+): Promise<TextArtifactObject> => {
+	let textArtifactObject: TextArtifactObject = {
+		type: "text",
+		title: "",
+		content: "",
+		messages: { plan: "", description: "" },
+	};
+
+	for await (const streamContent of readStreamableValue(stream)) {
+		if (streamContent === undefined) continue;
+		textArtifactObject = { ...textArtifactObject, ...streamContent };
+		updateArtifact(textArtifactObject);
+	}
+
+	return textArtifactObject;
+};
+
+const executeStep = async (
+	flowId: FlowId,
+	executionId: ExecutionId,
+	stepExecution: StepExecution,
+	executeStepAction: ExecuteStepAction,
+	updateExecution: (
+		updater: (prev: Execution | null) => Execution | null,
+	) => void,
+): Promise<number> => {
+	const stepRunStartedAt = Date.now();
+	const artifactId = createArtifactId();
+
+	// Initialize step execution
+	updateExecution((prev) => {
+		if (!prev) return null;
+		return {
+			...prev,
+			jobExecutions: prev.jobExecutions.map((job) => ({
+				...job,
+				stepExecutions: job.stepExecutions.map((step) =>
+					step.id === stepExecution.id
+						? { ...step, status: "running", runStartedAt: stepRunStartedAt }
+						: step,
+				),
+			})),
+			artifacts: [
+				...prev.artifacts,
+				{
+					id: artifactId,
+					type: "streamArtifact",
+					creatorNodeId: stepExecution.nodeId,
+					object: {
+						type: "text",
+						title: "",
+						content: "",
+						messages: { plan: "", description: "" },
+					},
+				},
+			],
+		};
+	});
+
+	// Execute step and process stream
+	const stream = await executeStepAction(
+		flowId,
+		executionId,
+		stepExecution.stepId,
+	);
+	const finalArtifact = await processStreamContent(stream, (content) => {
+		updateExecution((prev) => {
+			if (!prev || prev.status !== "running") return null;
+			return {
+				...prev,
+				artifacts: prev.artifacts.map((artifact) =>
+					artifact.id === artifactId
+						? { ...artifact, object: content }
+						: artifact,
+				),
+			};
+		});
+	});
+
+	// Complete step execution
+	const stepDurationMs = Date.now() - stepRunStartedAt;
+	updateExecution((prev) => {
+		if (!prev || prev.status !== "running") return null;
+		return {
+			...prev,
+			jobExecutions: prev.jobExecutions.map((job) => ({
+				...job,
+				stepExecutions: job.stepExecutions.map((step) =>
+					step.id === stepExecution.id
+						? {
+								...step,
+								status: "completed",
+								runStartedAt: stepRunStartedAt,
+								durationMs: stepDurationMs,
+							}
+						: step,
+				),
+			})),
+			artifacts: prev.artifacts.map((artifact) =>
+				artifact.id === artifactId
+					? {
+							id: artifactId,
+							type: "generatedArtifact",
+							creatorNodeId: stepExecution.nodeId,
+							createdAt: Date.now(),
+							object: finalArtifact,
+						}
+					: artifact,
+			),
+		};
+	});
+
+	return stepDurationMs;
+};
+
+const executeJob = async (
+	flowId: FlowId,
+	executionId: ExecutionId,
+	jobExecution: JobExecution,
+	executeStepAction: ExecuteStepAction,
+	updateExecution: (
+		updater: (prev: Execution | null) => Execution | null,
+	) => void,
+): Promise<number> => {
+	const jobRunStartedAt = Date.now();
+
+	// Start job execution
+	updateExecution((prev) => {
+		if (!prev) return null;
+		return {
+			...prev,
+			jobExecutions: prev.jobExecutions.map((job) =>
+				job.id === jobExecution.id
+					? { ...job, status: "running", runStartedAt: jobRunStartedAt }
+					: job,
+			),
+		};
+	});
+
+	// Execute all steps in parallel
+	const stepDurations = await Promise.all(
+		jobExecution.stepExecutions.map((step) =>
+			executeStep(
+				flowId,
+				executionId,
+				step,
+				executeStepAction,
+				updateExecution,
+			),
+		),
+	);
+
+	const jobDurationMs = stepDurations.reduce(
+		(sum, duration) => sum + duration,
+		0,
+	);
+
+	// Complete job execution
+	updateExecution((prev) => {
+		if (!prev) return null;
+		return {
+			...prev,
+			jobExecutions: prev.jobExecutions.map((job) =>
+				job.id === jobExecution.id
+					? {
+							...job,
+							status: "completed",
+							runStartedAt: jobRunStartedAt,
+							durationMs: jobDurationMs,
+						}
+					: job,
+			),
+		};
+	});
+
+	return jobDurationMs;
+};
 
 interface ExecutionContextType {
 	execution: Execution | null;
@@ -40,17 +251,18 @@ const ExecutionContext = createContext<ExecutionContextType | undefined>(
 	undefined,
 );
 
+type ExecuteStepAction = (
+	flowId: FlowId,
+	executionId: ExecutionId,
+	stepId: StepId,
+) => Promise<StreamableValue<TextArtifactObject, unknown>>;
 interface ExecutionProviderProps {
 	children: ReactNode;
 	executeAction: (
 		artifactId: ArtifactId,
 		nodeId: NodeId,
 	) => Promise<StreamableValue<TextArtifactObject, unknown>>;
-	executeStepAction: (
-		flowId: FlowId,
-		executionId: ExecutionId,
-		stepId: StepId,
-	) => Promise<StreamableValue<TextArtifactObject, unknown>>;
+	executeStepAction: ExecuteStepAction;
 }
 
 export function ExecutionProvider({
@@ -156,222 +368,38 @@ export function ExecutionProvider({
 	const executeFlow = useCallback(
 		async (flowId: FlowId) => {
 			const flow = graph.flows.find((flow) => flow.id === flowId);
-			if (flow === undefined) {
-				throw new Error("Flow not found");
-			}
+			if (!flow) throw new Error("Flow not found");
+
 			setPlaygroundMode("viewer");
 			const executionId = createExecutionId();
-			const jobExecutions: JobExecution[] = flow.jobs.map((job) => ({
-				id: createJobExecutionId(),
-				jobId: job.id,
-				status: "pending",
-				stepExecutions: job.steps.map((step) => ({
-					id: createStepExecutionId(),
-					stepId: step.id,
-					nodeId: step.nodeId,
-					status: "pending",
-				})),
-			}));
+			const jobExecutions = createInitialJobExecutions(flow);
 			const flowRunStartedAt = Date.now();
-			let flowDurationMs = 0;
-			setExecution({
-				id: executionId,
-				status: "running",
-				runStartedAt: flowRunStartedAt,
-				flowId,
-				jobExecutions,
-				artifacts: [],
-			});
-			for (const currentJobExecution of jobExecutions) {
-				const jobRunStartedAt = Date.now();
-				setExecution((prev) => {
-					if (prev === null) {
-						return null;
-					}
-					return {
-						...prev,
-						jobExecutions: prev.jobExecutions.map((jobExecution) => {
-							if (jobExecution.id !== currentJobExecution.id) {
-								return jobExecution;
-							}
-							return {
-								...jobExecution,
-								status: "running",
-								runStartedAt: jobRunStartedAt,
-							};
-						}),
-					};
-				});
-				let jobDurationMs = 0;
-				await Promise.all(
-					currentJobExecution.stepExecutions.map(
-						async (currentStepExecution) => {
-							const stepRunStartedAt = Date.now();
-							const artifactId = createArtifactId();
-							let textArtifactObject: TextArtifactObject = {
-								type: "text",
-								title: "",
-								content: "",
-								messages: {
-									plan: "",
-									description: "",
-								},
-							};
-							setExecution((prev) => {
-								if (prev === null) {
-									return null;
-								}
-								return {
-									...prev,
-									jobExecutions: prev.jobExecutions.map((jobExecution) => {
-										if (jobExecution.id !== currentJobExecution.id) {
-											return jobExecution;
-										}
-										return {
-											...jobExecution,
-											stepExecutions: jobExecution.stepExecutions.map(
-												(stepExecution) => {
-													if (stepExecution.id !== currentStepExecution.id) {
-														return stepExecution;
-													}
-													return {
-														...stepExecution,
-														status: "running",
-														runStartedAt: stepRunStartedAt,
-													};
-												},
-											),
-										};
-									}),
-									artifacts:
-										prev.status === "pending"
-											? [
-													{
-														id: artifactId,
-														type: "streamArtifact",
-														creatorNodeId: currentStepExecution.nodeId,
-														object: textArtifactObject,
-													},
-												]
-											: [
-													...prev.artifacts,
-													{
-														id: artifactId,
-														type: "streamArtifact",
-														creatorNodeId: currentStepExecution.nodeId,
-														object: textArtifactObject,
-													},
-												],
-								};
-							});
-							const stream = await executeStepAction(
-								flowId,
-								executionId,
-								currentStepExecution.stepId,
-							);
 
-							for await (const streamContent of readStreamableValue(stream)) {
-								if (streamContent === undefined) {
-									continue;
-								}
-								textArtifactObject = {
-									...textArtifactObject,
-									...streamContent,
-								};
-								setExecution((prev) => {
-									if (prev === null || prev.status !== "running") {
-										return null;
-									}
-									return {
-										...prev,
-										artifacts: prev.artifacts.map((artifact) => {
-											if (artifact.id !== artifactId) {
-												return artifact;
-											}
-											return {
-												...artifact,
-												object: textArtifactObject,
-											};
-										}),
-									};
-								});
-							}
-							const stepDurationMs = Date.now() - stepRunStartedAt;
-							setExecution((prev) => {
-								if (prev === null || prev.status !== "running") {
-									return null;
-								}
-								return {
-									...prev,
-									jobExecutions: prev.jobExecutions.map((jobExecution) => {
-										if (jobExecution.id !== currentJobExecution.id) {
-											return jobExecution;
-										}
-										return {
-											...jobExecution,
-											stepExecutions: jobExecution.stepExecutions.map(
-												(stepExecution) => {
-													if (stepExecution.id !== currentStepExecution.id) {
-														return stepExecution;
-													}
-													return {
-														...stepExecution,
-														status: "completed",
-														runStartedAt: stepRunStartedAt,
-														durationMs: stepDurationMs,
-													};
-												},
-											),
-										};
-									}),
-									artifacts: prev.artifacts.map((artifact) => {
-										if (artifact.id !== artifactId) {
-											return artifact;
-										}
-										return {
-											id: artifactId,
-											type: "generatedArtifact",
-											creatorNodeId: currentStepExecution.nodeId,
-											createdAt: Date.now(),
-											object: textArtifactObject,
-										};
-									}),
-								};
-							});
-							jobDurationMs += stepDurationMs;
-						},
-					),
+			// Initialize flow execution
+			setExecution(createInitialExecution(flowId, executionId, jobExecutions));
+
+			let totalFlowDurationMs = 0;
+
+			// Execute jobs sequentially
+			for (const jobExecution of jobExecutions) {
+				const jobDurationMs = await executeJob(
+					flowId,
+					executionId,
+					jobExecution,
+					executeStepAction,
+					setExecution,
 				);
-				setExecution((prev) => {
-					if (prev === null) {
-						return null;
-					}
-					return {
-						...prev,
-						jobExecutions: prev.jobExecutions.map((jobExecution) => {
-							if (jobExecution.id !== currentJobExecution.id) {
-								return jobExecution;
-							}
-							return {
-								...jobExecution,
-								status: "completed",
-								runStartedAt: jobRunStartedAt,
-								durationMs: jobDurationMs,
-							};
-						}),
-					};
-				});
-				flowDurationMs += jobDurationMs;
+				totalFlowDurationMs += jobDurationMs;
 			}
+
+			// Complete flow execution
 			setExecution((prev) => {
-				if (prev === null || prev.status !== "running") {
-					return null;
-				}
+				if (!prev || prev.status !== "running") return null;
 				return {
 					...prev,
 					status: "completed",
 					runStartedAt: flowRunStartedAt,
-					durationMs: flowDurationMs,
+					durationMs: totalFlowDurationMs,
 					resultArtifact: prev.artifacts[prev.artifacts.length - 1],
 				};
 			});

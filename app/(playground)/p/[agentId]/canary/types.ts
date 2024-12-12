@@ -281,6 +281,7 @@ interface ExecutionBase {
 	id: ExecutionId;
 	flowId?: FlowId;
 	jobExecutions: JobExecution[];
+	artifacts: Artifact[];
 }
 interface PendingExecution extends ExecutionBase {
 	status: "pending";
@@ -288,13 +289,11 @@ interface PendingExecution extends ExecutionBase {
 interface RunningExecution extends ExecutionBase {
 	status: "running";
 	runStartedAt: number;
-	artifacts: Artifact[];
 }
 interface CompletedExecution extends ExecutionBase {
 	status: "completed";
 	runStartedAt: number;
 	durationMs: number;
-	artifacts: Artifact[];
 	resultArtifact: Artifact;
 }
 export type Execution =
