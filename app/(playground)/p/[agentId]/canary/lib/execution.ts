@@ -227,6 +227,7 @@ export async function executeStep(
 	flowId: FlowId,
 	executionId: ExecutionId,
 	stepId: StepId,
+	artifacts: Artifact[],
 ) {
 	const lf = new Langfuse();
 	const trace = lf.trace({
@@ -270,7 +271,7 @@ export async function executeStep(
 		return node;
 	}
 	function artifactResolver(artifactCreatorNodeId: NodeId) {
-		const generatedArtifact = graph.artifacts.find(
+		const generatedArtifact = artifacts.find(
 			(artifact) => artifact.creatorNodeId === artifactCreatorNodeId,
 		);
 		if (

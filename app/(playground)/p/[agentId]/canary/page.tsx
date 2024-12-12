@@ -20,6 +20,7 @@ import { isLatestVersion, migrateGraph } from "./lib/graph";
 import { buildGraphFolderPath } from "./lib/utils";
 import type {
 	AgentId,
+	Artifact,
 	ArtifactId,
 	ExecutionId,
 	FlowId,
@@ -106,9 +107,10 @@ export default async function Page({
 		flowId: FlowId,
 		executionId: ExecutionId,
 		stepId: StepId,
+		artifacts: Artifact[],
 	) {
 		"use server";
-		return await executeStep(agentId, flowId, executionId, stepId);
+		return await executeStep(agentId, flowId, executionId, stepId, artifacts);
 	}
 
 	return (

@@ -16,6 +16,7 @@ import {
 	toErrorWithMessage,
 } from "../lib/utils";
 import type {
+	Artifact,
 	ArtifactId,
 	Execution,
 	ExecutionId,
@@ -84,6 +85,7 @@ const executeStep = async (
 	flowId: FlowId,
 	executionId: ExecutionId,
 	stepExecution: StepExecution,
+	artifacts: Artifact[],
 	executeStepAction: ExecuteStepAction,
 	updateExecution: (
 		updater: (prev: Execution | null) => Execution | null,
@@ -127,6 +129,7 @@ const executeStep = async (
 		flowId,
 		executionId,
 		stepExecution.stepId,
+		artifacts,
 	);
 	const finalArtifact = await processStreamContent(stream, (content) => {
 		updateExecution((prev) => {
@@ -182,6 +185,7 @@ const executeJob = async (
 	flowId: FlowId,
 	executionId: ExecutionId,
 	jobExecution: JobExecution,
+	artifacts: Artifact[],
 	executeStepAction: ExecuteStepAction,
 	updateExecution: (
 		updater: (prev: Execution | null) => Execution | null,
@@ -209,6 +213,7 @@ const executeJob = async (
 				flowId,
 				executionId,
 				step,
+				artifacts,
 				executeStepAction,
 				updateExecution,
 			),
@@ -255,6 +260,7 @@ type ExecuteStepAction = (
 	flowId: FlowId,
 	executionId: ExecutionId,
 	stepId: StepId,
+	artifacts: Artifact[],
 ) => Promise<StreamableValue<TextArtifactObject, unknown>>;
 interface ExecutionProviderProps {
 	children: ReactNode;
@@ -379,6 +385,7 @@ export function ExecutionProvider({
 			setExecution(createInitialExecution(flowId, executionId, jobExecutions));
 
 			let totalFlowDurationMs = 0;
+			let currentArtifacts: Artifact[] = [];
 
 			// Execute jobs sequentially
 			for (const jobExecution of jobExecutions) {
@@ -386,8 +393,18 @@ export function ExecutionProvider({
 					flowId,
 					executionId,
 					jobExecution,
+					currentArtifacts,
 					executeStepAction,
-					setExecution,
+					(updater) => {
+						// Update both state and our local artifacts array
+						setExecution((prev) => {
+							const updated = updater(prev);
+							if (updated) {
+								currentArtifacts = updated.artifacts; // Keep local array in sync
+							}
+							return updated;
+						});
+					},
 				);
 				totalFlowDurationMs += jobDurationMs;
 			}
