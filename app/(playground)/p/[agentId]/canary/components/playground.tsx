@@ -2,6 +2,7 @@
 
 import { usePlaygroundMode } from "../contexts/playground-mode";
 import { Editor } from "./editor";
+import { Viewer } from "./viewer";
 
 export function Playground() {
 	const { playgroundMode } = usePlaygroundMode();
@@ -9,7 +10,7 @@ export function Playground() {
 		return <Editor />;
 	}
 	if (playgroundMode === "viewer") {
-		return <div>Viewer</div>;
+		return <Viewer />;
 	}
 	throw new Error("Invalid playground mode");
 }

@@ -2,7 +2,7 @@
 
 import { type ReactNode, createContext, useContext, useState } from "react";
 
-type PlaygroundMode = "editor" | "viewer";
+export type PlaygroundMode = "editor" | "viewer";
 
 interface PlaygroundModeContextType {
 	playgroundMode: PlaygroundMode;

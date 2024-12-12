@@ -1,6 +1,10 @@
 import { GiselleLogo } from "@/components/giselle-logo";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import {
+	type PlaygroundMode,
+	usePlaygroundMode,
+} from "../contexts/playground-mode";
 // import { RunButton } from "./flow/components/run-button";
 import { SparklesIcon } from "./icons/sparkles";
 import { Button } from "./ui/button";
@@ -27,18 +31,19 @@ function SelectionIndicator() {
 
 interface ModeButtonProps {
 	children: ReactNode;
-	mode: "edit" | "view";
+	mode: PlaygroundMode;
 	selected?: boolean;
 }
 function ModeButton(props: ModeButtonProps) {
-	const mode = "edit";
+	const { playgroundMode, setPlaygroundMode } = usePlaygroundMode();
 	return (
 		<button
 			type="button"
 			className="px-[16px] uppercase font-bold text-[14px] relative"
+			onClick={() => setPlaygroundMode(props.mode)}
 		>
 			{props.children}
-			{mode === props.mode && (
+			{playgroundMode === props.mode && (
 				<div className="absolute left-0 -top-[6px]">
 					<SelectionIndicator />
 				</div>
@@ -73,8 +78,8 @@ export function Header() {
 								 */}
 			</div>
 			<div className="flex items-center gap-[10px] flex-1 justify-center">
-				<ModeButton mode={"edit"}>edit</ModeButton>
-				<ModeButton mode={"view"}>view</ModeButton>
+				<ModeButton mode="editor">edit</ModeButton>
+				<ModeButton mode="viewer">view</ModeButton>
 			</div>
 			<div className="flex-1 flex justify-end">
 				<Button type="button">
