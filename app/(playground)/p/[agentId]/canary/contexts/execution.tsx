@@ -18,8 +18,10 @@ import {
 import type {
 	ArtifactId,
 	Execution,
+	ExecutionId,
 	FlowId,
 	NodeId,
+	StepId,
 	TextArtifactObject,
 } from "../types";
 import { useGraph } from "./graph";
@@ -43,11 +45,17 @@ interface ExecutionProviderProps {
 		artifactId: ArtifactId,
 		nodeId: NodeId,
 	) => Promise<StreamableValue<TextArtifactObject, unknown>>;
+	executeStepAction: (
+		flowId: FlowId,
+		executionId: ExecutionId,
+		stepId: StepId,
+	) => Promise<StreamableValue<TextArtifactObject, unknown>>;
 }
 
 export function ExecutionProvider({
 	children,
 	executeAction,
+	executeStepAction,
 }: ExecutionProviderProps) {
 	const { dispatch, flush, graph } = useGraph();
 	const { setTab } = usePropertiesPanel();
@@ -151,22 +159,64 @@ export function ExecutionProvider({
 				throw new Error("Flow not found");
 			}
 			setPlaygroundMode("viewer");
-			setExecution({
+			let execution: Execution = {
 				id: createExecutionId(),
-				status: "pending",
+				status: "running",
+				runStartedAt: Date.now(),
 				flowId,
 				jobExecutions: flow.jobs.map((job) => ({
 					id: createJobExecutionId(),
+					jobId: job.id,
 					status: "pending",
 					stepExecutions: job.steps.map((step) => ({
 						id: createStepExecutionId(),
+						stepId: step.id,
 						nodeId: step.nodeId,
 						status: "pending",
 					})),
 				})),
-			});
+			};
+			setExecution(execution);
+			for (const currentJobExecution of execution.jobExecutions) {
+				const jobRunStartedAt = Date.now();
+				execution = {
+					...execution,
+					jobExecutions: execution.jobExecutions.map((jobExecution) => {
+						if (jobExecution.id !== currentJobExecution.id) {
+							return jobExecution;
+						}
+						return {
+							...jobExecution,
+							status: "running",
+							runStartedAt: jobRunStartedAt,
+						};
+					}),
+				};
+				setExecution(execution);
+				let durationMs = 0;
+				await Promise.all(
+					currentJobExecution.stepExecutions.map(async (stepExecution) => {
+						executeStepAction(flowId, execution.id, stepExecution.stepId);
+						durationMs += Date.now() - jobRunStartedAt;
+					}),
+				);
+				execution = {
+					...execution,
+					jobExecutions: execution.jobExecutions.map((jobExecution) => {
+						if (jobExecution.id !== currentJobExecution.id) {
+							return jobExecution;
+						}
+						return {
+							...jobExecution,
+							status: "completed",
+							runStartedAt: jobRunStartedAt,
+							durationMs,
+						};
+					}),
+				};
+			}
 		},
-		[setPlaygroundMode, graph.flows],
+		[setPlaygroundMode, graph.flows, executeStepAction],
 	);
 	return (
 		<ExecutionContext.Provider value={{ execution, execute, executeFlow }}>

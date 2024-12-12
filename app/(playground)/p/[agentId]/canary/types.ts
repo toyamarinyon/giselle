@@ -230,6 +230,7 @@ export type AgentId = `agnt_${string}`;
 export type StepExecutionId = `stex_${string}`;
 interface StepExecutionBase {
 	id: StepExecutionId;
+	stepId: StepId;
 	nodeId: NodeId;
 	status: string;
 }
@@ -255,6 +256,7 @@ export type StepExecution =
 export type JobExecutionId = `jbex_${string}`;
 interface JobExecutionBase {
 	id: JobExecutionId;
+	jobId: JobId;
 	stepExecutions: StepExecution[];
 	status: string;
 }
