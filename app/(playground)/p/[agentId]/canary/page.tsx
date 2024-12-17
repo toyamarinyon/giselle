@@ -131,6 +131,7 @@ export default async function Page({
 				defaultGraph={graph}
 				onPersistAction={persistGraph}
 				defaultGraphUrl={graphUrl}
+				testServerAction={updateAgentName}
 			>
 				<PropertiesPanelProvider>
 					<ReactFlowProvider>

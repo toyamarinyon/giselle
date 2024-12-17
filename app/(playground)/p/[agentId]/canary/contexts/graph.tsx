@@ -223,6 +223,7 @@ export function GraphContextProvider({
 	defaultGraph,
 	defaultGraphUrl,
 	onPersistAction,
+	testServerAction,
 }: {
 	children: ReactNode;
 	defaultGraph: Graph;
@@ -232,6 +233,7 @@ export function GraphContextProvider({
 	 * Returns the new graph URL.
 	 */
 	onPersistAction: (graph: Graph) => Promise<string>;
+	testServerAction: (n: string) => Promise<string>;
 }) {
 	const graphRef = useRef(defaultGraph);
 	const [graph, setGraph] = useState(graphRef.current);
@@ -259,9 +261,10 @@ export function GraphContextProvider({
 	}, [persist]);
 
 	const dispatch = useCallback(
-		(actionOrActions: GraphActionOrActions) => {
+		async (actionOrActions: GraphActionOrActions) => {
 			graphRef.current = applyActions(graphRef.current, actionOrActions);
 			setGraph(graphRef.current);
+			persist();
 
 			isPendingPersistRef.current = true;
 
@@ -275,6 +278,26 @@ export function GraphContextProvider({
 	);
 	return (
 		<GraphContext.Provider value={{ graph, dispatch, flush, graphUrl }}>
+			<div className="absolute z-10 top-[20px] left-[20px] bg-white p-12 rounded flex flex-col gap-4">
+				<button
+					className="rounded bg-black-50 text-white px-4 py-2"
+					type="button"
+					onClick={async () => {
+						await testServerAction("hello");
+					}}
+				>
+					Test Server Action
+				</button>
+				<button
+					className="rounded bg-black-50 text-white px-4 py-2"
+					type="button"
+					onClick={async () => {
+						await onPersistAction(graph);
+					}}
+				>
+					Persist Action
+				</button>
+			</div>
 			{children}
 		</GraphContext.Provider>
 	);
