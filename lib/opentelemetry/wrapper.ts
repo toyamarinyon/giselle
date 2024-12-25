@@ -1,8 +1,10 @@
 import { getCurrentMeasurementScope, isRoute06User } from "@/app/(auth)/lib";
+import { db } from "@/drizzle";
 import { waitUntil } from "@vercel/functions";
 import type { LanguageModelUsage } from "ai";
 import type { LanguageModelV1 } from "ai";
 import type { Strategy } from "unstructured-client/sdk/models/shared";
+import type { AgentId } from "../../app/(playground)/p/[agentId]/types";
 import { captureError } from "./log";
 import type { LogSchema, OtelLoggerWrapper } from "./types";
 import {
@@ -64,7 +66,6 @@ type MeasurementSchema<T> = (
 	result: T,
 	duration: number,
 	measurementScope: number,
-	isR06User: boolean,
 ) => LogSchema;
 
 async function withMeasurement<T>(
@@ -81,14 +82,9 @@ async function withMeasurement<T>(
 		try {
 			// instrumentation: error must not be thrown to avoid interfering with the business logic
 			const duration = Date.now() - startTime;
-			Promise.all([getCurrentMeasurementScope(), isRoute06User()])
-				.then(([measurementScope, isR06User]) => {
-					const metrics = measurement(
-						result,
-						duration,
-						measurementScope,
-						isR06User,
-					);
+			getCurrentMeasurementScope()
+				.then((measurementScope) => {
+					const metrics = measurement(result, duration, measurementScope);
 					logger.info(
 						metrics,
 						`[${metrics.externalServiceName}] response obtained`,
@@ -170,18 +166,18 @@ export function withCountMeasurement<T>(
 		| typeof APICallBasedService.Firecrawl,
 	measurementStartTime?: number,
 ): Promise<T>;
-export function withCountMeasurement<T>(
+export async function withCountMeasurement<T>(
 	logger: OtelLoggerWrapper,
 	operation: () => Promise<T>,
 	externalServiceName: (typeof APICallBasedService)[keyof typeof APICallBasedService],
 	measurementStartTime?: number,
 	strategyOrOptions?: Strategy | VercelBlobOperationType | undefined,
 ): Promise<T> {
+	const isR06User = await isRoute06User();
 	const measurement: MeasurementSchema<T> = (
 		result,
 		duration,
 		measurementScope,
-		isR06User,
 	): RequestCountSchema => {
 		const baseMetrics = {
 			duration,
@@ -224,21 +220,33 @@ export function withCountMeasurement<T>(
 	return withMeasurement(logger, operation, measurement, measurementStartTime);
 }
 
-export function withTokenMeasurement<T extends { usage: LanguageModelUsage }>(
+export async function withTokenMeasurement<
+	T extends { usage: LanguageModelUsage },
+>(
 	logger: OtelLoggerWrapper,
 	operation: () => Promise<T>,
 	model: LanguageModelV1,
+	agentId: AgentId,
 	measurementStartTime?: number,
 ): Promise<T> {
 	const { externalServiceName, modelId } = getModelInfo(
 		logger,
 		model as ModelConfig,
 	);
+	const agent = await db.query.agents.findFirst({
+		columns: {},
+		with: {
+			team: {
+				columns: {
+					type: true,
+				},
+			},
+		},
+	});
 	const measurements: MeasurementSchema<T> = (
 		result,
 		duration,
 		measurementScope,
-		isR06User,
 	): TokenConsumedSchema => ({
 		externalServiceName,
 		modelId,
@@ -246,7 +254,7 @@ export function withTokenMeasurement<T extends { usage: LanguageModelUsage }>(
 		tokenConsumedOutput: result.usage.completionTokens,
 		duration,
 		measurementScope,
-		isR06User,
+		isR06User: agent?.team.type === "internal",
 	});
 
 	return withMeasurement(logger, operation, measurements, measurementStartTime);
