@@ -62,11 +62,7 @@ function getModelInfo(
 	}
 }
 
-type MeasurementSchema<T> = (
-	result: T,
-	duration: number,
-	measurementScope: number,
-) => LogSchema;
+type MeasurementSchema<T> = (result: T, duration: number) => LogSchema;
 
 async function withMeasurement<T>(
 	logger: OtelLoggerWrapper,
@@ -82,21 +78,11 @@ async function withMeasurement<T>(
 		try {
 			// instrumentation: error must not be thrown to avoid interfering with the business logic
 			const duration = Date.now() - startTime;
-			getCurrentMeasurementScope()
-				.then((measurementScope) => {
-					const metrics = measurement(result, duration, measurementScope);
-					logger.info(
-						metrics,
-						`[${metrics.externalServiceName}] response obtained`,
-					);
-				})
-				.catch((getMetricsTagError) => {
-					captureError(
-						logger,
-						getMetricsTagError,
-						"failed to get user info for logging",
-					);
-				});
+			const metrics = measurement(result, duration);
+			logger.info(
+				metrics,
+				`[${metrics.externalServiceName}] response obtained`,
+			);
 		} catch (instrumentationError) {
 			captureError(logger, instrumentationError, "instrumentation failed");
 		}
@@ -174,10 +160,10 @@ export async function withCountMeasurement<T>(
 	strategyOrOptions?: Strategy | VercelBlobOperationType | undefined,
 ): Promise<T> {
 	const isR06User = await isRoute06User();
+	const measurementScope = await getCurrentMeasurementScope();
 	const measurement: MeasurementSchema<T> = (
 		result,
 		duration,
-		measurementScope,
 	): RequestCountSchema => {
 		const baseMetrics = {
 			duration,
@@ -234,7 +220,9 @@ export async function withTokenMeasurement<
 		model as ModelConfig,
 	);
 	const agent = await db.query.agents.findFirst({
-		columns: {},
+		columns: {
+			teamDbId: true,
+		},
 		with: {
 			team: {
 				columns: {
@@ -243,18 +231,20 @@ export async function withTokenMeasurement<
 			},
 		},
 	});
+	if (agent === undefined) {
+		throw new Error("Agent not found");
+	}
 	const measurements: MeasurementSchema<T> = (
 		result,
 		duration,
-		measurementScope,
 	): TokenConsumedSchema => ({
 		externalServiceName,
 		modelId,
 		tokenConsumedInput: result.usage.promptTokens,
 		tokenConsumedOutput: result.usage.completionTokens,
 		duration,
-		measurementScope,
-		isR06User: agent?.team.type === "internal",
+		measurementScope: agent.teamDbId,
+		isR06User: agent.team.type === "internal",
 	});
 
 	return withMeasurement(logger, operation, measurements, measurementStartTime);
