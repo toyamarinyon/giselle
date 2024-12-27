@@ -44,6 +44,7 @@ import type {
 } from "../types";
 import { AgentTimeNotAvailableError } from "./errors";
 import { textGenerationPrompt } from "./prompts";
+import { withTelemetry } from "./record-text-generation";
 import { langfuseModel, toErrorWithMessage } from "./utils";
 
 function resolveLanguageModel(
@@ -284,50 +285,100 @@ async function performFlowExecution(
 	if (!canPerform) {
 		throw new AgentTimeNotAvailableError();
 	}
-	const startTime = Date.now();
-	const lf = new Langfuse();
-	const trace = lf.trace({
-		sessionId: context.executionId,
-	});
 	const node = context.node;
+	const nodeContentType = node.content.type;
+	return withTelemetry({
+		scopeName: nodeContentType,
+		telemetry: {
+			isEnabled: true,
+		},
+		fn: async ({ langfuse, logger }) => {
+			switch (nodeContentType) {
+				case "textGeneration": {
+					const actionSources = await resolveSources(
+						node.content.sources,
+						context,
+					);
+					const requirement = resolveRequirement(
+						node.content.requirement ?? null,
+						context,
+					);
+					const model = resolveLanguageModel(node.content.llm);
+					const promptTemplate = HandleBars.compile(
+						node.content.system ?? textGenerationPrompt,
+					);
+					const prompt = promptTemplate({
+						instruction: node.content.instruction,
+						requirement,
+						sources: actionSources,
+					});
+					const topP = node.content.topP;
+					const temperature = node.content.temperature;
 
-	switch (node.content.type) {
-		case "textGeneration": {
-			const actionSources = await resolveSources(node.content.sources, context);
-			const requirement = resolveRequirement(
-				node.content.requirement ?? null,
-				context,
-			);
-			const model = resolveLanguageModel(node.content.llm);
-			const promptTemplate = HandleBars.compile(
-				node.content.system ?? textGenerationPrompt,
-			);
-			const prompt = promptTemplate({
-				instruction: node.content.instruction,
-				requirement,
-				sources: actionSources,
-			});
-			const topP = node.content.topP;
-			const temperature = node.content.temperature;
+					const tracer = langfuse.trace({
+						sessionId: context.executionId,
+						input: prompt,
+					});
+					const generationTracer = tracer.generation({
+						name: "generate-text",
+						input: prompt,
+						model: langfuseModel(node.content.llm),
+						modelParameters: {
+							topP,
+							temperature,
+						},
+					});
 
-			trace.update({
-				input: prompt,
-			});
+					if (context.stream) {
+						const streamableValue = createStreamableValue<TextArtifactObject>();
+						(async () => {
+							const { partialObjectStream, object, usage } = streamObject({
+								model,
+								prompt,
+								schema: jsonSchema<v.InferInput<typeof artifactSchema>>(
+									toJsonSchema(artifactSchema),
+								),
+								topP,
+								temperature,
+							});
 
-			const generationTracer = trace.generation({
-				name: "generate-text",
-				input: prompt,
-				model: langfuseModel(node.content.llm),
-				modelParameters: {
-					topP: node.content.topP,
-					temperature: node.content.temperature,
-				},
-			});
+							for await (const partialObject of partialObjectStream) {
+								streamableValue.update({
+									type: "text",
+									title: partialObject.title ?? "",
+									content: partialObject.content ?? "",
+									messages: {
+										plan: partialObject.plan ?? "",
+										description: partialObject.description ?? "",
+									},
+								});
+							}
 
-			if (context.stream) {
-				const streamableValue = createStreamableValue<TextArtifactObject>();
-				(async () => {
-					const { partialObjectStream, object, usage } = streamObject({
+							const result = await object;
+							generationTracer.end({ output: result });
+							// await withTokenMeasurement(
+							// 	createLogger(nodeContentType),
+							// 	async () => {
+							// 		await lf.shutdownAsync();
+							// 		waitForTelemetryExport();
+							// 		return { usage: await usage };
+							// 	},
+							// 	model,
+							// 	context.agentId,
+							// 	startTime,
+							// );
+							streamableValue.done();
+						})().catch((error) => {
+							generationTracer.update({
+								level: "ERROR",
+								statusMessage: toErrorWithMessage(error).message,
+							});
+							streamableValue.error(error);
+						});
+
+						return streamableValue.value;
+					}
+					const { usage, object } = await generateObject({
 						model,
 						prompt,
 						schema: jsonSchema<v.InferInput<typeof artifactSchema>>(
@@ -336,81 +387,36 @@ async function performFlowExecution(
 						topP,
 						temperature,
 					});
-
-					for await (const partialObject of partialObjectStream) {
-						streamableValue.update({
-							type: "text",
-							title: partialObject.title ?? "",
-							content: partialObject.content ?? "",
-							messages: {
-								plan: partialObject.plan ?? "",
-								description: partialObject.description ?? "",
-							},
-						});
-					}
-
-					const result = await object;
-					await withTokenMeasurement(
-						createLogger(node.content.type),
-						async () => {
-							generationTracer.end({ output: result });
-							trace.update({ output: result });
-							await lf.shutdownAsync();
-							waitForTelemetryExport();
-							return { usage: await usage };
+					// waitUntil(
+					// 	withTokenMeasurement(
+					// 		createLogger(node.content.type),
+					// 		async () => {
+					// 			generationTracerPrev.end({ output: object });
+					// 			trace.update({ output: object });
+					// 			await lf.shutdownAsync();
+					// 			waitForTelemetryExport();
+					// 			return { usage };
+					// 		},
+					// 		model,
+					// 		context.agentId,
+					// 		startTime,
+					// 	),
+					// );
+					return {
+						type: "text",
+						title: object.title,
+						content: object.content,
+						messages: {
+							plan: object.plan,
+							description: object.description,
 						},
-						model,
-						context.agentId,
-						startTime,
-					);
-					streamableValue.done();
-				})().catch((error) => {
-					generationTracer.update({
-						level: "ERROR",
-						statusMessage: toErrorWithMessage(error).message,
-					});
-					streamableValue.error(error);
-				});
-
-				return streamableValue.value;
+					} satisfies TextArtifactObject;
+				}
+				default:
+					throw new Error("Invalid node type");
 			}
-			const { usage, object } = await generateObject({
-				model,
-				prompt,
-				schema: jsonSchema<v.InferInput<typeof artifactSchema>>(
-					toJsonSchema(artifactSchema),
-				),
-				topP,
-				temperature,
-			});
-			waitUntil(
-				withTokenMeasurement(
-					createLogger(node.content.type),
-					async () => {
-						generationTracer.end({ output: object });
-						trace.update({ output: object });
-						await lf.shutdownAsync();
-						waitForTelemetryExport();
-						return { usage };
-					},
-					model,
-					context.agentId,
-					startTime,
-				),
-			);
-			return {
-				type: "text",
-				title: object.title,
-				content: object.content,
-				messages: {
-					plan: object.plan,
-					description: object.description,
-				},
-			} satisfies TextArtifactObject;
-		}
-		default:
-			throw new Error("Invalid node type");
-	}
+		},
+	});
 }
 
 interface OverrideData {
