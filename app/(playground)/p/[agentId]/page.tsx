@@ -179,6 +179,7 @@ export default async function Page({
 			executionId,
 			nodeId,
 			stream: true,
+			userId: user.id,
 		});
 		return response;
 	}
