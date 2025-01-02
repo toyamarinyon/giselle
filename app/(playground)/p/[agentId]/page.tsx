@@ -42,6 +42,7 @@ import {
 	buildGraphExecutionPath,
 	buildGraphFolderPath,
 	createGithubIntegrationSettingId,
+	waitForLangfuseFlush,
 } from "@giselles-ai/lib/utils";
 import type {
 	AgentId,
@@ -59,6 +60,7 @@ import { del, list, put } from "@vercel/blob";
 import { ReactFlowProvider } from "@xyflow/react";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 
 // Extend the max duration of the server actions from this page to 5 minutes
 // https://vercel.com/docs/functions/runtimes#max-duration
@@ -228,7 +230,14 @@ export default async function Page({
 
 	async function executeNodeAction(executionId: ExecutionId, nodeId: NodeId) {
 		"use server";
-		return await executeNode({ agentId, executionId, nodeId, stream: true });
+		const response = await executeNode({
+			agentId,
+			executionId,
+			nodeId,
+			stream: true,
+		});
+		after(waitForLangfuseFlush);
+		return response;
 	}
 
 	async function onFinishPerformExecutionAction(

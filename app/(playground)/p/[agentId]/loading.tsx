@@ -1,4 +1,4 @@
-import bg from "./components/bg.png";
+import bg from "@giselles-ai/components/bg.png";
 
 export default function Loading() {
 	return (

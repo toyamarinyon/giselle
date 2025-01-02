@@ -23,7 +23,6 @@ import { createStreamableValue } from "ai/rsc";
 import { MockLanguageModelV1, simulateReadableStream } from "ai/test";
 import { and, eq } from "drizzle-orm";
 import HandleBars from "handlebars";
-import Langfuse from "langfuse";
 import * as v from "valibot";
 import type {
 	AgentId,
@@ -285,10 +284,6 @@ async function performFlowExecution(
 		throw new AgentTimeNotAvailableError();
 	}
 	const startTime = Date.now();
-	const lf = new Langfuse();
-	const trace = lf.trace({
-		sessionId: context.executionId,
-	});
 	const node = context.node;
 
 	switch (node.content.type) {
@@ -309,20 +304,6 @@ async function performFlowExecution(
 			});
 			const topP = node.content.topP;
 			const temperature = node.content.temperature;
-
-			trace.update({
-				input: prompt,
-			});
-
-			const generationTracer = trace.generation({
-				name: "generate-text",
-				input: prompt,
-				model: langfuseModel(node.content.llm),
-				modelParameters: {
-					topP: node.content.topP,
-					temperature: node.content.temperature,
-				},
-			});
 
 			if (context.stream) {
 				const streamableValue = createStreamableValue<TextArtifactObject>();
@@ -353,9 +334,6 @@ async function performFlowExecution(
 					await withTokenMeasurement(
 						createLogger(node.content.type),
 						async () => {
-							generationTracer.end({ output: result });
-							trace.update({ output: result });
-							await lf.shutdownAsync();
 							waitForTelemetryExport();
 							return { usage: await usage };
 						},
@@ -364,10 +342,6 @@ async function performFlowExecution(
 					);
 					streamableValue.done();
 				})().catch((error) => {
-					generationTracer.update({
-						level: "ERROR",
-						statusMessage: toErrorWithMessage(error).message,
-					});
 					streamableValue.error(error);
 				});
 
@@ -381,14 +355,18 @@ async function performFlowExecution(
 				),
 				topP,
 				temperature,
+				experimental_telemetry: {
+					isEnabled: true,
+					functionId: "giselles-ai.lib.performFlowExecution",
+					metadata: {
+						sessionId: context.executionId,
+					},
+				},
 			});
 			waitUntil(
 				withTokenMeasurement(
 					createLogger(node.content.type),
 					async () => {
-						generationTracer.end({ output: object });
-						trace.update({ output: object });
-						await lf.shutdownAsync();
 						waitForTelemetryExport();
 						return { usage };
 					},
