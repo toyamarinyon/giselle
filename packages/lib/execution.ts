@@ -23,6 +23,7 @@ import { createStreamableValue } from "ai/rsc";
 import { MockLanguageModelV1, simulateReadableStream } from "ai/test";
 import { and, eq } from "drizzle-orm";
 import HandleBars from "handlebars";
+import { after } from "next/server";
 import * as v from "valibot";
 import type {
 	AgentId,
@@ -43,7 +44,11 @@ import type {
 } from "../types";
 import { AgentTimeNotAvailableError } from "./errors";
 import { textGenerationPrompt } from "./prompts";
-import { langfuseModel, toErrorWithMessage } from "./utils";
+import {
+	langfuseModel,
+	toErrorWithMessage,
+	waitForLangfuseFlush,
+} from "./utils";
 
 function resolveLanguageModel(
 	llm: TextGenerateActionContent["llm"],
@@ -316,6 +321,13 @@ async function performFlowExecution(
 						),
 						topP,
 						temperature,
+						experimental_telemetry: {
+							isEnabled: true,
+							functionId: "giselles-ai.lib.performFlowExecution",
+							metadata: {
+								sessionId: context.executionId,
+							},
+						},
 					});
 
 					for await (const partialObject of partialObjectStream) {
@@ -340,6 +352,7 @@ async function performFlowExecution(
 						model,
 						startTime,
 					);
+					after(waitForLangfuseFlush);
 					streamableValue.done();
 				})().catch((error) => {
 					streamableValue.error(error);
@@ -374,6 +387,7 @@ async function performFlowExecution(
 					startTime,
 				),
 			);
+			after(waitForLangfuseFlush);
 			return {
 				type: "text",
 				title: object.title,
