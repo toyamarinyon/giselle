@@ -126,6 +126,7 @@ export default async function Page({
 			stepId,
 			artifacts,
 			stream: true,
+			userId: user.id,
 		});
 	}
 	async function putExecutionAction(executionSnapshot: ExecutionSnapshot) {
@@ -169,19 +170,19 @@ export default async function Page({
 			stepId,
 			artifacts,
 			stream: true,
+			userId: user.id,
 		});
 	}
 
 	async function executeNodeAction(executionId: ExecutionId, nodeId: NodeId) {
 		"use server";
-		const response = await executeNode({
+		return await executeNode({
 			agentId,
 			executionId,
 			nodeId,
 			stream: true,
 			userId: user.id,
 		});
-		return response;
 	}
 
 	async function onFinishPerformExecutionAction(
