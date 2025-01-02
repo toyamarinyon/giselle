@@ -417,6 +417,7 @@ const otelBspScheduleDelay = Number.parseInt(
 const langfuseFlushInterval = Number.parseInt(
 	process.env.LANGFUSE_FLUSH_INTERVAL ?? "1000",
 );
-export const waitForLangfuseFlush = new Promise((resolve) =>
-	setTimeout(resolve, otelBspScheduleDelay + langfuseFlushInterval),
-);
+export const waitForLangfuseFlush = () =>
+	new Promise((resolve) =>
+		setTimeout(resolve, otelBspScheduleDelay + langfuseFlushInterval),
+	);

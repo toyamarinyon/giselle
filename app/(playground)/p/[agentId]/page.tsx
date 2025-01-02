@@ -58,7 +58,6 @@ import { put } from "@vercel/blob";
 import { ReactFlowProvider } from "@xyflow/react";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
-import { after } from "next/server";
 
 // Extend the max duration of the server actions from this page to 5 minutes
 // https://vercel.com/docs/functions/runtimes#max-duration
@@ -181,7 +180,6 @@ export default async function Page({
 			nodeId,
 			stream: true,
 		});
-		after(waitForLangfuseFlush);
 		return response;
 	}
 
