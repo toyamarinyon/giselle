@@ -279,6 +279,7 @@ interface ExecutionContext {
 	nodes: Node[];
 	connections: Connection[];
 	stream?: boolean;
+	userId?: string;
 }
 
 async function performFlowExecution(
@@ -324,9 +325,7 @@ async function performFlowExecution(
 						experimental_telemetry: {
 							isEnabled: true,
 							functionId: "giselles-ai.lib.performFlowExecution",
-							metadata: {
-								sessionId: context.executionId,
-							},
+							metadata: parseExecutionContextToTelemetryMetadata(context),
 						},
 					});
 
@@ -370,10 +369,8 @@ async function performFlowExecution(
 				temperature,
 				experimental_telemetry: {
 					isEnabled: true,
-					functionId: "giselles-ai.lib.performFlowExecution",
-					metadata: {
-						sessionId: context.executionId,
-					},
+					functionId: "giselles-ai.lib.performFlowExecution.generateObject",
+					metadata: parseExecutionContextToTelemetryMetadata(context),
 				},
 			});
 			waitUntil(
@@ -550,12 +547,14 @@ interface ExecuteNodeParams {
 	executionId: ExecutionId;
 	nodeId: NodeId;
 	stream?: boolean;
+	userId?: string;
 }
 export async function executeNode({
 	agentId,
 	executionId,
 	nodeId,
 	stream,
+	userId,
 }: ExecuteNodeParams) {
 	const agent = await db.query.agents.findFirst({
 		where: (agents, { eq }) => eq(agents.id, agentId),
@@ -582,6 +581,7 @@ export async function executeNode({
 		nodes: graph.nodes,
 		connections: graph.connections,
 		stream,
+		userId,
 	};
 
 	return performFlowExecution(context);
@@ -614,4 +614,14 @@ async function canPerformFlowExecution(agentId: AgentId) {
 
 	const team = res[0];
 	return await isAgentTimeAvailable(team);
+}
+
+function parseExecutionContextToTelemetryMetadata(
+	executionContext: ExecutionContext,
+): Record<string, string> {
+	return {
+		sessionId: executionContext.executionId,
+		agentId: executionContext.agentId,
+		...(executionContext.userId && { userId: executionContext.userId }),
+	};
 }
