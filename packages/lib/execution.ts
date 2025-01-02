@@ -411,6 +411,7 @@ interface ExecuteStepParams {
 	stepId: StepId;
 	artifacts: Artifact[];
 	stream?: boolean;
+	userId?: string;
 	overrideData?: OverrideData[];
 }
 export async function executeStep({
@@ -420,6 +421,7 @@ export async function executeStep({
 	stepId,
 	artifacts,
 	stream,
+	userId,
 	overrideData,
 }: ExecuteStepParams) {
 	const agent = await db.query.agents.findFirst({
@@ -490,6 +492,7 @@ export async function executeStep({
 		artifacts,
 		nodes: graph.nodes,
 		connections: graph.connections,
+		userId,
 		stream,
 	};
 
@@ -503,6 +506,7 @@ interface RetryStepParams {
 	stepId: StepId;
 	artifacts: Artifact[];
 	stream?: boolean;
+	userId?: string;
 }
 export async function retryStep({
 	agentId,
@@ -511,6 +515,7 @@ export async function retryStep({
 	stepId,
 	artifacts,
 	stream,
+	userId,
 }: RetryStepParams) {
 	const executionSnapshot = await fetch(retryExecutionSnapshotUrl).then(
 		(res) => res.json() as unknown as ExecutionSnapshot,
@@ -537,6 +542,7 @@ export async function retryStep({
 		nodes: executionSnapshot.nodes,
 		connections: executionSnapshot.connections,
 		stream,
+		userId,
 	};
 
 	return performFlowExecution(context);
