@@ -1,11 +1,17 @@
+import type { Node } from "./node/types";
 import { createLocalStorageClient } from "./storage/local";
 import { createVercelBlobStorageClient } from "./storage/vercel-blob";
 
-interface Workflow {
+interface WorkflowProperties {
 	storage: StorageClient;
+	telemetry: TelemetryConfiguration;
+}
+interface Workflow {
+	connect: (source: Node, target: Node) => void;
 }
 interface WorkflowConfiguration {
 	storage: StorageConfiguration;
+	telemetry?: TelemetryConfiguration;
 }
 export interface StorageClient {
 	put(keyName: string, keyValue: string): Promise<void>;
@@ -28,6 +34,10 @@ type StorageConfiguration =
 	| LocalStorageConfiguration
 	| VercelBlobStorageConfiguration;
 
+interface TelemetryConfiguration {
+	enabled: boolean;
+}
+
 function createStorageClient(config: StorageConfiguration): StorageClient {
 	if (config.type === "local") {
 		return createLocalStorageClient();
@@ -41,7 +51,11 @@ function createStorageClient(config: StorageConfiguration): StorageClient {
 }
 export function initWorkflow(config: WorkflowConfiguration): Workflow {
 	const storage = createStorageClient(config.storage);
-	return {
+	const properties: WorkflowProperties = {
 		storage,
+		telemetry: config.telemetry ?? { enabled: false },
+	};
+	return {
+		connect: (source: Node, target: Node) => {},
 	};
 }
