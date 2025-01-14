@@ -80,11 +80,14 @@ export function WorkflowDesignerProvider({
 	);
 
 	const addTextGenerationNode = useCallback(
-		(params: z.infer<typeof CreateTextGenerationNodeParams>) => {
+		(
+			params: z.infer<typeof CreateTextGenerationNodeParams>,
+			options?: { ui?: NodeUIState },
+		) => {
 			if (workflowDesignerRef.current === undefined) {
 				return;
 			}
-			workflowDesignerRef.current.addTextGenerationNode(params);
+			workflowDesignerRef.current.addTextGenerationNode(params, options);
 			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
 		},
 		[setAndSaveWorkflowData],
@@ -110,11 +113,14 @@ export function WorkflowDesignerProvider({
 	);
 
 	const addTextNode = useCallback(
-		(params: z.infer<typeof CreateTextNodeParams>) => {
+		(
+			params: z.infer<typeof CreateTextNodeParams>,
+			options?: { ui?: NodeUIState },
+		) => {
 			if (workflowDesignerRef.current === undefined) {
 				return;
 			}
-			workflowDesignerRef.current.addTextNode(params);
+			workflowDesignerRef.current.addTextNode(params, options);
 			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
 		},
 		[setAndSaveWorkflowData],

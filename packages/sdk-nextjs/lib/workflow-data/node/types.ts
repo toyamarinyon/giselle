@@ -31,6 +31,7 @@ export const NodeUIState = z.object({
 	position: Position,
 	selected: z.boolean(),
 });
+export type NodeUIState = z.infer<typeof NodeUIState>;
 
 export const connectionId = createIdGenerator("cnnc");
 export const Connection = z.object({

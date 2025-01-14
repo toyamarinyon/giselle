@@ -32,6 +32,17 @@ export const WorkflowData = z.object({
 		},
 		z.map(connectionId.schema, Connection),
 	),
+	ui: z.object({
+		nodeState: z.preprocess(
+			(args) => {
+				if (typeof args !== "object" || args === null || args instanceof Map) {
+					return args;
+				}
+				return new Map(Object.entries(args));
+			},
+			z.map(nodeId.schema, NodeUIState),
+		),
+	}),
 });
 export type WorkflowData = z.infer<typeof WorkflowData>;
 export const WorkflowDataJson = WorkflowData.extend({
@@ -53,6 +64,17 @@ export const WorkflowDataJson = WorkflowData.extend({
 		},
 		z.record(connectionId.schema, Connection),
 	),
+	ui: z.object({
+		nodeState: z.preprocess(
+			(args) => {
+				if (args instanceof Map) {
+					return Object.fromEntries(args);
+				}
+				return args;
+			},
+			z.record(nodeId.schema, NodeUIState),
+		),
+	}),
 });
 export type WorkflowDataJson = z.infer<typeof WorkflowDataJson>;
 
@@ -61,5 +83,8 @@ export function generateInitialWorkflowData() {
 		id: workflowId.generate(),
 		nodes: new Map(),
 		connections: new Map(),
+		ui: {
+			nodeState: new Map(),
+		},
 	});
 }

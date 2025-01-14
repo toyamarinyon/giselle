@@ -1,12 +1,12 @@
 "use client";
 import { useWorkflowDesigner } from "@/lib/workflow-designer";
-import { Node } from "@/lib/workflow-designer/ui";
+import { Editor, Node } from "@/lib/workflow-designer/ui";
 
 export default function Page() {
 	const { data, addTextGenerationNode, addTextNode } = useWorkflowDesigner();
 
 	return (
-		<div className="grid grid-cols-[250px_1fr]">
+		<div className="grid grid-cols-[250px_1fr] h-screen">
 			<div>
 				<button
 					type="button"
@@ -24,11 +24,10 @@ export default function Page() {
 				>
 					add text node
 				</button>
+				<p>Nodes: {data.nodes.size}</p>
 			</div>
-			<div>
-				{Array.from(data.nodes).map(([nodeId, node]) => (
-					<Node key={nodeId} data={node} />
-				))}
+			<div className="w-full h-full">
+				<Editor />
 			</div>
 		</div>
 	);

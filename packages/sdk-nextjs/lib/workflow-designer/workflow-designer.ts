@@ -40,21 +40,37 @@ export function WorkflowDesigner({
 }): WorkflowDesignerOperations {
 	const nodes = defaultValue.nodes;
 	const connections = defaultValue.connections;
+	const ui = defaultValue.ui;
 	function addTextGenerationNode(
 		params: z.infer<typeof CreateTextGenerationNodeParams>,
+		options?: {
+			ui?: NodeUIState;
+		},
 	) {
 		const textgenerationNodeData = createTextGenerationNodeData(params);
 		nodes.set(textgenerationNodeData.id, textgenerationNodeData);
+		if (options?.ui) {
+			ui.nodeState.set(textgenerationNodeData.id, options.ui);
+		}
 	}
-	function addTextNode(params: z.infer<typeof CreateTextNodeParams>) {
+	function addTextNode(
+		params: z.infer<typeof CreateTextNodeParams>,
+		options?: {
+			ui?: NodeUIState;
+		},
+	) {
 		const textNodeData = createTextNodeData(params);
 		nodes.set(textNodeData.id, textNodeData);
+		if (options?.ui) {
+			ui.nodeState.set(textgenerationNodeData.id, options.ui);
+		}
 	}
 	function getData() {
 		return {
 			id: defaultValue.id,
 			nodes,
 			connections,
+			ui,
 		};
 	}
 	function updateNodeData(nodeId: NodeId, data: NodeData) {

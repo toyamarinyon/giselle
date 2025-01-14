@@ -11,6 +11,7 @@
 	"dependencies": {
 		"@ai-sdk/openai": "1.0.15",
 		"@vercel/blob": "0.27.0",
+		"@xyflow/react": "12.3.6",
 		"ai": "4.0.30",
 		"nanoid": "5.0.9",
 		"next": "15.1.4",

@@ -4,6 +4,7 @@ import {
 	callGetWorkflowApi,
 } from "@/lib/workflow-designer";
 import type { ReactNode } from "react";
+import "@xyflow/react/dist/style.css";
 
 export default async function Layout({
 	params,
