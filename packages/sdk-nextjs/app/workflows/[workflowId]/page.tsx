@@ -6,7 +6,7 @@ export default function Page() {
 	const { data, addTextGenerationNode, addTextNode } = useWorkflowDesigner();
 
 	return (
-		<div className="grid grid-cols-[250px_1fr] h-screen">
+		<div className="grid grid-cols-[200px_1fr] h-screen">
 			<div>
 				<button
 					type="button"
