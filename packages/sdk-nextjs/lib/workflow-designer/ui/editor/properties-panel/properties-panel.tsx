@@ -14,7 +14,7 @@ import {
 import { PanelCloseIcon } from "../../icons/panel-close";
 import { PanelOpenIcon } from "../../icons/panel-open";
 import { ContentTypeIcon } from "../content-type-icon";
-import { TabsContentPrompt } from "./tab-contents/prompt";
+import { TextGenerationTabContents } from "./tab-contents/text-generation-tab-contents";
 // import { parse, remove } from "../actions";
 // import { vercelBlobFileFolder } from "../constants";
 // import { ContentTypeIcon } from "../content-type-icon";
@@ -210,16 +210,6 @@ function PropertiesPanelTitle({ node }: { node: NodeData }) {
 	);
 }
 
-function PropertiesPanelContents({ node }: { node: NodeData }) {
-	if (isTextGenerationNode(node)) {
-		return (
-			<TabsContent value="Prompt" className="flex-1">
-				<TabsContentPrompt node={node} />
-			</TabsContent>
-		);
-	}
-}
-
 export function PropertiesPanel() {
 	const {
 		data,
@@ -267,7 +257,9 @@ export function PropertiesPanel() {
 					{selectedNodes.length === 1 && (
 						<>
 							<PropertiesPanelTitle node={selectedNodes[0]} />
-							<PropertiesPanelContents node={selectedNodes[0]} />
+							{isTextGenerationNode(selectedNodes[0]) && (
+								<TextGenerationTabContents node={selectedNodes[0]} />
+							)}
 						</>
 					)}
 

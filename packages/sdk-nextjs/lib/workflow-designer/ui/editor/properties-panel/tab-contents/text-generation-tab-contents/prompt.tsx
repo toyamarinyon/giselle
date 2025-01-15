@@ -18,7 +18,7 @@ import {
 	useMemo,
 	useState,
 } from "react";
-import { Block } from "../../../_/block";
+import { Block } from "../../../../_/block";
 import {
 	Select,
 	SelectContent,
@@ -27,11 +27,11 @@ import {
 	SelectLabel,
 	SelectTrigger,
 	SelectValue,
-} from "../../../_/select";
-import { Slider } from "../../../_/slider";
-import { PropertiesPanelCollapsible } from "../_/collapsible";
-import { PropertiesPanelContentBox } from "../_/content-box";
-import { NodeDropdown } from "./_";
+} from "../../../../_/select";
+import { Slider } from "../../../../_/slider";
+import { PropertiesPanelCollapsible } from "../../_/collapsible";
+import { PropertiesPanelContentBox } from "../../_/content-box";
+import { NodeDropdown } from "../_";
 
 export function TabsContentPrompt({
 	node,

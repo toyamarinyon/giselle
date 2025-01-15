@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
 import bg from "./bg.png";
 import { type GiselleWorkflowDesignerNode, nodeTypes } from "./node";
-import { PropertiesPanel } from "./propertis-panel";
+import { PropertiesPanel } from "./properties-panel";
 
 function Editor() {
 	const {
