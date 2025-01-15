@@ -5,6 +5,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import clsx from "clsx/lite";
 import { type ComponentProps, type HTMLAttributes, useMemo } from "react";
 import { PanelOpenIcon } from "../../icons/panel-open";
+import { Tabs, TabsList } from "./_/tabs";
 import { TextGenerationNodePropertiesPanel } from "./text-generation-node-properties-panel";
 import { TextNodePropertiesPanel } from "./text-node-properties-panel";
 // import { parse, remove } from "../actions";
@@ -123,7 +124,11 @@ export function PropertiesPanel() {
 		>
 			<div className="absolute z-0 rounded-[16px] inset-0 border mask-fill bg-gradient-to-br bg-origin-border bg-clip-boarder border-transparent from-[hsla(233,4%,37%,1)] to-[hsla(233,62%,22%,1)]" />
 			{openPropertiesPanel ? (
-				selectedNodes.length === 1 && (
+				selectedNodes.length === 0 ? (
+					<Tabs>
+						<TabsList />
+					</Tabs>
+				) : (
 					<>
 						{isTextGenerationNode(selectedNodes[0]) && (
 							<TextGenerationNodePropertiesPanel node={selectedNodes[0]} />

@@ -49,8 +49,8 @@ export function TabsContentPrompt({
 		(sourceNode: NodeData) => {
 			const connectionHandle = createConnectionHandle({
 				label: "Source",
-				nodeId: sourceNode.id,
-				nodeType: sourceNode.type,
+				nodeId: node.id,
+				nodeType: node.type,
 			});
 			addConnection(sourceNode, connectionHandle);
 			connectionHandle;

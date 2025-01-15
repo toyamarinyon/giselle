@@ -6,6 +6,7 @@ import {
 	ReactFlow,
 	ReactFlowProvider,
 	useReactFlow,
+	useUpdateNodeInternals,
 } from "@xyflow/react";
 import { useEffect } from "react";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
@@ -23,6 +24,7 @@ function Editor() {
 		setOpenPropertiesPanel,
 	} = useWorkflowDesigner();
 	const reactFlowInstance = useReactFlow();
+	const updateNodeInternals = useUpdateNodeInternals();
 	useEffect(() => {
 		reactFlowInstance.setNodes(
 			Array.from(data.ui.nodeState)
@@ -41,7 +43,18 @@ function Editor() {
 				})
 				.filter((result) => result !== null),
 		);
-	}, [data, reactFlowInstance.setNodes]);
+		updateNodeInternals(Array.from(data.ui.nodeState.keys()));
+	}, [data, reactFlowInstance.setNodes, updateNodeInternals]);
+	useEffect(() => {
+		reactFlowInstance.setEdges(
+			Array.from(data.connections).map(([connectionId, connection]) => ({
+				id: connectionId,
+				source: connection.sourceNodeId,
+				target: connection.targetNodeId,
+				targetHandle: connection.targetNodeHandleId,
+			})),
+		);
+	}, [data, reactFlowInstance.setEdges]);
 	return (
 		<ReactFlow<GiselleWorkflowDesignerNode>
 			className="giselle-workflow-editor"

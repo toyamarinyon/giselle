@@ -14,7 +14,7 @@ export function TextNodePropertiesPanel({ node }: { node: TextNodeData }) {
 			</TabsList>
 
 			<PropertiesPanelTitle node={node} />
-			<TabsContent value="Prompt">
+			<TabsContent value="Text">
 				<PropertiesPanelContentBox className="h-full flex">
 					<textarea
 						name="text"

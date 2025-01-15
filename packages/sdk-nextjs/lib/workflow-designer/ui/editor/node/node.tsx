@@ -108,7 +108,7 @@ function CustomNode({
 									)}
 								/>
 								<div className="text-[14px] text-black--30 px-[12px]">
-									{targetHandle.label}
+									{targetHandle.id}
 								</div>
 							</div>
 						))}
