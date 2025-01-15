@@ -15,6 +15,7 @@ import type { CreateTextGenerationNodeParams } from "../workflow-data/node/actio
 import { createConnectionHandle as createConnectionHandleData } from "../workflow-data/node/connection";
 import type {
 	ConnectionHandle,
+	ConnectionId,
 	NodeId,
 	NodeUIState,
 } from "../workflow-data/node/types";
@@ -33,6 +34,8 @@ interface WorkflowDesignerContextValue
 		| "addConnection"
 		| "addTextNode"
 		| "setUiNodeState"
+		| "deleteNode"
+		| "deleteConnection"
 	> {
 	data: WorkflowData;
 	textGenerationApi: string;
@@ -102,11 +105,11 @@ export function WorkflowDesignerProvider({
 	);
 
 	const updateNodeData = useCallback(
-		(nodeId: NodeId, data: NodeData) => {
+		<T extends NodeData>(node: T, data: Partial<T>) => {
 			if (workflowDesignerRef.current === undefined) {
 				return;
 			}
-			workflowDesignerRef.current.updateNodeData(nodeId, data);
+			workflowDesignerRef.current.updateNodeData(node, data);
 			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
 		},
 		[setAndSaveWorkflowData],
@@ -145,6 +148,29 @@ export function WorkflowDesignerProvider({
 		[setAndSaveWorkflowData],
 	);
 
+	const deleteNode = useCallback(
+		(nodeId: NodeId | string) => {
+			if (workflowDesignerRef.current === undefined) {
+				return;
+			}
+			workflowDesignerRef.current.deleteNode(nodeId);
+			console.log(workflowDesignerRef.current.getData());
+			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+		},
+		[setAndSaveWorkflowData],
+	);
+
+	const deleteConnection = useCallback(
+		(connectionId: ConnectionId) => {
+			if (workflowDesignerRef.current === undefined) {
+				return;
+			}
+			workflowDesignerRef.current.deleteConnection(connectionId);
+			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+		},
+		[setAndSaveWorkflowData],
+	);
+
 	return (
 		<WorkflowDesignerContext.Provider
 			value={{
@@ -155,6 +181,8 @@ export function WorkflowDesignerProvider({
 				addConnection,
 				updateNodeData,
 				setUiNodeState,
+				deleteNode,
+				deleteConnection,
 			}}
 		>
 			{children}
@@ -200,10 +228,9 @@ export function useNode(nodeId: NodeId) {
 
 	const updateData = useCallback(
 		(newData: Partial<NodeData>) => {
-			// @ts-ignore zod types are not working well with partials
-			updateNodeData(nodeId, { ...data, ...newData });
+			updateNodeData(data, newData);
 		},
-		[nodeId, updateNodeData, data],
+		[updateNodeData, data],
 	);
 
 	const addConnection = useCallback(

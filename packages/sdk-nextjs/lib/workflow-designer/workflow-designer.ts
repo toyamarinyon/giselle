@@ -12,6 +12,7 @@ import { createConnection } from "../workflow-data/node/connection";
 import {
 	type BaseNodeData,
 	type ConnectionHandle,
+	type ConnectionId,
 	type NodeId,
 	NodeUIState,
 	connectionId,
@@ -36,7 +37,6 @@ export interface WorkflowDesignerOperations {
 		options?: addNodeOptions,
 	) => void;
 	getData: () => WorkflowData;
-	updateNodeData: (nodeId: NodeId, data: NodeData) => void;
 	addConnection: (
 		sourceNode: NodeData,
 		targetNodeHandle: ConnectionHandle,
@@ -45,6 +45,9 @@ export interface WorkflowDesignerOperations {
 		nodeId: string | NodeId,
 		newUiState: Partial<NodeUIState>,
 	) => void;
+	deleteNode: (nodeId: string | NodeId) => void;
+	deleteConnection: (connectionId: ConnectionId) => void;
+	updateNodeData: <T extends NodeData>(node: T, data: Partial<T>) => void;
 }
 
 export function WorkflowDesigner({
@@ -87,8 +90,8 @@ export function WorkflowDesigner({
 			ui,
 		};
 	}
-	function updateNodeData(nodeId: NodeId, data: NodeData) {
-		nodes.set(nodeId, data);
+	function updateNodeData<T extends NodeData>(node: T, data: Partial<T>) {
+		nodes.set(node.id, { ...node, ...data });
 	}
 	function addConnection(
 		sourceNode: BaseNodeData,
@@ -111,6 +114,14 @@ export function WorkflowDesigner({
 			NodeUIState.parse({ ...nodeState, ...newUiState }),
 		);
 	}
+	function deleteConnection(connectionId: ConnectionId) {
+		connections.delete(connectionId);
+	}
+	function deleteNode(unsafeNodeId: string | NodeId) {
+		const deleteNodeId = nodeId.parse(unsafeNodeId);
+		ui.nodeState.delete(deleteNodeId);
+		nodes.delete(deleteNodeId);
+	}
 
 	return {
 		addTextGenerationNode,
@@ -119,5 +130,7 @@ export function WorkflowDesigner({
 		getData,
 		updateNodeData,
 		setUiNodeState,
+		deleteNode,
+		deleteConnection,
 	};
 }

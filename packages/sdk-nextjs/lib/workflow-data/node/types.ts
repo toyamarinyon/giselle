@@ -34,6 +34,7 @@ export const NodeUIState = z.object({
 export type NodeUIState = z.infer<typeof NodeUIState>;
 
 export const connectionId = createIdGenerator("cnnc");
+export type ConnectionId = z.infer<typeof connectionId.schema>;
 export const Connection = z.object({
 	id: connectionId.schema,
 	sourceNodeId: nodeId.schema,

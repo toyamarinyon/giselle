@@ -12,7 +12,8 @@ import bg from "./bg.png";
 import { type GiselleWorkflowDesignerNode, nodeTypes } from "./node";
 
 function Editor() {
-	const { data, setUiNodeState } = useWorkflowDesigner();
+	const { data, setUiNodeState, deleteNode, deleteConnection, updateNodeData } =
+		useWorkflowDesigner();
 	const reactFlowInstance = useReactFlow();
 	useEffect(() => {
 		reactFlowInstance.setNodes(
@@ -45,6 +46,39 @@ function Editor() {
 					switch (nodeChange.type) {
 						case "select": {
 							setUiNodeState(nodeChange.id, { selected: nodeChange.selected });
+							break;
+						}
+						case "remove": {
+							for (const [connectionId, connectionData] of data.connections) {
+								if (connectionData.sourceNodeId !== nodeChange.id) {
+									continue;
+								}
+								deleteConnection(connectionId);
+								const targetNode = data.nodes.get(connectionData.targetNodeId);
+								if (targetNode === undefined) {
+									continue;
+								}
+								switch (targetNode.content.type) {
+									case "textGeneration": {
+										updateNodeData(targetNode, {
+											content: {
+												...targetNode.content,
+												sources: targetNode.content.sources.filter(
+													(source) =>
+														source.id !== connectionData.targetNodeHandleId,
+												),
+												requirement:
+													targetNode.content.requirement?.id ===
+													connectionData.targetNodeHandleId
+														? undefined
+														: targetNode.content.requirement,
+											},
+										});
+									}
+								}
+							}
+							deleteNode(nodeChange.id);
+							break;
 						}
 					}
 				});
