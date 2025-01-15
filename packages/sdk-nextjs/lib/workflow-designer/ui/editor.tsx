@@ -12,11 +12,20 @@ function Editor() {
 	const reactFlowInstance = useReactFlow();
 	useEffect(() => {
 		reactFlowInstance.setNodes(
-			Array.from(data.nodes).map(([nodeId, node]) => ({
-				id: nodeId,
-				position: { x: 0, y: 0 },
-				data: {},
-			})),
+			Array.from(data.ui.nodeState)
+				.map(([nodeId, nodeState]) => {
+					const nodeData = data.nodes.get(nodeId);
+					if (nodeData === undefined) {
+						return null;
+					}
+					return {
+						id: nodeId,
+						position: { x: nodeState.position.x, y: nodeState.position.y },
+						selected: nodeState.selected,
+						data: { nodeData: nodeData },
+					};
+				})
+				.filter((result) => result !== null),
 		);
 	}, [data, reactFlowInstance.setNodes]);
 	return (

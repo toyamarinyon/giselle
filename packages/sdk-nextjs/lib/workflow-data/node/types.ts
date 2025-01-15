@@ -29,7 +29,7 @@ export type ConnectionHandle = z.infer<typeof ConnectionHandle>;
 
 export const NodeUIState = z.object({
 	position: Position,
-	selected: z.boolean(),
+	selected: z.boolean().default(false).optional(),
 });
 export type NodeUIState = z.infer<typeof NodeUIState>;
 

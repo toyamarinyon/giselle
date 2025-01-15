@@ -11,7 +11,17 @@ export default function Page() {
 				<button
 					type="button"
 					onClick={() => {
-						addTextGenerationNode({ name: "test text generation node" });
+						addTextGenerationNode(
+							{ name: "test text generation node" },
+							{
+								ui: {
+									position: {
+										x: Math.random() * 100,
+										y: Math.random() * 100,
+									},
+								},
+							},
+						);
 					}}
 				>
 					add text generation node

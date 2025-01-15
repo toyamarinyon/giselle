@@ -1,7 +1,7 @@
 import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
 import { ActionNodeData } from "./node/actions";
-import { Connection, connectionId, nodeId } from "./node/types";
+import { Connection, NodeUIState, connectionId, nodeId } from "./node/types";
 import { VariableNodeData } from "./node/variables";
 
 const NodeData = z.discriminatedUnion("type", [
