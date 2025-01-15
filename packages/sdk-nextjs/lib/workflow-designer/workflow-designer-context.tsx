@@ -28,7 +28,11 @@ import {
 interface WorkflowDesignerContextValue
 	extends Pick<
 		WorkflowDesignerOperations,
-		"addTextGenerationNode" | "updateNodeData" | "addConnection" | "addTextNode"
+		| "addTextGenerationNode"
+		| "updateNodeData"
+		| "addConnection"
+		| "addTextNode"
+		| "setUiNodeState"
 	> {
 	data: WorkflowData;
 	textGenerationApi: string;
@@ -130,6 +134,17 @@ export function WorkflowDesignerProvider({
 		[setAndSaveWorkflowData],
 	);
 
+	const setUiNodeState = useCallback(
+		(nodeId: string | NodeId, ui: Partial<NodeUIState>) => {
+			if (workflowDesignerRef.current === undefined) {
+				return;
+			}
+			workflowDesignerRef.current.setUiNodeState(nodeId, ui);
+			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+		},
+		[setAndSaveWorkflowData],
+	);
+
 	return (
 		<WorkflowDesignerContext.Provider
 			value={{
@@ -139,6 +154,7 @@ export function WorkflowDesignerProvider({
 				addTextNode,
 				addConnection,
 				updateNodeData,
+				setUiNodeState,
 			}}
 		>
 			{children}

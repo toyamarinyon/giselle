@@ -1,3 +1,4 @@
+import { nodeId } from "@/lib/workflow-data/node/types";
 import {
 	Background,
 	BackgroundVariant,
@@ -8,10 +9,10 @@ import {
 import { useEffect } from "react";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
 import bg from "./bg.png";
-import { nodeTypes } from "./node";
+import { type GiselleWorkflowDesignerNode, nodeTypes } from "./node";
 
 function Editor() {
-	const { data } = useWorkflowDesigner();
+	const { data, setUiNodeState } = useWorkflowDesigner();
 	const reactFlowInstance = useReactFlow();
 	useEffect(() => {
 		reactFlowInstance.setNodes(
@@ -33,12 +34,26 @@ function Editor() {
 		);
 	}, [data, reactFlowInstance.setNodes]);
 	return (
-		<ReactFlow
+		<ReactFlow<GiselleWorkflowDesignerNode>
 			className="giselle-workflow-editor"
 			colorMode="dark"
 			defaultNodes={[]}
 			defaultEdges={[]}
 			nodeTypes={nodeTypes}
+			onNodesChange={(nodesChange) => {
+				nodesChange.map((nodeChange) => {
+					switch (nodeChange.type) {
+						case "select": {
+							setUiNodeState(nodeChange.id, { selected: nodeChange.selected });
+						}
+					}
+				});
+			}}
+			onNodeDragStop={(_event, _node, nodes) => {
+				nodes.map((node) => {
+					setUiNodeState(node.id, { position: node.position });
+				});
+			}}
 		>
 			<Background
 				className="!bg-black-100"

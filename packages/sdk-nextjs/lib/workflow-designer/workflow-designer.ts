@@ -13,8 +13,9 @@ import {
 	type BaseNodeData,
 	type ConnectionHandle,
 	type NodeId,
-	type NodeUIState,
+	NodeUIState,
 	connectionId,
+	nodeId,
 } from "../workflow-data/node/types";
 import {
 	type CreateTextNodeParams,
@@ -39,6 +40,10 @@ export interface WorkflowDesignerOperations {
 	addConnection: (
 		sourceNode: NodeData,
 		targetNodeHandle: ConnectionHandle,
+	) => void;
+	setUiNodeState: (
+		nodeId: string | NodeId,
+		newUiState: Partial<NodeUIState>,
 	) => void;
 }
 
@@ -95,6 +100,17 @@ export function WorkflowDesigner({
 		});
 		connections.set(connection.id, connection);
 	}
+	function setUiNodeState(
+		unsafeNodeId: string | NodeId,
+		newUiState: Partial<NodeUIState>,
+	): void {
+		const targetNodeId = nodeId.parse(unsafeNodeId);
+		const nodeState = ui.nodeState.get(targetNodeId);
+		ui.nodeState.set(
+			targetNodeId,
+			NodeUIState.parse({ ...nodeState, ...newUiState }),
+		);
+	}
 
 	return {
 		addTextGenerationNode,
@@ -102,5 +118,6 @@ export function WorkflowDesigner({
 		addConnection,
 		getData,
 		updateNodeData,
+		setUiNodeState,
 	};
 }

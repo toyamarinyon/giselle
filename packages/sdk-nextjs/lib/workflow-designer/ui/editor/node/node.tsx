@@ -19,7 +19,7 @@ type GiselleWorkflowDesignerTextNode = Node<
 	{ nodeData: TextNodeData; preview?: boolean },
 	TextNodeData["content"]["type"]
 >;
-type GiselleWorkflowDesignerNode =
+export type GiselleWorkflowDesignerNode =
 	| GiselleWorkflowDesignerTextGenerationNode
 	| GiselleWorkflowDesignerTextNode;
 
