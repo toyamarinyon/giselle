@@ -5,7 +5,7 @@ import {
 	useReactFlow,
 } from "@xyflow/react";
 import { useEffect } from "react";
-import { useWorkflowDesigner } from "../workflow-designer-context";
+import { useWorkflowDesigner } from "../../workflow-designer-context";
 
 function Editor() {
 	const { data } = useWorkflowDesigner();
