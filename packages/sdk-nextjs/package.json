@@ -10,10 +10,13 @@
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "1.0.15",
+		"@radix-ui/react-dialog": "1.1.4",
+		"@radix-ui/react-tabs": "1.1.2",
 		"@vercel/blob": "0.27.0",
 		"@xyflow/react": "12.3.6",
 		"ai": "4.0.30",
 		"clsx": "2.1.1",
+		"lucide-react": "0.471.1",
 		"nanoid": "5.0.9",
 		"next": "15.1.4",
 		"react": "19.0.0",

@@ -1,6 +1,6 @@
 import type { NodeData } from "@/lib/workflow-data";
 import { clsx } from "clsx/lite";
-import { ContentTypeIcon } from "./content-type-icon";
+import { ContentTypeIcon } from "../content-type-icon";
 
 export function NodeHeader({
 	name,

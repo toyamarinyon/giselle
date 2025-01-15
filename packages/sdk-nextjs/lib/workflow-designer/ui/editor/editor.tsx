@@ -2,6 +2,7 @@ import { nodeId } from "@/lib/workflow-data/node/types";
 import {
 	Background,
 	BackgroundVariant,
+	Panel,
 	ReactFlow,
 	ReactFlowProvider,
 	useReactFlow,
@@ -10,10 +11,17 @@ import { useEffect } from "react";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
 import bg from "./bg.png";
 import { type GiselleWorkflowDesignerNode, nodeTypes } from "./node";
+import { PropertiesPanel } from "./propertis-panel";
 
 function Editor() {
-	const { data, setUiNodeState, deleteNode, deleteConnection, updateNodeData } =
-		useWorkflowDesigner();
+	const {
+		data,
+		setUiNodeState,
+		deleteNode,
+		deleteConnection,
+		updateNodeData,
+		setOpenPropertiesPanel,
+	} = useWorkflowDesigner();
 	const reactFlowInstance = useReactFlow();
 	useEffect(() => {
 		reactFlowInstance.setNodes(
@@ -46,6 +54,9 @@ function Editor() {
 					switch (nodeChange.type) {
 						case "select": {
 							setUiNodeState(nodeChange.id, { selected: nodeChange.selected });
+							if (nodeChange.selected) {
+								setOpenPropertiesPanel(true);
+							}
 							break;
 						}
 						case "remove": {
@@ -100,6 +111,9 @@ function Editor() {
 					backgroundSize: "cover",
 				}}
 			/>
+			<Panel position="top-right" className="!top-0 !bottom-0 !right-0 !m-0">
+				<PropertiesPanel />
+			</Panel>
 		</ReactFlow>
 	);
 }

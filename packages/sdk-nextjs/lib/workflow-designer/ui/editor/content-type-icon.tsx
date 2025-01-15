@@ -1,9 +1,9 @@
 import type { NodeData } from "@/lib/workflow-data";
 import type { SVGProps } from "react";
-import { DocumentIcon } from "../../icons/document";
-import { GlobeIcon } from "../../icons/globe";
-import { PromptIcon } from "../../icons/prompt";
-import { TextGenerationIcon } from "../../icons/text-generation";
+import { DocumentIcon } from "../icons/document";
+import { GlobeIcon } from "../icons/globe";
+import { PromptIcon } from "../icons/prompt";
+import { TextGenerationIcon } from "../icons/text-generation";
 
 type ContentTypeIconProps = SVGProps<SVGSVGElement> & {
 	contentType: NodeData["content"]["type"];

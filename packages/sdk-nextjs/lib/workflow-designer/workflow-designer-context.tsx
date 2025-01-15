@@ -21,6 +21,7 @@ import type {
 } from "../workflow-data/node/types";
 import type { CreateTextNodeParams } from "../workflow-data/node/variables/text";
 import { callSaveWorkflowApi } from "./call-save-workflow-api";
+import { usePropertiesPanel } from "./state";
 import {
 	WorkflowDesigner,
 	type WorkflowDesignerOperations,
@@ -28,15 +29,16 @@ import {
 
 interface WorkflowDesignerContextValue
 	extends Pick<
-		WorkflowDesignerOperations,
-		| "addTextGenerationNode"
-		| "updateNodeData"
-		| "addConnection"
-		| "addTextNode"
-		| "setUiNodeState"
-		| "deleteNode"
-		| "deleteConnection"
-	> {
+			WorkflowDesignerOperations,
+			| "addTextGenerationNode"
+			| "updateNodeData"
+			| "addConnection"
+			| "addTextNode"
+			| "setUiNodeState"
+			| "deleteNode"
+			| "deleteConnection"
+		>,
+		ReturnType<typeof usePropertiesPanel> {
 	data: WorkflowData;
 	textGenerationApi: string;
 }
@@ -170,6 +172,8 @@ export function WorkflowDesignerProvider({
 		[setAndSaveWorkflowData],
 	);
 
+	const usePropertiesPanelHelper = usePropertiesPanel();
+
 	return (
 		<WorkflowDesignerContext.Provider
 			value={{
@@ -182,6 +186,7 @@ export function WorkflowDesignerProvider({
 				setUiNodeState,
 				deleteNode,
 				deleteConnection,
+				...usePropertiesPanelHelper,
 			}}
 		>
 			{children}
