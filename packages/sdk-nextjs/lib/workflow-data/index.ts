@@ -1,6 +1,7 @@
 import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
 import { ActionNodeData, TextGenerationNodeData } from "./node/actions";
+import { createConnection, createConnectionHandle } from "./node/connection";
 import { Connection, NodeUIState, connectionId, nodeId } from "./node/types";
 import { TextNodeData, VariableNodeData } from "./node/variables";
 
@@ -89,4 +90,9 @@ export function generateInitialWorkflowData() {
 	});
 }
 
-export { TextNodeData, TextGenerationNodeData };
+export {
+	TextNodeData,
+	TextGenerationNodeData,
+	createConnection,
+	createConnectionHandle,
+};

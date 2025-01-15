@@ -1,11 +1,9 @@
-import type {
-	NodeData,
-	TextGenerationNodeData,
-	TextNodeData,
+import {
+	type NodeData,
+	type TextGenerationNodeData,
+	type TextNodeData,
+	createConnectionHandle,
 } from "@/lib/workflow-data";
-import type { TextGenerationContent } from "@/lib/workflow-data/node/actions/text-generation";
-import { createConnectionHandle } from "@/lib/workflow-data/node/connection";
-import type { ConnectionHandle } from "@/lib/workflow-data/node/types";
 import {
 	useNode,
 	useWorkflowDesigner,
@@ -181,7 +179,7 @@ export function TabsContentPrompt({
 							value={node.content.llm}
 							onValueChange={(value) => {
 								updateNodeDataContent(node, {
-									llm: value as TextGenerationContent["llm"],
+									llm: value,
 								});
 							}}
 						>
