@@ -1,11 +1,12 @@
 import type { WorkflowData } from "@/lib/workflow-data";
 import type { Connection, NodeId } from "@/lib/workflow-data/node/types";
 
+type ConnectionMap = Map<NodeId, Set<NodeId>>;
 export function createConnectionMap(
 	connectionSet: Set<Connection>,
 	nodeIdSet: Set<NodeId>,
 ) {
-	const connectionMap = new Map<NodeId, Set<NodeId>>();
+	const connectionMap: ConnectionMap = new Map();
 	for (const connection of connectionSet) {
 		if (
 			!nodeIdSet.has(connection.sourceNodeId) ||
@@ -31,31 +32,29 @@ export function createConnectionMap(
 	}
 	return connectionMap;
 }
-export function parse(workflowData: WorkflowData) {
-	const processedNodes = new Set<NodeId>();
-	const connectionMap = new Map<NodeId, Set<NodeId>>();
-	const nodeIds = new Set<NodeId>(workflowData.nodes.keys());
-	for (const [connectionId, connection] of workflowData.connections) {
-		if (
-			!nodeIds.has(connection.sourceNodeId) ||
-			!nodeIds.has(connection.targetNodeId)
-		) {
-			continue;
-		}
-		if (!connectionMap.has(connection.sourceNodeId)) {
-			connectionMap.set(connection.sourceNodeId, new Set());
-		}
-		const sourceSet = connectionMap.get(connection.sourceNodeId);
-		if (sourceSet) {
-			sourceSet.add(connection.targetNodeId);
-		}
 
-		if (!connectionMap.has(connection.targetNodeId)) {
-			connectionMap.set(connection.targetNodeId, new Set());
-		}
-		const targetSet = connectionMap.get(connection.targetNodeId);
-		if (targetSet) {
-			targetSet.add(connection.sourceNodeId);
+export function findConnectedComponent(
+	startNodeId: NodeId,
+	connectionMap: ConnectionMap,
+): Set<NodeId> {
+	const connectedNodes = new Set<NodeId>();
+	const stack: NodeId[] = [startNodeId];
+
+	while (stack.length > 0) {
+		const currentNodeId = stack.pop() || startNodeId;
+		if (connectedNodes.has(currentNodeId)) continue;
+
+		connectedNodes.add(currentNodeId);
+
+		const connectedNodeIds = connectionMap.get(currentNodeId);
+		if (connectedNodeIds) {
+			for (const connectedNodeId of connectedNodeIds) {
+				if (!connectedNodes.has(connectedNodeId)) {
+					stack.push(connectedNodeId);
+				}
+			}
 		}
 	}
+
+	return connectedNodes;
 }
