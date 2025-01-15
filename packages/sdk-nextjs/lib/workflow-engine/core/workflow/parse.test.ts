@@ -1,8 +1,11 @@
+import type { NodeData } from "@/lib/workflow-data";
+import type { NodeId } from "@/lib/workflow-data/node/types";
 import { describe, expect, test } from "vitest";
 import {
 	createConnectionMap,
-	findConnectedConnections,
-	findConnectedNodes,
+	createJobSet,
+	findConnectedConnectionMap,
+	findConnectedNodeMap,
 } from "./parse";
 import {
 	connection1,
@@ -46,20 +49,33 @@ describe("findConnectedComponent", () => {
 	);
 	test("start by textGenerationNode1", () => {
 		expect(
-			findConnectedNodes(textGenerationNode1.id, connectionMap),
-		).toStrictEqual(
-			new Set([
+			findConnectedNodeMap(
 				textGenerationNode1.id,
-				textNode1.id,
-				textGenerationNode2.id,
-				textGenerationNode3.id,
+				testWorkflowData.nodes,
+				connectionMap,
+			),
+		).toStrictEqual(
+			new Map<NodeId, NodeData>([
+				[textGenerationNode1.id, textGenerationNode1],
+				[textNode1.id, textNode1],
+				[textGenerationNode2.id, textGenerationNode2],
+				[textGenerationNode3.id, textGenerationNode3],
 			]),
 		);
 	});
 	test("start by textGenerationNode4", () => {
 		expect(
-			findConnectedNodes(textGenerationNode4.id, connectionMap),
-		).toStrictEqual(new Set([textGenerationNode4.id, textGenerationNode5.id]));
+			findConnectedNodeMap(
+				textGenerationNode4.id,
+				testWorkflowData.nodes,
+				connectionMap,
+			),
+		).toStrictEqual(
+			new Map<NodeId, NodeData>([
+				[textGenerationNode4.id, textGenerationNode4],
+				[textGenerationNode5.id, textGenerationNode5],
+			]),
+		);
 	});
 });
 
@@ -69,27 +85,90 @@ describe("findConnectedConnections", () => {
 		new Set(testWorkflowData.nodes.keys()),
 	);
 	test("start by textGenerationNode1", () => {
-		const connectedNodeIdSet = findConnectedNodes(
+		const connectedNodeMap = findConnectedNodeMap(
 			textGenerationNode1.id,
+			testWorkflowData.nodes,
 			connectionMap,
 		);
 		expect(
-			findConnectedConnections(
-				connectedNodeIdSet,
+			findConnectedConnectionMap(
+				new Set(connectedNodeMap.keys()),
 				new Set(testWorkflowData.connections.values()),
 			),
-		).toStrictEqual(new Set([connection1.id, connection2.id, connection3.id]));
+		).toStrictEqual(
+			new Map([
+				[connection1.id, connection1],
+				[connection2.id, connection2],
+				[connection3.id, connection3],
+			]),
+		);
 	});
 	test("start by textGenerationNode4", () => {
-		const connectedNodeIdSet = findConnectedNodes(
+		const connectedNodeMap = findConnectedNodeMap(
 			textGenerationNode4.id,
+			testWorkflowData.nodes,
 			connectionMap,
 		);
 		expect(
-			findConnectedConnections(
-				connectedNodeIdSet,
+			findConnectedConnectionMap(
+				new Set(connectedNodeMap.keys()),
 				new Set(testWorkflowData.connections.values()),
 			),
-		).toStrictEqual(new Set([connection4.id]));
+		).toStrictEqual(new Map([[connection4.id, connection4]]));
+	});
+});
+describe("createJobsFromGraph", () => {
+	const connectionMap = createConnectionMap(
+		new Set(testWorkflowData.connections.values()),
+		new Set(testWorkflowData.nodes.keys()),
+	);
+	test("start by textGenerationNode1", () => {
+		const connectedNodeMap = findConnectedNodeMap(
+			textGenerationNode1.id,
+			testWorkflowData.nodes,
+			connectionMap,
+		);
+		const connectedConnectionMap = findConnectedConnectionMap(
+			new Set(connectedNodeMap.keys()),
+			new Set(testWorkflowData.connections.values()),
+		);
+		const jobSet = createJobSet(
+			new Set(connectedNodeMap.values()),
+			new Set(connectedConnectionMap.values()),
+		);
+		expect(jobSet.size).toBe(3);
+		const jobSetIterator = jobSet.values();
+		const firstJob = jobSetIterator.next().value;
+		expect(firstJob?.stepSet.size).toBe(1);
+		const firstJobFirstStep = firstJob?.stepSet.values().next().value;
+		expect(firstJobFirstStep?.nodeId).toBe(textGenerationNode1.id);
+		const secondJob = jobSetIterator.next().value;
+		expect(secondJob?.stepSet.size).toBe(1);
+		const secondJobFirstStep = secondJob?.stepSet.values().next().value;
+		expect(secondJobFirstStep?.nodeId).toBe(textGenerationNode2.id);
+		const thirdJob = jobSetIterator.next().value;
+		expect(thirdJob?.stepSet.size).toBe(1);
+		const thirdJobFirstStep = thirdJob?.stepSet.values().next().value;
+		expect(thirdJobFirstStep?.nodeId).toBe(textGenerationNode3.id);
+	});
+	test("start by textGenerationNode4", () => {
+		const connectedNodeMap = findConnectedNodeMap(
+			textGenerationNode4.id,
+			testWorkflowData.nodes,
+			connectionMap,
+		);
+		const connectedConnectionMap = findConnectedConnectionMap(
+			new Set(connectedNodeMap.keys()),
+			new Set(testWorkflowData.connections.values()),
+		);
+		const jobSet = createJobSet(
+			new Set(connectedNodeMap.values()),
+			new Set(connectedConnectionMap.values()),
+		);
+		expect(jobSet.size).toBe(2);
+		const firstJob = jobSet.values().next().value;
+		expect(firstJob?.stepSet.size).toBe(1);
+		const firstJobFirstStep = firstJob?.stepSet.values().next().value;
+		expect(firstJobFirstStep?.nodeId).toBe(textGenerationNode4.id);
 	});
 });
