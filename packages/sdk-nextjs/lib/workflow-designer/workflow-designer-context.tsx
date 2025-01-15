@@ -154,7 +154,6 @@ export function WorkflowDesignerProvider({
 				return;
 			}
 			workflowDesignerRef.current.deleteNode(nodeId);
-			console.log(workflowDesignerRef.current.getData());
 			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
 		},
 		[setAndSaveWorkflowData],
