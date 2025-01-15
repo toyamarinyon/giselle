@@ -142,14 +142,19 @@ describe("createJobsFromGraph", () => {
 		expect(firstJob?.stepSet.size).toBe(1);
 		const firstJobFirstStep = firstJob?.stepSet.values().next().value;
 		expect(firstJobFirstStep?.nodeId).toBe(textGenerationNode1.id);
+		expect(firstJobFirstStep?.variableNodeIds).toStrictEqual(
+			new Set([textNode1.id]),
+		);
 		const secondJob = jobSetIterator.next().value;
 		expect(secondJob?.stepSet.size).toBe(1);
 		const secondJobFirstStep = secondJob?.stepSet.values().next().value;
 		expect(secondJobFirstStep?.nodeId).toBe(textGenerationNode2.id);
+		expect(secondJobFirstStep?.variableNodeIds).toStrictEqual(new Set());
 		const thirdJob = jobSetIterator.next().value;
 		expect(thirdJob?.stepSet.size).toBe(1);
 		const thirdJobFirstStep = thirdJob?.stepSet.values().next().value;
 		expect(thirdJobFirstStep?.nodeId).toBe(textGenerationNode3.id);
+		expect(thirdJobFirstStep?.variableNodeIds).toStrictEqual(new Set());
 	});
 	test("start by textGenerationNode4", () => {
 		const connectedNodeMap = findConnectedNodeMap(
