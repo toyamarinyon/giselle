@@ -11,14 +11,15 @@ export function useTextGenerationNode(
 ) {
 	const { data: workflowData, textGenerationApi } = useWorkflowDesigner();
 
-	const { handleSubmit, completion, input, handleInputChange } = useCompletion({
-		api: textGenerationApi,
-		initialInput: node.content.prompt,
-		body: {
-			workflowId: workflowData.id,
-			nodeId: node.id,
-		},
-	});
+	const { handleSubmit, completion, input, handleInputChange, isLoading } =
+		useCompletion({
+			api: textGenerationApi,
+			initialInput: node.content.prompt,
+			body: {
+				workflowId: workflowData.id,
+				nodeId: node.id,
+			},
+		});
 
 	const handleGeneratingTextSubmit = useCallback(
 		(event: FormEvent<HTMLFormElement>) => {
@@ -33,5 +34,6 @@ export function useTextGenerationNode(
 		generatedText: completion,
 		prompt: input,
 		handlePromptChange: handleInputChange,
+		isThinking: isLoading && completion.length === 0,
 	};
 }
