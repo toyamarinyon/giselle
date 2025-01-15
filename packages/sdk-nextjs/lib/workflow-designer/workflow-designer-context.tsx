@@ -41,6 +41,10 @@ interface WorkflowDesignerContextValue
 		ReturnType<typeof usePropertiesPanel> {
 	data: WorkflowData;
 	textGenerationApi: string;
+	updateNodeDataContent: <T extends NodeData>(
+		node: T,
+		content: Partial<T["content"]>,
+	) => void;
 }
 const WorkflowDesignerContext = createContext<
 	WorkflowDesignerContextValue | undefined
@@ -117,6 +121,20 @@ export function WorkflowDesignerProvider({
 		[setAndSaveWorkflowData],
 	);
 
+	const updateNodeDataContent = useCallback(
+		<T extends NodeData>(node: T, content: Partial<T["content"]>) => {
+			if (workflowDesignerRef.current === undefined) {
+				return;
+			}
+			workflowDesignerRef.current.updateNodeData(node, {
+				...node,
+				content: { ...node.content, ...content },
+			});
+			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+		},
+		[setAndSaveWorkflowData],
+	);
+
 	const addConnection = useCallback(
 		(sourceNode: NodeData, targetHandle: ConnectionHandle) => {
 			workflowDesignerRef.current?.addConnection(sourceNode, targetHandle);
@@ -183,6 +201,7 @@ export function WorkflowDesignerProvider({
 				addTextNode,
 				addConnection,
 				updateNodeData,
+				updateNodeDataContent,
 				setUiNodeState,
 				deleteNode,
 				deleteConnection,

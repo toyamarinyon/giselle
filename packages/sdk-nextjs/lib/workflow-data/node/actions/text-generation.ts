@@ -12,7 +12,7 @@ export const TextGenerationContent = z.object({
 	system: z.string(),
 	sources: z.array(ConnectionHandle),
 });
-type TextGenerationContent = z.infer<typeof TextGenerationContent>;
+export type TextGenerationContent = z.infer<typeof TextGenerationContent>;
 
 export const TextGenerationNodeData = BaseNodeData.extend({
 	type: z.literal("action"),

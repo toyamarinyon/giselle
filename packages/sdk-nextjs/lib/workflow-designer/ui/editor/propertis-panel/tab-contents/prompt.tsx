@@ -1,60 +1,103 @@
+import type {
+	NodeData,
+	TextGenerationNodeData,
+	TextNodeData,
+} from "@/lib/workflow-data";
+import type { TextGenerationContent } from "@/lib/workflow-data/node/actions/text-generation";
+import {
+	useNode,
+	useWorkflowDesigner,
+} from "@/lib/workflow-designer/workflow-designer-context";
+import { textGenerationPrompt } from "@/lib/workflow-engine/core/prompts";
+import clsx from "clsx/lite";
+import { CheckIcon, TrashIcon, UndoIcon } from "lucide-react";
+import {
+	type DetailedHTMLProps,
+	useCallback,
+	useId,
+	useMemo,
+	useState,
+} from "react";
+import { Block } from "../../../_/block";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from "../../../_/select";
+import { Slider } from "../../../_/slider";
+import { PropertiesPanelCollapsible } from "../_/collapsible";
+import { PropertiesPanelContentBox } from "../_/content-box";
+import { NodeDropdown } from "./_";
+
 export function TabsContentPrompt({
-	content,
-	onContentChange,
-	onRequirementConnect,
-	onRequirementRemove,
-	onSourceConnect,
-	onSourceRemove,
+	node,
 }: {
-	content: TextGenerateActionContent;
-	onContentChange?: (content: TextGenerateActionContent) => void;
-	onRequirementConnect?: (sourceNode: Node) => void;
-	onRequirementRemove?: (sourceNode: Node) => void;
-	onSourceConnect?: (sourceNode: Node) => void;
-	onSourceRemove?: (sourceNode: Node) => void;
+	node: TextGenerationNodeData;
 }) {
-	const {
-		graph: { nodes, connections },
-	} = useGraph();
-	const developerMode = useDeveloperMode();
-	const connectableTextNodes: Text[] = nodes
-		.filter((node) => node.content.type === "text")
-		.map((node) => node as Text);
-	const connectableTextGeneratorNodes = nodes.filter(
-		(node) => node.content.type === "textGeneration",
+	const { data, updateNodeDataContent } = useWorkflowDesigner();
+
+	const connectableTextNodes = useMemo(
+		() =>
+			Array.from(data.nodes)
+				.filter(([_, nodeData]) => nodeData.content.type === "text")
+				.map(([_, nodeData]) => nodeData as TextNodeData),
+		[data],
 	);
-	const connectableFileNodes = nodes.filter(
-		(node) => node.content.type === "files",
+	const connectableTextGeneratorNodes = useMemo(
+		() =>
+			Array.from(data.nodes)
+				.filter(([_, nodeData]) => nodeData.content.type === "textGeneration")
+				.map(([_, nodeData]) => nodeData as TextGenerationNodeData),
+		[data],
 	);
-	const requirementNode = useNode({
-		targetNodeHandleId: content.requirement?.id,
-	});
 	const sourceNodes = useMemo(
 		() =>
-			content.sources
+			node.content.sources
 				.map((source) => {
-					const connection = connections.find(
-						(connection) => connection.targetNodeHandleId === source.id,
-					);
-					const node = nodes.find(
-						(node) => node.id === connection?.sourceNodeId,
-					);
-					return node;
+					let sourceNode: NodeData | undefined;
+					for (const [connectionId, connectionData] of data.connections) {
+						if (connectionData.targetNodeHandleId !== source.id) {
+							continue;
+						}
+						sourceNode = data.nodes.get(connectionData.sourceNodeId);
+						if (sourceNode !== undefined) {
+							break;
+						}
+					}
+					return sourceNode;
 				})
 				.filter((node) => node !== undefined),
-		[connections, content.sources, nodes],
+		[data, node.content.sources],
 	);
+	const requirementNode = useMemo(() => {
+		if (node.content.requirement === undefined) {
+			return null;
+		}
+		for (const [connectionId, connectionData] of data.connections) {
+			if (connectionData.targetNodeHandleId !== node.content.requirement.id) {
+				continue;
+			}
+			const result = data.nodes.get(connectionData.sourceNodeId);
+			if (result !== undefined) {
+				return result;
+			}
+		}
+		return null;
+	}, [data, node.content.requirement]);
 	return (
 		<div className="relative z-10 flex flex-col gap-[2px] h-full">
-			<PropertiesPanelCollapsible title="LLM" glanceLabel={content.llm}>
+			<PropertiesPanelCollapsible title="LLM" glanceLabel={node.content.llm}>
 				<div className="flex flex-col gap-[10px]">
 					<div className="grid gap-[8px]">
 						<Select
-							value={content.llm}
+							value={node.content.llm}
 							onValueChange={(value) => {
-								onContentChange?.({
-									...content,
-									llm: value as TextGenerateActionContent["llm"],
+								updateNodeDataContent(node, {
+									llm: value as TextGenerationContent["llm"],
 								});
 							}}
 						>
@@ -87,14 +130,14 @@ export function TabsContentPrompt({
 										Gemini 2.0 Flash Exp
 									</SelectItem>
 								</SelectGroup>
-								{developerMode && (
+								{/* {developerMode && (
 									<SelectGroup>
 										<SelectLabel>Development</SelectLabel>
 										<SelectItem value="dev:error">
 											Mock(Raise an error)
 										</SelectItem>
 									</SelectGroup>
-								)}
+								)} */}
 							</SelectContent>
 						</Select>
 					</div>
@@ -105,13 +148,12 @@ export function TabsContentPrompt({
 						<div className="grid gap-[16px]">
 							<Slider
 								label="Temperature"
-								value={content.temperature}
+								value={node.content.temperature}
 								max={2.0}
 								min={0.0}
 								step={0.01}
 								onChange={(value) => {
-									onContentChange?.({
-										...content,
+									updateNodeDataContent(node, {
 										temperature: value,
 									});
 								}}
@@ -119,13 +161,12 @@ export function TabsContentPrompt({
 						</div>
 						<Slider
 							label="Top P"
-							value={content.topP}
+							value={node.content.topP}
 							max={1.0}
 							min={0.0}
 							step={0.01}
 							onChange={(value) => {
-								onContentChange?.({
-									...content,
+								updateNodeDataContent(node, {
 									topP: value,
 								});
 							}}
@@ -149,9 +190,7 @@ export function TabsContentPrompt({
 								...connectableTextNodes,
 								...connectableTextGeneratorNodes,
 							]}
-							onValueChange={(node) => {
-								onRequirementConnect?.(node);
-							}}
+							onValueChange={(node) => {}}
 						/>
 					</div>
 				) : (
@@ -176,7 +215,7 @@ export function TabsContentPrompt({
 								type="button"
 								className="group-hover:block hidden p-[2px] hover:bg-black-70 rounded-[4px]"
 								onClick={() => {
-									onRequirementRemove?.(requirementNode);
+									// onRequirementRemove?.(requirementNode);
 								}}
 							>
 								<TrashIcon className="w-[16px] h-[16px] text-black-30" />
@@ -229,10 +268,9 @@ export function TabsContentPrompt({
 							nodes={[
 								...connectableTextNodes,
 								...connectableTextGeneratorNodes,
-								...connectableFileNodes,
 							]}
 							onValueChange={(node) => {
-								onSourceConnect?.(node);
+								// onSourceConnect?.(node);
 							}}
 						/>
 					</div>
@@ -262,7 +300,7 @@ export function TabsContentPrompt({
 										type="button"
 										className="group-hover:block hidden p-[2px] hover:bg-black-70 rounded-[4px]"
 										onClick={() => {
-											onSourceRemove?.(sourceNode);
+											// onSourceRemove?.(sourceNode);
 										}}
 									>
 										<TrashIcon className="w-[16px] h-[16px] text-black-30" />
@@ -277,10 +315,10 @@ export function TabsContentPrompt({
 								nodes={[
 									...connectableTextNodes,
 									...connectableTextGeneratorNodes,
-									...connectableFileNodes,
+									// ...connectableFileNodes,
 								]}
 								onValueChange={(node) => {
-									onSourceConnect?.(node);
+									// onSourceConnect?.(node);
 								}}
 							/>
 						</div>
@@ -291,7 +329,7 @@ export function TabsContentPrompt({
 			<div className="border-t border-[hsla(222,21%,40%,1)]" />
 			<PropertiesPanelCollapsible
 				title="System"
-				glanceLabel={content.system === undefined ? "Default" : "Modified"}
+				glanceLabel={node.content.system === undefined ? "Default" : "Modified"}
 				expandedClassName="flex-1"
 			>
 				<div className="flex-1 flex flex-col gap-[3px]">
@@ -301,17 +339,15 @@ export function TabsContentPrompt({
 					</p>
 					<SystemPromptTextarea
 						className="flex-1"
-						defaultValue={content.system ?? textGenerationPrompt}
+						defaultValue={node.content.system ?? textGenerationPrompt}
 						revertValue={textGenerationPrompt}
 						onValueChange={(value) => {
-							onContentChange?.({
-								...content,
+							updateNodeDataContent(node, {
 								system: value,
 							});
 						}}
 						onRevertToDefault={() => {
-							onContentChange?.({
-								...content,
+							updateNodeDataContent(node, {
 								system: undefined,
 							});
 						}}
@@ -328,25 +364,28 @@ export function TabsContentPrompt({
 					name="text"
 					id="text"
 					className="w-full text-[14px] bg-[hsla(222,21%,40%,0.3)] rounded-[8px] text-white p-[14px] font-rosart outline-none resize-none flex-1 mb-[16px]"
-					defaultValue={content.instruction}
+					defaultValue={node.content.prompt}
 					ref={(ref) => {
 						if (ref === null) {
 							return;
 						}
-
 						function handleBlur() {
 							if (ref === null) {
 								return;
 							}
-							if (content.instruction !== ref.value) {
-								onContentChange?.({
-									...content,
-									instruction: ref.value,
+							if (node.content.prompt !== ref.value) {
+								updateNodeDataContent(node, {
+									prompt: ref.value,
 								});
 							}
 						}
 						ref.addEventListener("blur", handleBlur);
 						return () => {
+							if (node.content.prompt !== ref.value) {
+								updateNodeDataContent(node, {
+									prompt: ref.value,
+								});
+							}
 							ref.removeEventListener("blur", handleBlur);
 						};
 					}}
@@ -565,5 +604,111 @@ export function TabsContentPrompt({
 								</div>
 							</div> */}
 		</div>
+	);
+}
+
+interface SystemPromptTextareaProps
+	extends Pick<
+		DetailedHTMLProps<
+			React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+			HTMLTextAreaElement
+		>,
+		"defaultValue" | "className"
+	> {
+	onValueChange?: (value: string) => void;
+	onRevertToDefault?: () => void;
+	revertValue?: string;
+}
+export function SystemPromptTextarea({
+	defaultValue,
+	className,
+	onValueChange,
+	onRevertToDefault,
+	revertValue,
+}: SystemPromptTextareaProps) {
+	const id = useId();
+	return (
+		<div className={clsx("relative", className)}>
+			<textarea
+				className="w-full text-[14px] bg-[hsla(222,21%,40%,0.3)] rounded-[8px] text-white p-[14px] font-rosart outline-none resize-none h-full"
+				defaultValue={defaultValue}
+				ref={(ref) => {
+					if (ref === null) {
+						return;
+					}
+					ref.dataset.refId = id;
+
+					function handleBlur() {
+						if (ref === null) {
+							return;
+						}
+						if (defaultValue !== ref.value) {
+							onValueChange?.(ref.value);
+						}
+					}
+					ref.addEventListener("blur", handleBlur);
+					return () => {
+						ref.removeEventListener("blur", handleBlur);
+					};
+				}}
+			/>
+
+			<div className="absolute bottom-[4px] right-[4px]">
+				<RevertToDefaultButton
+					onClick={() => {
+						onRevertToDefault?.();
+						const textarea = document.querySelector(
+							`textarea[data-ref-id="${id}"]`,
+						);
+						if (
+							revertValue !== undefined &&
+							textarea !== null &&
+							textarea instanceof HTMLTextAreaElement
+						) {
+							textarea.value = revertValue;
+						}
+					}}
+				/>
+			</div>
+		</div>
+	);
+}
+
+function RevertToDefaultButton({ onClick }: { onClick: () => void }) {
+	const [clicked, setClicked] = useState(false);
+
+	const handleClick = useCallback(() => {
+		onClick();
+		setClicked(true);
+		setTimeout(() => setClicked(false), 2000);
+	}, [onClick]);
+
+	return (
+		<button
+			type="button"
+			className="group flex items-center bg-black-100/30 text-white px-[8px] py-[2px] rounded-md transition-all duration-300 ease-in-out hover:bg-black-100"
+			onClick={handleClick}
+		>
+			<div className="relative h-[12px] w-[12px]">
+				<span
+					className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${clicked ? "opacity-0" : "opacity-100"}`}
+				>
+					<UndoIcon className="h-[12px] w-[12px]" />
+				</span>
+				<span
+					className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${clicked ? "opacity-100" : "opacity-0"}`}
+				>
+					<CheckIcon className="h-[12px] w-[12px]" />
+				</span>
+			</div>
+			<div
+				className="overflow-hidden transition-all duration-300 ease-in-out w-0 data-[clicked=false]:group-hover:w-[98px] data-[clicked=true]:group-hover:w-[40px] group-hover:ml-[4px] flex"
+				data-clicked={clicked}
+			>
+				<span className="whitespace-nowrap text-[12px]">
+					{clicked ? "Revert!" : "Revert to Default"}
+				</span>
+			</div>
+		</button>
 	);
 }

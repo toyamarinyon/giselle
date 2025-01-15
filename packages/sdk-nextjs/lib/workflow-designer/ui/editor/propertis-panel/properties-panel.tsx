@@ -1,63 +1,20 @@
 import type { NodeData } from "@/lib/workflow-data";
-import { usePropertiesPanel } from "@/lib/workflow-designer/state";
+import { isTextGenerationNode } from "@/lib/workflow-data/node/actions/text-generation";
 import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { upload } from "@vercel/blob/client";
-import { readStreamableValue } from "ai/rsc";
 import clsx from "clsx/lite";
 import {
-	ArrowUpFromLineIcon,
-	CheckCircle,
-	CheckIcon,
-	ChevronsUpDownIcon,
-	CornerDownRightIcon,
-	FileIcon,
-	FileXIcon,
-	FingerprintIcon,
-	Minimize2Icon,
-	TrashIcon,
-	UndoIcon,
-} from "lucide-react";
-import {
 	type ComponentProps,
-	type DetailedHTMLProps,
 	type FC,
 	type HTMLAttributes,
 	type ReactNode,
-	useCallback,
-	useId,
 	useMemo,
-	useState,
 } from "react";
-import ClipboardButton from "../../_/clipboard-button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuLabel,
-	DropdownMenuRadioGroup,
-	DropdownMenuRadioItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "../../_/dropdown-menu";
-import { Markdown } from "../../_/markdown";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-} from "../../_/select";
-import { Slider } from "../../_/slider";
-import { Tooltip } from "../../_/tooltip";
-import { DocumentIcon } from "../../icons/document";
 import { PanelCloseIcon } from "../../icons/panel-close";
 import { PanelOpenIcon } from "../../icons/panel-open";
-import { SpinnerIcon } from "../../icons/spinner";
-import { WilliIcon } from "../../icons/willi";
 import { ContentTypeIcon } from "../content-type-icon";
+import { TabsContentPrompt } from "./tab-contents/prompt";
 // import { parse, remove } from "../actions";
 // import { vercelBlobFileFolder } from "../constants";
 // import { ContentTypeIcon } from "../content-type-icon";
@@ -95,61 +52,6 @@ function PropertiesPanelContentBox({
 }: { children: ReactNode; className?: string }) {
 	return (
 		<div className={clsx("px-[24px] py-[8px]", className)}>{children}</div>
-	);
-}
-
-interface PropertiesPanelCollapsible {
-	title: string;
-	glanceLabel?: string;
-	children: ReactNode;
-	expandedClassName?: string;
-}
-
-function PropertiesPanelCollapsible({
-	title,
-	glanceLabel,
-	expandedClassName,
-	children,
-}: PropertiesPanelCollapsible) {
-	const [isExpanded, setIsExpanded] = useState(false);
-
-	return (
-		<>
-			{isExpanded ? (
-				<PropertiesPanelContentBox
-					className={clsx(
-						"text-black-30 flex flex-col gap-2",
-						expandedClassName,
-					)}
-				>
-					<div className="flex justify-between items-center">
-						<p className="font-rosart">{title}</p>
-						<button type="button" onClick={() => setIsExpanded(false)}>
-							<Minimize2Icon
-								size={16}
-								className="text-black-50 hover:text-black-30"
-							/>
-						</button>
-					</div>
-					{children}
-				</PropertiesPanelContentBox>
-			) : (
-				<button type="button" onClick={() => setIsExpanded(true)}>
-					<PropertiesPanelContentBox className="text-black-30 flex justify-between items-center group">
-						<div className="flex gap-2 items-center">
-							<p className="font-rosart">{title}</p>
-							{glanceLabel && (
-								<span className="text-[10px] text-black-50">{glanceLabel}</span>
-							)}
-						</div>
-						<ChevronsUpDownIcon
-							size={16}
-							className="text-black-50 group-hover:text-black-30"
-						/>
-					</PropertiesPanelContentBox>
-				</button>
-			)}
-		</>
 	);
 }
 
@@ -308,6 +210,16 @@ function PropertiesPanelTitle({ node }: { node: NodeData }) {
 	);
 }
 
+function PropertiesPanelContents({ node }: { node: NodeData }) {
+	if (isTextGenerationNode(node)) {
+		return (
+			<TabsContent value="Prompt" className="flex-1">
+				<TabsContentPrompt node={node} />
+			</TabsContent>
+		);
+	}
+}
+
 export function PropertiesPanel() {
 	const {
 		data,
@@ -353,7 +265,10 @@ export function PropertiesPanel() {
 					</div>
 
 					{selectedNodes.length === 1 && (
-						<PropertiesPanelTitle node={selectedNodes[0]} />
+						<>
+							<PropertiesPanelTitle node={selectedNodes[0]} />
+							<PropertiesPanelContents node={selectedNodes[0]} />
+						</>
 					)}
 
 					{/* {selectedNode && isTextGeneration(selectedNode) && (

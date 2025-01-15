@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import * as SliderPrimitive from "@radix-ui/react-slider";
+import clsx from "clsx/lite";
 import { type ComponentProps, useState } from "react";
 
 function SliderInner({
@@ -8,7 +8,7 @@ function SliderInner({
 }: ComponentProps<typeof SliderPrimitive.Root>) {
 	return (
 		<SliderPrimitive.Root
-			className={cn(
+			className={clsx(
 				"relative flex w-full touch-none select-none items-center",
 				className,
 			)}
