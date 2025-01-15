@@ -62,11 +62,6 @@ export function TabsContentPrompt({
 			const removeSourceConnectionHandle = node.content.sources.find(
 				(source) => source.nodeId === removeSourceNode.id,
 			);
-			console.log(
-				node.content.sources,
-				removeSourceNode,
-				removeSourceConnectionHandle,
-			);
 			if (removeSourceConnectionHandle === undefined) {
 				return;
 			}
