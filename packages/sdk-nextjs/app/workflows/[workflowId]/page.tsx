@@ -1,6 +1,6 @@
 "use client";
 import { useWorkflowDesigner } from "@/lib/workflow-designer";
-import { Editor, } from "@/lib/workflow-designer/ui";
+import { Editor } from "@/lib/workflow-designer/ui";
 
 export default function Page() {
 	const { data, addTextGenerationNode, addTextNode } = useWorkflowDesigner();
@@ -29,7 +29,17 @@ export default function Page() {
 				<button
 					type="button"
 					onClick={() => {
-						addTextNode({ name: "test textnode" });
+						addTextNode(
+							{ name: "test textnode" },
+							{
+								ui: {
+									position: {
+										x: Math.random() * 100,
+										y: Math.random() * 100,
+									},
+								},
+							},
+						);
 					}}
 				>
 					add text node
