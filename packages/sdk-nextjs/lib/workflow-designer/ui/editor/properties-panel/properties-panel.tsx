@@ -13,8 +13,7 @@ import {
 } from "react";
 import { PanelCloseIcon } from "../../icons/panel-close";
 import { PanelOpenIcon } from "../../icons/panel-open";
-import { ContentTypeIcon } from "../content-type-icon";
-import { TextGenerationTabContents } from "./tab-contents/text-generation-tab-contents";
+import { TextGenerationNodePropertiesPanel } from "./text-generation-node";
 // import { parse, remove } from "../actions";
 // import { vercelBlobFileFolder } from "../constants";
 // import { ContentTypeIcon } from "../content-type-icon";
@@ -177,39 +176,6 @@ function PropertiesTabList({
 	);
 }
 
-function PropertiesPanelTitle({ node }: { node: NodeData }) {
-	return (
-		<div className="bg-black-80 px-[24px] h-[36px] flex items-center justify-between">
-			<div className="flex items-center gap-[10px]">
-				<div
-					data-type={node.type}
-					className={clsx(
-						"rounded-[2px] flex items-center justify-center px-[4px] py-[4px]",
-						"data-[type=action]:bg-[hsla(187,71%,48%,1)]",
-						"data-[type=variable]:bg-white",
-					)}
-				>
-					<ContentTypeIcon
-						contentType={node.content.type}
-						className="w-[14px] h-[14px] fill-black-100"
-					/>
-				</div>
-				<div className="font-avenir text-[16px] text-black-30">{node.name}</div>
-			</div>
-			{node.content.type === "textGeneration" && (
-				<div className="">
-					<button
-						type="button"
-						className="relative z-10 rounded-[8px] shadow-[0px_0px_3px_0px_#FFFFFF40_inset] py-[3px] px-[8px] bg-black-80 text-black-30 font-rosart text-[14px] disabled:bg-black-40"
-					>
-						Generate
-					</button>
-				</div>
-			)}
-		</div>
-	);
-}
-
 export function PropertiesPanel() {
 	const {
 		data,
@@ -254,14 +220,10 @@ export function PropertiesPanel() {
 						)}
 					</div>
 
-					{selectedNodes.length === 1 && (
-						<>
-							<PropertiesPanelTitle node={selectedNodes[0]} />
-							{isTextGenerationNode(selectedNodes[0]) && (
-								<TextGenerationTabContents node={selectedNodes[0]} />
-							)}
-						</>
-					)}
+					{selectedNodes.length === 1 &&
+						isTextGenerationNode(selectedNodes[0]) && (
+							<TextGenerationNodePropertiesPanel node={selectedNodes[0]} />
+						)}
 
 					{/* {selectedNode && isTextGeneration(selectedNode) && (
 						<TabsContent value="Prompt" className="flex-1">

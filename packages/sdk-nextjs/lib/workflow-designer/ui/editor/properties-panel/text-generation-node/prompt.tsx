@@ -4,21 +4,19 @@ import {
 	type TextNodeData,
 	createConnectionHandle,
 } from "@/lib/workflow-data";
-import {
-	useNode,
-	useWorkflowDesigner,
-} from "@/lib/workflow-designer/workflow-designer-context";
+import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import { textGenerationPrompt } from "@/lib/workflow-engine/core/prompts";
 import clsx from "clsx/lite";
 import { CheckIcon, TrashIcon, UndoIcon } from "lucide-react";
 import {
+	type ChangeEvent,
 	type DetailedHTMLProps,
 	useCallback,
 	useId,
 	useMemo,
 	useState,
 } from "react";
-import { Block } from "../../../../_/block";
+import { Block } from "../../../_/block";
 import {
 	Select,
 	SelectContent,
@@ -27,16 +25,22 @@ import {
 	SelectLabel,
 	SelectTrigger,
 	SelectValue,
-} from "../../../../_/select";
-import { Slider } from "../../../../_/slider";
-import { PropertiesPanelCollapsible } from "../../_/collapsible";
-import { PropertiesPanelContentBox } from "../../_/content-box";
-import { NodeDropdown } from "../_";
+} from "../../../_/select";
+import { Slider } from "../../../_/slider";
+import { PropertiesPanelCollapsible } from "../_/collapsible";
+import { PropertiesPanelContentBox } from "../_/content-box";
+import { NodeDropdown } from "../_/node-dropdown";
 
 export function TabsContentPrompt({
 	node,
+	prompt,
+	onPromptChange,
 }: {
 	node: TextGenerationNodeData;
+	prompt: string;
+	onPromptChange: (
+		event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
+	) => void;
 }) {
 	const { data, updateNodeDataContent, addConnection, deleteConnection } =
 		useWorkflowDesigner();
@@ -418,7 +422,8 @@ export function TabsContentPrompt({
 					name="text"
 					id="text"
 					className="w-full text-[14px] bg-[hsla(222,21%,40%,0.3)] rounded-[8px] text-white p-[14px] font-rosart outline-none resize-none flex-1 mb-[16px]"
-					defaultValue={node.content.prompt}
+					defaultValue={prompt}
+					onChange={onPromptChange}
 					ref={(ref) => {
 						if (ref === null) {
 							return;

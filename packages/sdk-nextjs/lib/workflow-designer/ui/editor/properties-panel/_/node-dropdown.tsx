@@ -1,6 +1,4 @@
 import type { NodeData } from "@/lib/workflow-data";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
-import type { ComponentProps } from "react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -75,17 +73,3 @@ export function NodeDropdown({
 		</DropdownMenu>
 	);
 }
-
-export function TabsContent({
-	ref,
-	...props
-}: ComponentProps<typeof TabsPrimitive.Content>) {
-	return (
-		<TabsPrimitive.Content
-			ref={ref}
-			className="overflow-y-auto overflow-x-hidden"
-			{...props}
-		/>
-	);
-}
-TabsContent.displayName = TabsPrimitive.Content.displayName;

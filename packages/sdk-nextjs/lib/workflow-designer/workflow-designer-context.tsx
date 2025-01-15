@@ -1,18 +1,15 @@
 "use client";
 
-import { useCompletion } from "ai/react";
 import {
 	createContext,
 	useCallback,
 	useContext,
-	useMemo,
 	useRef,
 	useState,
 } from "react";
 import type { z } from "zod";
 import type { NodeData, WorkflowData } from "../workflow-data";
 import type { CreateTextGenerationNodeParams } from "../workflow-data/node/actions/text-generation";
-import { createConnectionHandle as createConnectionHandleData } from "../workflow-data/node/connection";
 import type {
 	ConnectionHandle,
 	ConnectionId,
@@ -221,60 +218,4 @@ export function useWorkflowDesigner() {
 		);
 	}
 	return context;
-}
-
-export function useNode(nodeId: NodeId) {
-	const {
-		data: workflowData,
-		textGenerationApi,
-		updateNodeData,
-		addConnection: addConnectionInternal,
-	} = useWorkflowDesigner();
-
-	const data = useMemo(() => {
-		const node = workflowData.nodes.get(nodeId);
-		if (node === undefined) {
-			throw new Error(`Node with id ${nodeId} not found`);
-		}
-		return node;
-	}, [workflowData, nodeId]);
-
-	const { handleSubmit, completion, input, handleInputChange } = useCompletion({
-		api: textGenerationApi,
-		initialInput:
-			data.content.type === "textGeneration" ? data.content.prompt : undefined,
-		body: {
-			workflowId: workflowData.id,
-			nodeId: data.id,
-		},
-	});
-
-	const updateData = useCallback(
-		(newData: Partial<NodeData>) => {
-			updateNodeData(data, newData);
-		},
-		[updateNodeData, data],
-	);
-
-	const addConnection = useCallback(
-		({ sourceNode, label }: { sourceNode: NodeData; label: string }) => {
-			const connectionHandle = createConnectionHandleData({
-				label,
-				nodeId: data.id,
-				nodeType: data.type,
-			});
-			addConnectionInternal(sourceNode, connectionHandle);
-			return connectionHandle;
-		},
-		[data, addConnectionInternal],
-	);
-
-	return {
-		updateData,
-		addConnection,
-		handleGeneratingTextSubmit: handleSubmit,
-		generatedText: completion,
-		prompt: input,
-		handlePromptChange: handleInputChange,
-	};
 }
