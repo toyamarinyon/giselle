@@ -1,15 +1,22 @@
 import { TextGenerationNodeData, TextNodeData } from "@/lib/workflow-data";
-import type { Node, NodeProps, NodeTypes } from "@xyflow/react";
+import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
+import {
+	Handle,
+	type Node,
+	type NodeProps,
+	type NodeTypes,
+	Position,
+} from "@xyflow/react";
 import clsx from "clsx/lite";
 import { useMemo } from "react";
-import { NodeHeader } from "./node/node-header";
+import { NodeHeader } from "./node-header";
 
 type GiselleWorkflowDesignerTextGenerationNode = Node<
-	{ nodeData: TextGenerationNodeData },
+	{ nodeData: TextGenerationNodeData; preview?: boolean },
 	TextGenerationNodeData["content"]["type"]
 >;
 type GiselleWorkflowDesignerTextNode = Node<
-	{ nodeData: TextNodeData },
+	{ nodeData: TextNodeData; preview?: boolean },
 	TextNodeData["content"]["type"]
 >;
 type GiselleWorkflowDesignerNode =
@@ -26,6 +33,7 @@ function CustomNode({
 	type,
 	selected,
 }: NodeProps<GiselleWorkflowDesignerNode>) {
+	const { data: workflowData } = useWorkflowDesigner();
 	const targetHandles = useMemo(() => {
 		if (data.nodeData.content.type !== "textGeneration") {
 			return [];
@@ -35,6 +43,13 @@ function CustomNode({
 			...data.nodeData.content.sources,
 		].filter((item) => item !== undefined);
 	}, [data]);
+	const hasTarget = useMemo(
+		() =>
+			Array.from(workflowData.connections).some(
+				([_, connection]) => connection.sourceNodeId === data.nodeData.id,
+			),
+		[workflowData, data.nodeData.id],
+	);
 	return (
 		<div
 			data-type={data.nodeData.type}
@@ -75,7 +90,59 @@ function CustomNode({
 				)} */}
 			</div>
 			<div className="py-[4px] min-h-[30px]">
-				<div className="flex justify-between h-full"></div>
+				<div className="flex justify-between h-full">
+					<div className="grid">
+						{targetHandles.map((targetHandle) => (
+							<div
+								className="relative flex items-center h-[28px]"
+								key={targetHandle.id}
+							>
+								<Handle
+									type="target"
+									position={Position.Left}
+									id={targetHandle.id}
+									className={clsx(
+										"!absolute !w-[6px] !h-[12px] !rounded-l-[12px] !rounded-r-none !top-[50%] !-translate-y-[50%] !-left-[10px]",
+										"group-data-[type=action]:!bg-[hsla(187,71%,48%,1)]",
+										"group-data-[type=variable]:!bg-[hsla(236,7%,39%,1)]",
+									)}
+								/>
+								<div className="text-[14px] text-black--30 px-[12px]">
+									{targetHandle.label}
+								</div>
+							</div>
+						))}
+					</div>
+
+					{!data.preview && (
+						<div className="grid">
+							<div className="relative flex items-center h-[28px]">
+								<div className="absolute -right-[10px] translate-x-[6px]">
+									<div
+										className={clsx(
+											"h-[28px] w-[10px]",
+											"group-data-[type=action]:bg-[hsla(195,74%,21%,1)]",
+											"group-data-[type=variable]:bg-[hsla(236,7%,39%,1)]",
+										)}
+									/>
+									<Handle
+										type="source"
+										position={Position.Right}
+										data-state={hasTarget ? "connected" : "disconnected"}
+										className={clsx(
+											"!w-[12px] !absolute !h-[12px] !rounded-full !bg-black-100 !border-[2px] !top-[50%] !-translate-y-[50%] !translate-x-[5px]",
+											"group-data-[type=action]:!border-[hsla(195,74%,21%,1)] group-data-[type=action]:data-[state=connected]:!bg-[hsla(187,71%,48%,1)] group-data-[type=action]:hover:!bg-[hsla(187,71%,48%,1)]",
+											"group-data-[type=variable]:!border-[hsla(236,7%,39%,1)] group-data-[type=variable]:data-[state=connected]:!bg-white",
+										)}
+									/>
+								</div>
+								<div className="text-[14px] text-black--30 px-[12px]">
+									Output
+								</div>
+							</div>
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	);
