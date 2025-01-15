@@ -1,4 +1,3 @@
-import type { NodeData } from "@/lib/workflow-data";
 import { isTextGenerationNode } from "@/lib/workflow-data/node/actions/text-generation";
 import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
@@ -11,9 +10,8 @@ import {
 	type ReactNode,
 	useMemo,
 } from "react";
-import { PanelCloseIcon } from "../../icons/panel-close";
 import { PanelOpenIcon } from "../../icons/panel-open";
-import { TextGenerationNodePropertiesPanel } from "./text-generation-node";
+import { TextGenerationNodePropertiesPanel } from "./text-generation-node-properties-panel";
 // import { parse, remove } from "../actions";
 // import { vercelBlobFileFolder } from "../constants";
 // import { ContentTypeIcon } from "../content-type-icon";
