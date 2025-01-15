@@ -1,11 +1,13 @@
 import {
 	Background,
+	BackgroundVariant,
 	ReactFlow,
 	ReactFlowProvider,
 	useReactFlow,
 } from "@xyflow/react";
 import { useEffect } from "react";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
+import bg from "./bg.png";
 import { nodeTypes } from "./node";
 
 function Editor() {
@@ -32,12 +34,23 @@ function Editor() {
 	}, [data, reactFlowInstance.setNodes]);
 	return (
 		<ReactFlow
+			className="giselle-workflow-editor"
 			colorMode="dark"
 			defaultNodes={[]}
 			defaultEdges={[]}
 			nodeTypes={nodeTypes}
 		>
-			<Background />
+			<Background
+				className="!bg-black-100"
+				lineWidth={0}
+				variant={BackgroundVariant.Lines}
+				style={{
+					backgroundImage: `url(${bg.src})`,
+					backgroundPositionX: "center",
+					backgroundPositionY: "center",
+					backgroundSize: "cover",
+				}}
+			/>
 		</ReactFlow>
 	);
 }

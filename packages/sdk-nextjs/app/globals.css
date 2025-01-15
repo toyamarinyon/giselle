@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+	--black_100: 234 91% 5%;
+	--black_80: 218 58% 21%;
+	--black_70: 222 21% 40%;
+	--black_50: 222 21% 40%;
+	--black_40: 207 12% 57%;
+	--black_30: 207 19% 77%;
+	--black_-30: 192 73% 84%;
+	--black_-50: 210 58% 71%;
+	--black_-70: 202 52% 46%;
+	--green: 142 100% 68%;
+	--white: 30 100% 98%;
+	--red_50: 359 100% 66%;
+}

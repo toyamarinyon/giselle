@@ -1,0 +1,22 @@
+.mask-fill {
+	-webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0); /* 2つのマスクレイヤー */
+	-webkit-mask-clip: padding-box, border-box; /* レイヤーごとの描画領域の範囲 */
+	-webkit-mask-composite: destination-out; /* レイヤーが重なっていない領域を描画対象 */
+}
+
+.giselle-workflow-editor .react-flow__pane.selection {
+	cursor: default;
+}
+.giselle-workflow-editor[data-floating-node="true"]
+	.react-flow__pane.selection {
+	cursor: crosshair;
+}
+.giselle-workflow-editor .react-flow__node.selectable {
+	cursor: default;
+}
+.giselle-workflow-editor .react-flow__node.draggable.dragging {
+	cursor: default;
+}
+.giselle-workflow-editor .react-flow__edge.selectable {
+	cursor: default;
+}
