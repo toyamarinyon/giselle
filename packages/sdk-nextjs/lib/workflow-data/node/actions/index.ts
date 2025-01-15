@@ -10,3 +10,8 @@ export const ActionNodeData = BaseNodeData.extend({
 	type: z.literal("action"),
 	content: ActionNodeContentData,
 });
+
+export const TextGenerationNodeData = ActionNodeData.extend({
+	content: TextGenerationContent,
+});
+export type TextGenerationNodeData = z.infer<typeof TextGenerationNodeData>;

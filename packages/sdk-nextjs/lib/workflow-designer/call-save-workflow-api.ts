@@ -1,4 +1,8 @@
-import type { WorkflowData, WorkflowId } from "../workflow-data";
+import {
+	type WorkflowData,
+	WorkflowDataJson,
+	type WorkflowId,
+} from "../workflow-data";
 import { Output } from "../workflow-engine/core/handlers/save-workflow";
 
 export async function callSaveWorkflowApi({
@@ -17,11 +21,7 @@ export async function callSaveWorkflowApi({
 		},
 		body: JSON.stringify({
 			workflowId,
-			workflowData: {
-				...workflowData,
-				nodes: Object.fromEntries(workflowData.nodes),
-				connections: Object.fromEntries(workflowData.connections),
-			},
+			workflowData: WorkflowDataJson.parse(workflowData),
 		}),
 	});
 	const data = await response.json();

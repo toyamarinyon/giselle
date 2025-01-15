@@ -6,6 +6,7 @@ import {
 } from "@xyflow/react";
 import { useEffect } from "react";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
+import { nodeTypes } from "./node";
 
 function Editor() {
 	const { data } = useWorkflowDesigner();
@@ -20,6 +21,7 @@ function Editor() {
 					}
 					return {
 						id: nodeId,
+						type: nodeData.content.type,
 						position: { x: nodeState.position.x, y: nodeState.position.y },
 						selected: nodeState.selected,
 						data: { nodeData: nodeData },
@@ -29,7 +31,12 @@ function Editor() {
 		);
 	}, [data, reactFlowInstance.setNodes]);
 	return (
-		<ReactFlow colorMode="dark" defaultNodes={[]} defaultEdges={[]}>
+		<ReactFlow
+			colorMode="dark"
+			defaultNodes={[]}
+			defaultEdges={[]}
+			nodeTypes={nodeTypes}
+		>
 			<Background />
 		</ReactFlow>
 	);

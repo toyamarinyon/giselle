@@ -1,8 +1,8 @@
 import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
-import { ActionNodeData } from "./node/actions";
+import { ActionNodeData, TextGenerationNodeData } from "./node/actions";
 import { Connection, NodeUIState, connectionId, nodeId } from "./node/types";
-import { VariableNodeData } from "./node/variables";
+import { TextNodeData, VariableNodeData } from "./node/variables";
 
 const NodeData = z.discriminatedUnion("type", [
 	ActionNodeData,
@@ -88,3 +88,5 @@ export function generateInitialWorkflowData() {
 		},
 	});
 }
+
+export { TextNodeData, TextGenerationNodeData };
