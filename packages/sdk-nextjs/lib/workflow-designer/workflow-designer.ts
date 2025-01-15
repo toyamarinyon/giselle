@@ -2,13 +2,13 @@ import type { z } from "zod";
 import {
 	type NodeData,
 	type WorkflowData,
+	createConnection,
 	generateInitialWorkflowData,
 } from "../workflow-data";
 import {
 	type CreateTextGenerationNodeParams,
 	createTextGenerationNodeData,
 } from "../workflow-data/node/actions/text-generation";
-import { createConnection } from "../workflow-data/node/connection";
 import {
 	type BaseNodeData,
 	type ConnectionHandle,
