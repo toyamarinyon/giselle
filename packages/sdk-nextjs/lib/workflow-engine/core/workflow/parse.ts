@@ -1,5 +1,9 @@
 import type { WorkflowData } from "@/lib/workflow-data";
-import type { Connection, NodeId } from "@/lib/workflow-data/node/types";
+import type {
+	Connection,
+	ConnectionId,
+	NodeId,
+} from "@/lib/workflow-data/node/types";
 
 type ConnectionMap = Map<NodeId, Set<NodeId>>;
 export function createConnectionMap(
@@ -33,7 +37,7 @@ export function createConnectionMap(
 	return connectionMap;
 }
 
-export function findConnectedComponent(
+export function findConnectedNodes(
 	startNodeId: NodeId,
 	connectionMap: ConnectionMap,
 ): Set<NodeId> {
@@ -57,4 +61,22 @@ export function findConnectedComponent(
 	}
 
 	return connectedNodes;
+}
+
+export function findConnectedConnections(
+	connectedNodeIdSet: Set<NodeId>,
+	allConnectionSet: Set<Connection>,
+): Set<ConnectionId> {
+	const connectedConnectionSet = new Set<ConnectionId>();
+
+	for (const connection of allConnectionSet) {
+		if (
+			connectedNodeIdSet.has(connection.sourceNodeId) &&
+			connectedNodeIdSet.has(connection.targetNodeId)
+		) {
+			connectedConnectionSet.add(connection.id);
+		}
+	}
+
+	return connectedConnectionSet;
 }
