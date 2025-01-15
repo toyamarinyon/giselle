@@ -4,6 +4,7 @@ import type {
 	TextNodeData,
 } from "@/lib/workflow-data";
 import type { TextGenerationContent } from "@/lib/workflow-data/node/actions/text-generation";
+import { createConnectionHandle } from "@/lib/workflow-data/node/connection";
 import {
 	useNode,
 	useWorkflowDesigner,
@@ -38,7 +39,58 @@ export function TabsContentPrompt({
 }: {
 	node: TextGenerationNodeData;
 }) {
-	const { data, updateNodeDataContent } = useWorkflowDesigner();
+	const { data, updateNodeDataContent, addConnection, deleteConnection } =
+		useWorkflowDesigner();
+
+	const addSource = useCallback(
+		({ sourceNode, label }: { sourceNode: NodeData; label: string }) => {
+			const connectionHandle = createConnectionHandle({
+				label,
+				nodeId: node.id,
+				nodeType: node.type,
+			});
+			addConnection(sourceNode, connectionHandle);
+			connectionHandle;
+			updateNodeDataContent(node, {
+				sources: [...node.content.sources, connectionHandle],
+			});
+		},
+		[addConnection, node, updateNodeDataContent],
+	);
+
+	const setRequirement = useCallback(
+		({ requirementNode }: { requirementNode: NodeData }) => {
+			const connectionHandle = createConnectionHandle({
+				label: "Requirement",
+				nodeId: node.id,
+				nodeType: node.type,
+			});
+			addConnection(requirementNode, connectionHandle);
+			updateNodeDataContent(node, {
+				requirement: connectionHandle,
+			});
+		},
+		[addConnection, node, updateNodeDataContent],
+	);
+
+	const unsetRequirement = useCallback(() => {
+		const requirementConnectionHandle = node.content.requirement;
+		if (requirementConnectionHandle === undefined) {
+			return;
+		}
+		for (const [connectionId, connectionData] of data.connections) {
+			if (
+				connectionData.targetNodeHandleId !== requirementConnectionHandle.id
+			) {
+				continue;
+			}
+			deleteConnection(connectionId);
+			break;
+		}
+		updateNodeDataContent(node, {
+			requirement: undefined,
+		});
+	}, [deleteConnection, data, node, updateNodeDataContent]);
 
 	const connectableTextNodes = useMemo(
 		() =>
@@ -190,7 +242,9 @@ export function TabsContentPrompt({
 								...connectableTextNodes,
 								...connectableTextGeneratorNodes,
 							]}
-							onValueChange={(node) => {}}
+							onValueChange={(node) => {
+								setRequirement({ requirementNode: node });
+							}}
 						/>
 					</div>
 				) : (
@@ -215,7 +269,7 @@ export function TabsContentPrompt({
 								type="button"
 								className="group-hover:block hidden p-[2px] hover:bg-black-70 rounded-[4px]"
 								onClick={() => {
-									// onRequirementRemove?.(requirementNode);
+									unsetRequirement();
 								}}
 							>
 								<TrashIcon className="w-[16px] h-[16px] text-black-30" />
@@ -223,31 +277,6 @@ export function TabsContentPrompt({
 						</div>
 					</Block>
 				)}
-				{/* <div className="mb-[4px]">
-					<Select value={requirementNode?.id}>
-						<SelectTrigger>
-							<SelectValue placeholder="Select a requirement" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectLabel>Text Generator</SelectLabel>
-								{connectableTextGeneratorNodes.map((node) => (
-									<SelectItem value={node.id} key={node.id} label={node.name}>
-										<p>it's a text generator</p>
-									</SelectItem>
-								))}
-							</SelectGroup>
-							<SelectGroup>
-								<SelectLabel>Text</SelectLabel>
-								{connectableTextNodes.map((node) => (
-									<SelectItem value={node.id} key={node.id} label={node.name}>
-										<p>{node.content.text}</p>
-									</SelectItem>
-								))}
-							</SelectGroup>
-						</SelectContent>
-					</Select>
-				</div> */}
 			</PropertiesPanelCollapsible>
 
 			<div className="border-t border-[hsla(222,21%,40%,1)]" />
