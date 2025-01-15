@@ -1,3 +1,4 @@
+import { WorkflowData } from "../workflow-data";
 import { Output } from "../workflow-engine/core/handlers/create-workflow";
 
 export async function callCreateWorkflowApi({
@@ -13,5 +14,6 @@ export async function callCreateWorkflowApi({
 		body: JSON.stringify({}),
 	});
 	const data = await response.json();
-	return Output.parse(data);
+	const output = Output.parse(data);
+	return WorkflowData.parse(output.workflowData);
 }

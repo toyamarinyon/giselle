@@ -5,12 +5,10 @@ import { callCreateWorkflowApi } from "./call-create-workflow-api";
 export function useCreateWorkflow({
 	onWorkflowCreated,
 }: {
-	onWorkflowCreated?: ({
-		workflowData,
-	}: { workflowData: WorkflowData }) => void;
+	onWorkflowCreated?: (params: { workflowData: WorkflowData }) => void;
 } = {}) {
 	const createWorkflow = useCallback(async () => {
-		const { workflowData } = await callCreateWorkflowApi();
+		const workflowData = await callCreateWorkflowApi();
 		onWorkflowCreated?.({ workflowData });
 	}, [onWorkflowCreated]);
 	return {

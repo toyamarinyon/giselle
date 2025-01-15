@@ -13,7 +13,11 @@ import type { z } from "zod";
 import type { NodeData, WorkflowData } from "../workflow-data";
 import type { CreateTextGenerationNodeParams } from "../workflow-data/node/actions/text-generation";
 import { createConnectionHandle as createConnectionHandleData } from "../workflow-data/node/connection";
-import type { ConnectionHandle, NodeId } from "../workflow-data/node/types";
+import type {
+	ConnectionHandle,
+	NodeId,
+	NodeUIState,
+} from "../workflow-data/node/types";
 import type { CreateTextNodeParams } from "../workflow-data/node/variables/text";
 import { callSaveWorkflowApi } from "./call-save-workflow-api";
 import {
