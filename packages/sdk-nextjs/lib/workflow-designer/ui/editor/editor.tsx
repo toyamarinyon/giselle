@@ -11,6 +11,7 @@ import {
 import { useEffect } from "react";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
 import bg from "./bg.png";
+import { Header } from "./header";
 import { type GiselleWorkflowDesignerNode, nodeTypes } from "./node";
 import { PropertiesPanel } from "./properties-panel";
 
@@ -124,6 +125,9 @@ function Editor() {
 					backgroundSize: "cover",
 				}}
 			/>
+			<Panel position="top-left" className="!top-0 !left-0 !right-0 !m-0">
+				<Header />
+			</Panel>
 			<Panel position="top-right" className="!top-0 !bottom-0 !right-0 !m-0">
 				<PropertiesPanel />
 			</Panel>

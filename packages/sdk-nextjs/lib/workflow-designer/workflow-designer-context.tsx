@@ -18,7 +18,7 @@ import type {
 } from "../workflow-data/node/types";
 import type { CreateTextNodeParams } from "../workflow-data/node/variables/text";
 import { callSaveWorkflowApi } from "./call-save-workflow-api";
-import { usePropertiesPanel } from "./state";
+import { usePropertiesPanel, useView } from "./state";
 import {
 	WorkflowDesigner,
 	type WorkflowDesignerOperations,
@@ -35,7 +35,8 @@ interface WorkflowDesignerContextValue
 			| "deleteNode"
 			| "deleteConnection"
 		>,
-		ReturnType<typeof usePropertiesPanel> {
+		ReturnType<typeof usePropertiesPanel>,
+		ReturnType<typeof useView> {
 	data: WorkflowData;
 	textGenerationApi: string;
 	updateNodeDataContent: <T extends NodeData>(
@@ -188,6 +189,7 @@ export function WorkflowDesignerProvider({
 	);
 
 	const usePropertiesPanelHelper = usePropertiesPanel();
+	const useViewHelper = useView();
 
 	return (
 		<WorkflowDesignerContext.Provider
@@ -203,6 +205,7 @@ export function WorkflowDesignerProvider({
 				deleteNode,
 				deleteConnection,
 				...usePropertiesPanelHelper,
+				...useViewHelper,
 			}}
 		>
 			{children}
