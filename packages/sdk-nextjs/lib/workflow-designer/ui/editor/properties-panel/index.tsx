@@ -1,17 +1,12 @@
 import { isTextGenerationNode } from "@/lib/workflow-data/node/actions/text-generation";
+import { isTextNode } from "@/lib/workflow-data/node/variables/text";
 import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
 import clsx from "clsx/lite";
-import {
-	type ComponentProps,
-	type FC,
-	type HTMLAttributes,
-	type ReactNode,
-	useMemo,
-} from "react";
+import { type ComponentProps, type HTMLAttributes, useMemo } from "react";
 import { PanelOpenIcon } from "../../icons/panel-open";
 import { TextGenerationNodePropertiesPanel } from "./text-generation-node-properties-panel";
+import { TextNodePropertiesPanel } from "./text-node-properties-panel";
 // import { parse, remove } from "../actions";
 // import { vercelBlobFileFolder } from "../constants";
 // import { ContentTypeIcon } from "../content-type-icon";
@@ -42,37 +37,6 @@ import { TextGenerationNodePropertiesPanel } from "./text-generation-node-proper
 // } from "../lib/utils";
 // import type {} from "../types";
 // import { Block } from "./block";
-
-function PropertiesPanelContentBox({
-	children,
-	className,
-}: { children: ReactNode; className?: string }) {
-	return (
-		<div className={clsx("px-[24px] py-[8px]", className)}>{children}</div>
-	);
-}
-
-const Tabs = TabsPrimitive.Root;
-
-function TabsList(props: ComponentProps<typeof TabsPrimitive.List>) {
-	return (
-		<TabsPrimitive.List className="gap-[16px] flex items-center" {...props} />
-	);
-}
-TabsList.displayName = TabsPrimitive.List.displayName;
-
-const TabsTrigger: FC<ComponentProps<typeof TabsPrimitive.Trigger>> = ({
-	ref,
-	className,
-	...props
-}) => (
-	<TabsPrimitive.Trigger
-		ref={ref}
-		className="font-rosart text-[16px] text-black-70 hover:text-black-30/70 data-[state=active]:text-black-30 py-[6px] px-[2px]"
-		{...props}
-	/>
-);
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
 function DialogOverlay(props: ComponentProps<typeof DialogPrimitive.Overlay>) {
 	return (
@@ -159,9 +123,15 @@ export function PropertiesPanel() {
 		>
 			<div className="absolute z-0 rounded-[16px] inset-0 border mask-fill bg-gradient-to-br bg-origin-border bg-clip-boarder border-transparent from-[hsla(233,4%,37%,1)] to-[hsla(233,62%,22%,1)]" />
 			{openPropertiesPanel ? (
-				selectedNodes.length === 1 &&
-				isTextGenerationNode(selectedNodes[0]) && (
-					<TextGenerationNodePropertiesPanel node={selectedNodes[0]} />
+				selectedNodes.length === 1 && (
+					<>
+						{isTextGenerationNode(selectedNodes[0]) && (
+							<TextGenerationNodePropertiesPanel node={selectedNodes[0]} />
+						)}
+						{isTextNode(selectedNodes[0]) && (
+							<TextNodePropertiesPanel node={selectedNodes[0]} />
+						)}
+					</>
 				)
 			) : (
 				<div className="relative z-10 flex justify-between items-center">

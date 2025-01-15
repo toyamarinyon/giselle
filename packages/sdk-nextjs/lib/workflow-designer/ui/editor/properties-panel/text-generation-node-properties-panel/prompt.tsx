@@ -428,7 +428,7 @@ export function TabsContentPrompt({
 						if (ref === null) {
 							return;
 						}
-						function handleBlur() {
+						function updatePrompt() {
 							if (ref === null) {
 								return;
 							}
@@ -438,13 +438,12 @@ export function TabsContentPrompt({
 								});
 							}
 						}
+						function handleBlur() {
+							updatePrompt();
+						}
 						ref.addEventListener("blur", handleBlur);
 						return () => {
-							if (node.content.prompt !== ref.value) {
-								updateNodeDataContent(node, {
-									prompt: ref.value,
-								});
-							}
+							updatePrompt();
 							ref.removeEventListener("blur", handleBlur);
 						};
 					}}
