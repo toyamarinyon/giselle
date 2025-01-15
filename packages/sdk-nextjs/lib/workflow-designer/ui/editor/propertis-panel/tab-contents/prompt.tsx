@@ -5,6 +5,7 @@ import type {
 } from "@/lib/workflow-data";
 import type { TextGenerationContent } from "@/lib/workflow-data/node/actions/text-generation";
 import { createConnectionHandle } from "@/lib/workflow-data/node/connection";
+import type { ConnectionHandle } from "@/lib/workflow-data/node/types";
 import {
 	useNode,
 	useWorkflowDesigner,
@@ -43,11 +44,11 @@ export function TabsContentPrompt({
 		useWorkflowDesigner();
 
 	const addSource = useCallback(
-		({ sourceNode, label }: { sourceNode: NodeData; label: string }) => {
+		(sourceNode: NodeData) => {
 			const connectionHandle = createConnectionHandle({
-				label,
-				nodeId: node.id,
-				nodeType: node.type,
+				label: "Source",
+				nodeId: sourceNode.id,
+				nodeType: sourceNode.type,
 			});
 			addConnection(sourceNode, connectionHandle);
 			connectionHandle;
@@ -58,8 +59,39 @@ export function TabsContentPrompt({
 		[addConnection, node, updateNodeDataContent],
 	);
 
+	const removeSource = useCallback(
+		(removeSourceNode: NodeData) => {
+			const removeSourceConnectionHandle = node.content.sources.find(
+				(source) => source.nodeId === removeSourceNode.id,
+			);
+			console.log(
+				node.content.sources,
+				removeSourceNode,
+				removeSourceConnectionHandle,
+			);
+			if (removeSourceConnectionHandle === undefined) {
+				return;
+			}
+			for (const [connectionId, connectionData] of data.connections) {
+				if (
+					connectionData.targetNodeHandleId !== removeSourceConnectionHandle.id
+				) {
+					continue;
+				}
+				deleteConnection(connectionId);
+				break;
+			}
+			updateNodeDataContent(node, {
+				sources: node.content.sources.filter(
+					({ id }) => id !== removeSourceConnectionHandle.id,
+				),
+			});
+		},
+		[deleteConnection, data, node, updateNodeDataContent],
+	);
+
 	const setRequirement = useCallback(
-		({ requirementNode }: { requirementNode: NodeData }) => {
+		(requirementNode: NodeData) => {
 			const connectionHandle = createConnectionHandle({
 				label: "Requirement",
 				nodeId: node.id,
@@ -243,7 +275,7 @@ export function TabsContentPrompt({
 								...connectableTextGeneratorNodes,
 							]}
 							onValueChange={(node) => {
-								setRequirement({ requirementNode: node });
+								setRequirement(node);
 							}}
 						/>
 					</div>
@@ -299,7 +331,7 @@ export function TabsContentPrompt({
 								...connectableTextGeneratorNodes,
 							]}
 							onValueChange={(node) => {
-								// onSourceConnect?.(node);
+								addSource(node);
 							}}
 						/>
 					</div>
@@ -329,7 +361,7 @@ export function TabsContentPrompt({
 										type="button"
 										className="group-hover:block hidden p-[2px] hover:bg-black-70 rounded-[4px]"
 										onClick={() => {
-											// onSourceRemove?.(sourceNode);
+											removeSource(sourceNode);
 										}}
 									>
 										<TrashIcon className="w-[16px] h-[16px] text-black-30" />
@@ -347,7 +379,7 @@ export function TabsContentPrompt({
 									// ...connectableFileNodes,
 								]}
 								onValueChange={(node) => {
-									// onSourceConnect?.(node);
+									addSource(node);
 								}}
 							/>
 						</div>
