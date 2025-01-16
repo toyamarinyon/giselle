@@ -1,4 +1,4 @@
-import type { NodeData } from "@/lib/workflow-data";
+import type { NodeData } from "@/lib/giselle-data";
 import { clsx } from "clsx/lite";
 import { ContentTypeIcon } from "../../icons/content-type-icon";
 

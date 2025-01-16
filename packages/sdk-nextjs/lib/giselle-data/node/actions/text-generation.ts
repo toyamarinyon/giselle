@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BaseNodeData, ConnectionHandle, nodeId } from "../types";
+import { BaseNodeData, ConnectionHandle, NodeId } from "../types";
 // import type { Workspace } from "./workflow-state";
 
 export const TextGenerationContent = z.object({
@@ -42,7 +42,7 @@ export function createTextGenerationNodeData(
 	params: z.infer<typeof CreateTextGenerationNodeParams>,
 ): z.infer<typeof TextGenerationNodeData> {
 	return {
-		id: nodeId.generate(),
+		id: NodeId.generate(),
 		name: params.name,
 		type: "action",
 		content: {

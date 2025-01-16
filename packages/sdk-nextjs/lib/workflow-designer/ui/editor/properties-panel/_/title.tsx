@@ -1,4 +1,4 @@
-import type { NodeData } from "@/lib/workflow-data";
+import type { NodeData } from "@/lib/giselle-data";
 import clsx from "clsx/lite";
 import type { ReactNode } from "react";
 import { ContentTypeIcon } from "../../../icons";

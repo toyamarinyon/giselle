@@ -1,4 +1,4 @@
-import type { WorkspaceJson } from "@/lib/workflow-data";
+import type { WorkspaceJson } from "@/lib/giselle-data";
 import type { Storage } from "unstorage";
 
 export interface GiselleEngineContext {

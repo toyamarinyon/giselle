@@ -1,8 +1,4 @@
-import type {
-	Workspace,
-	WorkspaceId,
-	WorkspaceJson,
-} from "@/lib/workflow-data";
+import type { Workspace, WorkspaceId, WorkspaceJson } from "@/lib/giselle-data";
 import type { Storage } from "unstorage";
 import { WorkspacePath } from "./workspace-path";
 

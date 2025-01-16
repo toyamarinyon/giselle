@@ -1,13 +1,13 @@
 import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
-import { NodeData, nodeId } from "../node";
+import { NodeData, NodeId } from "../node";
 
 export const StepId = createIdGenerator("stp");
 export type StepId = z.infer<typeof StepId.schema>;
 export const Step = z.object({
 	id: StepId.schema,
-	nodeId: nodeId.schema,
-	variableNodeIds: z.set(nodeId.schema),
+	nodeId: NodeId.schema,
+	variableNodeIds: z.set(NodeId.schema),
 });
 export type Step = z.infer<typeof Step>;
 

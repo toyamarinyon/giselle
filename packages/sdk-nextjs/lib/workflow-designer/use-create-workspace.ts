@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { Workspace } from "../workflow-data";
+import type { Workspace } from "../giselle-data";
 import { callCreateWorkspaceApi } from "./call-create-workspace-api";
 
 export function useCreateWorkspace({

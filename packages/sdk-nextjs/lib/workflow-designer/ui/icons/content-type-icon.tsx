@@ -1,4 +1,4 @@
-import type { NodeData } from "@/lib/workflow-data";
+import type { NodeData } from "@/lib/giselle-data";
 import type { SVGProps } from "react";
 import { DocumentIcon } from "../icons/document";
 import { GlobeIcon } from "../icons/globe";

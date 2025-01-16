@@ -1,4 +1,4 @@
-import type { TextGenerationNodeData } from "@/lib/workflow-data";
+import type { TextGenerationNodeData } from "@/lib/giselle-data";
 import { useTextGenerationNode } from "../../../../use-text-generation-node";
 import { useWorkflowDesigner } from "../../../../workflow-designer-context";
 import { WilliIcon } from "../../../icons/willi";

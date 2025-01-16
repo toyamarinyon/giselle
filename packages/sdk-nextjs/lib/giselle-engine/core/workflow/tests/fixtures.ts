@@ -4,10 +4,10 @@ import {
 	createConnection,
 	createConnectionHandle,
 	generateInitialWorkspace,
-} from "@/lib/workflow-data";
-import { createTextGenerationNodeData } from "@/lib/workflow-data/node/actions/text-generation";
-import type { NodeId } from "@/lib/workflow-data/node/types";
-import { createTextNodeData } from "@/lib/workflow-data/node/variables/text";
+} from "@/lib/giselle-data";
+import { createTextGenerationNodeData } from "@/lib/giselle-data/node/actions/text-generation";
+import type { NodeId } from "@/lib/giselle-data/node/types";
+import { createTextNodeData } from "@/lib/giselle-data/node/variables/text";
 
 export const textGenerationNode1 = createTextGenerationNodeData({
 	name: "Text Generation Node 1",

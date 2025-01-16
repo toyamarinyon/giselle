@@ -1,6 +1,6 @@
 import { useCompletion } from "ai/react";
 import { type FormEvent, useCallback } from "react";
-import type { TextGenerationNodeData } from "../workflow-data";
+import type { TextGenerationNodeData } from "../giselle-data";
 import { useWorkflowDesigner } from "./workflow-designer-context";
 
 export function useTextGenerationNode(

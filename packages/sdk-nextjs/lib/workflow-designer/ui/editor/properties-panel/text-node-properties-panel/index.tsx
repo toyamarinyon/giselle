@@ -1,4 +1,4 @@
-import type { TextNodeData } from "@/lib/workflow-data";
+import type { TextNodeData } from "@/lib/giselle-data";
 import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import { PropertiesPanelContentBox } from "../_/content-box";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_/tabs";

@@ -1,4 +1,4 @@
-import { WorkspaceId, WorkspaceJson } from "@/lib/workflow-data";
+import { WorkspaceId, WorkspaceJson } from "@/lib/giselle-data";
 import { z } from "zod";
 import { WorkspacePath } from "../helpers/workspace-path";
 import type { WorkspaceEngineHandlerArgs } from "./types";

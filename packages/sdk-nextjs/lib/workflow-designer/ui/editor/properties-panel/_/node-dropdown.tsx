@@ -1,4 +1,4 @@
-import type { NodeData } from "@/lib/workflow-data";
+import type { NodeData } from "@/lib/giselle-data";
 import {
 	DropdownMenu,
 	DropdownMenuContent,

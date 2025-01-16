@@ -1,11 +1,11 @@
 import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
 
-export const nodeId = createIdGenerator("nd");
-export type NodeId = z.infer<typeof nodeId.schema>;
+export const NodeId = createIdGenerator("nd");
+export type NodeId = z.infer<typeof NodeId.schema>;
 
 export const BaseNodeData = z.object({
-	id: nodeId.schema,
+	id: NodeId.schema,
 	name: z.string(),
 	type: z.string(),
 });
@@ -21,7 +21,7 @@ export const Position = z.object({
 
 export const ConnectionHandle = z.object({
 	id: connectionHandleId.schema,
-	nodeId: nodeId.schema,
+	nodeId: NodeId.schema,
 	nodeType: BaseNodeData.shape.type,
 	label: z.string(),
 });
@@ -37,9 +37,9 @@ export const connectionId = createIdGenerator("cnnc");
 export type ConnectionId = z.infer<typeof connectionId.schema>;
 export const Connection = z.object({
 	id: connectionId.schema,
-	sourceNodeId: nodeId.schema,
+	sourceNodeId: NodeId.schema,
 	sourceNodeType: BaseNodeData.shape.type,
-	targetNodeId: nodeId.schema,
+	targetNodeId: NodeId.schema,
 	targetNodeType: BaseNodeData.shape.type,
 	targetNodeHandleId: connectionHandleId.schema,
 });

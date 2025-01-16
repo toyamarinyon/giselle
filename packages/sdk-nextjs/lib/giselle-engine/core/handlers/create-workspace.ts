@@ -1,9 +1,9 @@
-import { createIdGenerator } from "@/lib/utils/generate-id";
 import {
 	WorkspaceId,
 	WorkspaceJson,
 	generateInitialWorkspace,
-} from "@/lib/workflow-data";
+} from "@/lib/giselle-data";
+import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
 import { setGraphToStorage } from "../helpers/set-graph-to-storage";
 import type { WorkspaceEngineHandlerArgs } from "./types";

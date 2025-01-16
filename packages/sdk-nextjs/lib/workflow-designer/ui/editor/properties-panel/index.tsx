@@ -1,5 +1,5 @@
-import { isTextGenerationNode } from "@/lib/workflow-data/node/actions/text-generation";
-import { isTextNode } from "@/lib/workflow-data/node/variables/text";
+import { isTextGenerationNode } from "@/lib/giselle-data/node/actions/text-generation";
+import { isTextNode } from "@/lib/giselle-data/node/variables/text";
 import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import clsx from "clsx/lite";

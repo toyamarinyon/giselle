@@ -1,4 +1,4 @@
-import { TextGenerationNodeData, TextNodeData } from "@/lib/workflow-data";
+import { TextGenerationNodeData, TextNodeData } from "@/lib/giselle-data";
 import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import {
 	Handle,

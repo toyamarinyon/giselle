@@ -1,5 +1,4 @@
-import type { NodeData } from "@/lib/workflow-data";
-import type { NodeId } from "@/lib/workflow-data/node/types";
+import type { NodeData, NodeId } from "@/lib/giselle-data";
 import { describe, expect, test } from "vitest";
 import {
 	createConnectionMap,

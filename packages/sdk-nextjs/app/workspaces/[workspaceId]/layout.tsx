@@ -1,4 +1,4 @@
-import { WorkspaceId } from "@/lib/workflow-data";
+import { WorkspaceId } from "@/lib/giselle-data";
 import {
 	WorkflowDesignerProvider,
 	callGetWorkspaceApi,

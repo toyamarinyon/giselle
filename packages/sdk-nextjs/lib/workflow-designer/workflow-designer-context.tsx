@@ -8,15 +8,15 @@ import {
 	useState,
 } from "react";
 import type { z } from "zod";
-import type { NodeData, Workspace } from "../workflow-data";
-import type { CreateTextGenerationNodeParams } from "../workflow-data/node/actions/text-generation";
+import type { NodeData, Workspace } from "../giselle-data";
+import type { CreateTextGenerationNodeParams } from "../giselle-data/node/actions/text-generation";
 import type {
 	ConnectionHandle,
 	ConnectionId,
 	NodeId,
 	NodeUIState,
-} from "../workflow-data/node/types";
-import type { CreateTextNodeParams } from "../workflow-data/node/variables/text";
+} from "../giselle-data/node/types";
+import type { CreateTextNodeParams } from "../giselle-data/node/variables/text";
 import { callSaveWorkflowApi } from "./call-save-workspace-api";
 import { usePropertiesPanel, useView } from "./state";
 import {

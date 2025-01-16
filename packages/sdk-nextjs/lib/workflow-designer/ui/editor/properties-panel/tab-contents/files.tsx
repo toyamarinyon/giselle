@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 function DataList({ label, children }: { label: string; children: ReactNode }) {
 	return (
 		<div>

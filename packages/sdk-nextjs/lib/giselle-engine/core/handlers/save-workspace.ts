@@ -1,4 +1,4 @@
-import { WorkspaceId, WorkspaceJson } from "@/lib/workflow-data";
+import { WorkspaceId, WorkspaceJson } from "@/lib/giselle-data";
 import type { StorageMeta } from "unstorage";
 import { z } from "zod";
 import { setGraphToStorage } from "../helpers/set-graph-to-storage";

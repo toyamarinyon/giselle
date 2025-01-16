@@ -4,24 +4,23 @@ import {
 	type Workspace,
 	createConnection,
 	generateInitialWorkspace,
-} from "../workflow-data";
+} from "../giselle-data";
 import {
 	type CreateTextGenerationNodeParams,
 	createTextGenerationNodeData,
-} from "../workflow-data/node/actions/text-generation";
+} from "../giselle-data/node/actions/text-generation";
 import {
 	type BaseNodeData,
 	type ConnectionHandle,
 	type ConnectionId,
-	type NodeId,
+	NodeId,
 	NodeUIState,
 	connectionId,
-	nodeId,
-} from "../workflow-data/node/types";
+} from "../giselle-data/node/types";
 import {
 	type CreateTextNodeParams,
 	createTextNodeData,
-} from "../workflow-data/node/variables/text";
+} from "../giselle-data/node/variables/text";
 
 interface addNodeOptions {
 	ui?: NodeUIState;
@@ -107,7 +106,7 @@ export function WorkflowDesigner({
 		unsafeNodeId: string | NodeId,
 		newUiState: Partial<NodeUIState>,
 	): void {
-		const targetNodeId = nodeId.parse(unsafeNodeId);
+		const targetNodeId = NodeId.parse(unsafeNodeId);
 		const nodeState = ui.nodeState.get(targetNodeId);
 		ui.nodeState.set(
 			targetNodeId,
@@ -118,7 +117,7 @@ export function WorkflowDesigner({
 		connections.delete(connectionId);
 	}
 	function deleteNode(unsafeNodeId: string | NodeId) {
-		const deleteNodeId = nodeId.parse(unsafeNodeId);
+		const deleteNodeId = NodeId.parse(unsafeNodeId);
 		ui.nodeState.delete(deleteNodeId);
 		nodes.delete(deleteNodeId);
 	}

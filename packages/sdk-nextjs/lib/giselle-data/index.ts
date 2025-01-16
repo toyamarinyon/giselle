@@ -3,9 +3,9 @@ import { z } from "zod";
 import {
 	Connection,
 	NodeData,
+	NodeId,
 	NodeUIState,
 	connectionId,
-	nodeId,
 } from "./node";
 import { TextGenerationNodeData } from "./node/actions";
 import { createConnection, createConnectionHandle } from "./node/connection";
@@ -23,7 +23,7 @@ export const Workspace = z.object({
 			}
 			return new Map(Object.entries(args));
 		},
-		z.map(nodeId.schema, NodeData),
+		z.map(NodeId.schema, NodeData),
 	),
 	connections: z.preprocess(
 		(args) => {
@@ -42,7 +42,7 @@ export const Workspace = z.object({
 				}
 				return new Map(Object.entries(args));
 			},
-			z.map(nodeId.schema, NodeUIState),
+			z.map(NodeId.schema, NodeUIState),
 		),
 	}),
 });
@@ -55,7 +55,7 @@ export const WorkspaceJson = Workspace.extend({
 			}
 			return args;
 		},
-		z.record(nodeId.schema, NodeData),
+		z.record(NodeId.schema, NodeData),
 	),
 	connections: z.preprocess(
 		(args) => {
@@ -74,7 +74,7 @@ export const WorkspaceJson = Workspace.extend({
 				}
 				return args;
 			},
-			z.record(nodeId.schema, NodeUIState),
+			z.record(NodeId.schema, NodeUIState),
 		),
 	}),
 });
@@ -97,4 +97,5 @@ export {
 	createConnection,
 	createConnectionHandle,
 	NodeData,
+	NodeId,
 };

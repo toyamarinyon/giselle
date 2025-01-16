@@ -1,9 +1,9 @@
-import type { NodeData, Workspace } from "@/lib/workflow-data";
+import type { NodeData, Workspace } from "@/lib/giselle-data";
 import type {
 	Connection,
 	ConnectionId,
 	NodeId,
-} from "@/lib/workflow-data/node/types";
+} from "@/lib/giselle-data/node/types";
 import { type Job, JobId, type Step, StepId } from "./types";
 
 type ConnectionMap = Map<NodeId, Set<NodeId>>;

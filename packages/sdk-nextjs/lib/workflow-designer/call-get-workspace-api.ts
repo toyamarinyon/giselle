@@ -1,5 +1,5 @@
+import { Workspace, type WorkspaceId } from "../giselle-data";
 import { Output } from "../giselle-engine/core/handlers/get-workspace";
-import { Workspace, type WorkspaceId } from "../workflow-data";
 
 export async function callGetWorkspaceApi({
 	host = process.env.NEXT_PUBLIC_VERCEL_URL ?? "localhost:3000",

@@ -1,5 +1,5 @@
+import { Workspace } from "../giselle-data";
 import { Output } from "../giselle-engine/core/handlers/create-workspace";
-import { Workspace } from "../workflow-data";
 
 export async function callCreateWorkspaceApi({
 	api = "/api/giselle/create-workspace",
