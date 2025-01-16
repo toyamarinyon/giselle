@@ -1,6 +1,6 @@
 "use client";
 import { useWorkflowDesigner } from "@/lib/workflow-designer";
-import { Editor } from "@/lib/workflow-designer/ui";
+import { Designer } from "@/lib/workflow-designer/ui";
 
 export default function Page() {
 	const { data, addTextGenerationNode, addTextNode } = useWorkflowDesigner();
@@ -57,7 +57,7 @@ export default function Page() {
 				</div>
 			</div>
 			<div className="w-full h-full">
-				<Editor />
+				<Designer />
 			</div>
 		</div>
 	);

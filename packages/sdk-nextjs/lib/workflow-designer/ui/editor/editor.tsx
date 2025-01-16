@@ -10,7 +10,7 @@ import {
 import { useEffect } from "react";
 import bg from "../../images/bg.png";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
-import { Header } from "./header";
+import { Header } from "../_/header";
 import { type GiselleWorkflowDesignerNode, nodeTypes } from "./node";
 import { PropertiesPanel } from "./properties-panel";
 

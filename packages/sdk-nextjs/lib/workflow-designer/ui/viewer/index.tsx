@@ -1,166 +1,180 @@
 "use client";
 
 import type {
+	Job,
+	JobId,
 	JobRun,
+	JobRunId,
 	NodeData,
 	Step,
+	StepId,
 	StepRun,
-	WorkflowId,
+	StepRunId,
+	Workflow,
 	WorkflowRun,
 	WorkflowRunId,
 } from "@/lib/giselle-data";
 import * as Tabs from "@radix-ui/react-tabs";
 import { CircleAlertIcon, CircleSlashIcon } from "lucide-react";
 import { type DetailedHTMLProps, useMemo } from "react";
+import bg from "../../images/bg.png";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
-// import { useExecution } from "../contexts/execution";
-// import { useGraph } from "../contexts/graph";
-import { ContentTypeIcon, SpinnerIcon, WilliIcon } from "../icons";
-import bg from "../images/bg.png";
-// import { formatTimestamp } from "../lib/utils";
-// import type { Execution, Node, StepExecution } from "../types";
-// import ClipboardButton from "./clipboard-button";
-// import { ContentTypeIcon } from "./content-type-icon";
-// import { Header } from "./header";
-// import { Markdown } from "./markdown";
-// import { Button } from "./ui/button";
-// import { EmptyState } from "./ui/empty-state";
+import { Header } from "../_/header";
+import { Markdown } from "../_/markdown";
+import { ContentTypeIcon, SpinnerIcon } from "../icons";
 
-interface StepExecutionButtonProps
+type StepWithRun = Step &
+	Pick<StepRun, "status" | "attempts"> & {
+		stepRunId: StepRunId;
+		node: NodeData;
+	};
+type JobWithRun = Job &
+	Pick<JobRun, "status" | "attempts"> & {
+		stepMap: Map<StepId, StepWithRun>;
+	} & {
+		jobRunId: JobRunId;
+	};
+type WorkflowWithRun = Pick<Workflow, "id"> &
+	Pick<WorkflowRun, "status"> & {
+		jobMap: Map<JobId, JobWithRun>;
+		workflowRunId: WorkflowRunId;
+	};
+
+interface StepRunButtonProps
 	extends DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	step: Step;
-	stepRun: StepRun;
-	node: NodeData;
+	stepWithRun: StepWithRun;
 }
-function StepButton({
-	step,
-	stepRun,
-	node,
-	...props
-}: StepExecutionButtonProps) {
+function StepButton({ stepWithRun, ...props }: StepRunButtonProps) {
 	return (
 		<button
 			type="button"
 			className="flex items-center gap-[8px] rounded-[4px] px-[8px] py-[4px] data-[state=active]:bg-black-80"
 			{...props}
 		>
-			{stepRun.status === "queued" && (
+			{stepWithRun.status === "queued" && (
 				<SpinnerIcon className="w-[18px] h-[18px] stroke-black-30 fill-transparent" />
 			)}
-			{stepRun.status === "failed" && (
+			{stepWithRun.status === "failed" && (
 				<CircleAlertIcon className="w-[18px] h-[18px] stroke-black-30 fill-transparent" />
 			)}
-			{stepRun.status === "cancelled" && (
+			{stepWithRun.status === "cancelled" && (
 				<CircleSlashIcon className="w-[18px] h-[18px] stroke-black-30 fill-transparent" />
 			)}
-			{stepRun.status === "inProgress" && (
+			{stepWithRun.status === "inProgress" && (
 				<SpinnerIcon className="w-[18px] h-[18px] stroke-black-30 animate-follow-through-spin fill-transparent" />
 			)}
-			{stepRun.status === "completed" && (
+			{stepWithRun.status === "completed" && (
 				<ContentTypeIcon
-					contentType={node.content.type}
+					contentType={stepWithRun.node.content.type}
 					className="w-[18px] h-[18px] fill-current text-white"
 				/>
 			)}
 
 			<div className="flex flex-col items-start">
-				<p className="truncate text-[14px] font-rosart">{node.content.type}</p>
+				<p className="truncate text-[14px] font-rosart">
+					{stepWithRun.node.content.type}
+				</p>
 				<p className="line-clamp-1 font-rosart text-black-70 text-[8px]">
-					{node.name} / {stepRun.status}
+					{stepWithRun.node.name} / {stepWithRun.status}
 				</p>
 			</div>
 		</button>
 	);
 }
 
-function jobRunKey(
-	workflowRun: WorkflowRun,
-	jobRun: JobRun,
-	jobRunIndex: number,
-) {
-	return `${workflowRun.id}.jobs[${jobRunIndex}]#${jobRun.attempts}`;
-}
-
-function stepRunKey(
-	workflowRun: WorkflowRun,
-	jobRun: JobRun,
-	jobRunIndex: number,
-	stepRun: StepRun,
-	stepRunIndex: number,
-) {
-	return `${workflowRun.id}.jobs[${jobRunIndex}].steps[${stepRun.stepId}]#${stepRun.attempts}`;
-}
-
 function WorkflowRunViewer({
 	workflowRunId,
 }: { workflowRunId: WorkflowRunId }) {
 	const { data } = useWorkflowDesigner();
-	const workflowRun = useMemo(() => {
+	const workflowWithRun = useMemo<WorkflowWithRun>(() => {
 		const workflowRun = data.workflowRunMap.get(workflowRunId);
 		if (workflowRun === undefined) {
 			throw new Error(`Workflow run with id ${workflowRunId} not found`);
 		}
-		return workflowRun;
-	}, [data.workflowRunMap, workflowRunId]);
-	const workflow = useMemo(() => {
 		const workflow = data.workflowMap.get(workflowRun.workflowId);
 		if (workflow === undefined) {
 			throw new Error(`Workflow with id ${workflowRun.workflowId} not found`);
 		}
-		return workflow;
-	}, [data.workflowMap, workflowRun.workflowId]);
+		const jobWithRunMap = new Map<JobId, JobWithRun>();
+		for (const [jobRunId, jobRun] of workflowRun.jobRunMap) {
+			const job = workflow.jobMap.get(jobRun.jobId);
+			if (job === undefined) {
+				console.warn(`Job not found: ${jobRun.jobId}`);
+				continue;
+			}
+			const stepWithRunMap = new Map<StepId, StepWithRun>();
+			for (const [stepRunId, stepRun] of jobRun.stepRunMap) {
+				const step = job.stepMap.get(stepRun.stepId);
+				if (step === undefined) {
+					console.warn(`Step not found: ${stepRun.stepId}`);
+					continue;
+				}
+				const node = data.nodeMap.get(step.nodeId);
+				if (node === undefined) {
+					console.warn(`Node not found: ${step.nodeId}`);
+					continue;
+				}
+				stepWithRunMap.set(step.id, {
+					...step,
+					node,
+					stepRunId,
+					status: stepRun.status,
+					attempts: stepRun.attempts,
+				});
+			}
+			jobWithRunMap.set(job.id, {
+				...job,
+				jobRunId,
+				status: jobRun.status,
+				attempts: jobRun.attempts,
+				stepMap: stepWithRunMap,
+			});
+		}
+		const workflowWithRun = {
+			id: workflow.id,
+			status: workflowRun.status,
+			jobMap: jobWithRunMap,
+			workflowRunId,
+		} satisfies WorkflowWithRun;
+		return workflowWithRun;
+	}, [data, workflowRunId]);
 	return (
 		<Tabs.Root className="flex-1 flex w-full gap-[16px] pt-[16px] overflow-hidden h-full mx-[20px]">
 			<div className="w-[200px]">
 				<Tabs.List className="flex flex-col gap-[8px]">
-					{Array.from(workflowRun.jobRunSet).map((jobRun, jobRunIndex) => (
-						<div key={jobRunKey(workflowRun, jobRun, jobRunIndex)}>
-							<p className="text-[12px] text-black-30 mb-[4px]">
-								Job {jobRunIndex + 1}
-							</p>
-							<div className="flex flex-col gap-[4px]">
-								{Array.from(jobRun.stepRunSet).map((stepRun, stepRunIndex) => (
-									<Tabs.Trigger
-										key={stepRunKey(
-											workflowRun,
-											jobRun,
-											jobRunIndex,
-											stepRun,
-											stepRunIndex,
-										)}
-										value={stepRunKey(
-											workflowRun,
-											jobRun,
-											jobRunIndex,
-											stepRun,
-											stepRunIndex,
-										)}
-										asChild
-									>
-										<StepButton
-											step={workflow.}
-											stepRun={stepRun}
-											node={stepRun.node}
-										/>
-									</Tabs.Trigger>
-								))}
+					{Array.from(workflowWithRun.jobMap).map(
+						([jobId, jobWithRun], jobRunIndex) => (
+							<div key={jobId}>
+								<p className="text-[12px] text-black-30 mb-[4px]">
+									Job {jobRunIndex + 1}
+								</p>
+								<div className="flex flex-col gap-[4px]">
+									{Array.from(jobWithRun.stepMap).map(
+										([stepId, stepWithRun], stepRunIndex) => (
+											<Tabs.Trigger key={stepId} value={stepId} asChild>
+												<StepButton stepWithRun={stepWithRun} />
+											</Tabs.Trigger>
+										),
+									)}
+								</div>
 							</div>
-						</div>
-					))}
+						),
+					)}
 				</Tabs.List>
 			</div>
 			<div className="overflow-y-auto flex-1 pb-[20px]">
-				{execution.jobRuns.flatMap((jobExecution) =>
-					jobExecution.stepExecutions.map((stepExecution) => (
-						<Tabs.Content key={stepExecution.id} value={stepExecution.id}>
-							{stepExecution.status === "pending" && <p>Pending</p>}
-							{stepExecution.status === "failed" && (
+				{Array.from(workflowWithRun.jobMap).flatMap(([jobId, job]) =>
+					Array.from(job.stepMap).map(([stepId, step]) => (
+						<Tabs.Content key={stepId} value={stepId}>
+							{step.status === "queued" && <p>Qeued</p>}
+							{step.status === "failed" && (
 								<div className="flex flex-col gap-[8px]">
-									<p>{stepExecution.error}</p>
-									<div>
+									<p>error</p>
+									{/* <p>{stepExecution.error}</p> */}
+									{/* <div>
 										<Button
 											type="button"
 											onClick={() => {
@@ -169,14 +183,12 @@ function WorkflowRunViewer({
 										>
 											Retry
 										</Button>
-									</div>
+									</div> */}
 								</div>
 							)}
-							{(stepExecution.status === "running" ||
-								stepExecution.status === "completed") && (
-								<Markdown>{stepExecution.artifact?.object.content}</Markdown>
-							)}
-							{stepExecution.artifact?.type === "generatedArtifact" && (
+							{(step.status === "inProgress" ||
+								step.status === "completed") && <Markdown>Completed</Markdown>}
+							{/* {stepExecution.artifact?.type === "generatedArtifact" && (
 								<div className="mt-[10px] flex gap-[12px] items-center">
 									<div className="text-[14px] font-bold text-black-70 ">
 										Generated{" "}
@@ -201,7 +213,7 @@ function WorkflowRunViewer({
 										</button>
 									</div>
 								</div>
-							)}
+							)} */}
 						</Tabs.Content>
 					)),
 				)}
@@ -277,7 +289,7 @@ function WorkflowRunViewer({
 }
 
 export function Viewer() {
-	const { execution } = useExecution();
+	// const { execution } = useExecution();
 	return (
 		<div
 			className="w-full h-screen bg-black-100 flex flex-col"
@@ -290,7 +302,7 @@ export function Viewer() {
 		>
 			<Header />
 			<div className="flex-1 w-full flex items-center justify-center overflow-hidden">
-				{execution === null ? (
+				{/* {execution === null ? (
 					<EmptyState
 						icon={
 							<WilliIcon className="fill-current w-[32px] h-[32px] text-black-30" />
@@ -302,7 +314,7 @@ export function Viewer() {
 					/>
 				) : (
 					<WorkflowRunViewer execution={execution} />
-				)}
+				)} */}
 			</div>
 		</div>
 	);

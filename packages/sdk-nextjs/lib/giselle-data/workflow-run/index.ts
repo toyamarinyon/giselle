@@ -1,5 +1,6 @@
 import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
+import { mapToObject, objectToMap } from "../utils";
 import { JobId, StepId, type Workflow, WorkflowId } from "../workflow";
 
 export const StepRunStatus = z.enum([
@@ -9,7 +10,10 @@ export const StepRunStatus = z.enum([
 	"failed",
 	"cancelled",
 ]);
+export const StepRunId = createIdGenerator("str");
+export type StepRunId = z.infer<typeof StepRunId.schema>;
 export const StepRun = z.object({
+	id: StepRunId.schema,
 	attempts: z.number(),
 	stepId: StepId.schema,
 	status: StepRunStatus,
@@ -24,25 +28,18 @@ export const JobRunStatus = z.enum([
 	"requested",
 	"pending",
 ]);
+export const JobRunId = createIdGenerator("jbr");
+export type JobRunId = z.infer<typeof JobRunId.schema>;
 export const JobRun = z.object({
+	id: JobRunId.schema,
 	attempts: z.number(),
 	jobId: JobId.schema,
 	status: JobRunStatus,
-	stepRunSet: z.preprocess((args) => {
-		if (!Array.isArray(args) || args === null || args instanceof Map) {
-			return args;
-		}
-		return new Set(args);
-	}, z.set(StepRun)),
+	stepRunMap: z.preprocess(objectToMap, z.map(StepRunId.schema, StepRun)),
 });
 export type JobRun = z.infer<typeof JobRun>;
 export const JobRunJson = JobRun.extend({
-	stepRunSet: z.preprocess((args) => {
-		if (args instanceof Set) {
-			return Array.from(args);
-		}
-		return args;
-	}, z.array(StepRun)),
+	stepRunMap: z.preprocess(mapToObject, z.map(StepRunId.schema, StepRun)),
 });
 
 export const WorkflowRunStatus = z.enum([
@@ -67,19 +64,9 @@ export const WorkflowRun = z.object({
 	id: WorkflowRunId.schema,
 	workflowId: WorkflowId.schema,
 	status: WorkflowRunStatus,
-	jobRunSet: z.preprocess((args) => {
-		if (!Array.isArray(args) || args === null || args instanceof Map) {
-			return args;
-		}
-		return new Set(args);
-	}, z.set(JobRun)),
+	jobRunMap: z.preprocess(objectToMap, z.map(JobRunId.schema, JobRun)),
 });
 export type WorkflowRun = z.infer<typeof WorkflowRun>;
 export const WorkflowRunJson = WorkflowRun.extend({
-	jobRunSet: z.preprocess((args) => {
-		if (args instanceof Set) {
-			return Array.from(args);
-		}
-		return args;
-	}, z.array(JobRunJson)),
+	jobRunMap: z.preprocess(mapToObject, z.map(JobRunId.schema, JobRunJson)),
 });

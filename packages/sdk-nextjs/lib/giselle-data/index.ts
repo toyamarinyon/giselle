@@ -22,7 +22,9 @@ import {
 } from "./workflow";
 import {
 	JobRun,
+	JobRunId,
 	StepRun,
+	StepRunId,
 	WorkflowRun,
 	WorkflowRunId,
 	WorkflowRunJson,
@@ -94,9 +96,11 @@ export {
 	Job,
 	JobId,
 	JobRun,
+	JobRunId,
 	Step,
 	StepId,
 	StepRun,
+	StepRunId,
 	Workflow,
 	WorkflowId,
 	WorkflowRun,

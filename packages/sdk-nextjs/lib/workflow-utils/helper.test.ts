@@ -2,7 +2,7 @@ import type { NodeData, NodeId } from "@/lib/giselle-data";
 import { describe, expect, test } from "vitest";
 import {
 	createConnectedNodeIdMap,
-	createJobSet,
+	createJobMap,
 	findConnectedConnectionMap,
 	findConnectedNodeMap,
 } from "./helper";
@@ -161,7 +161,7 @@ describe("createJobsFromGraph", () => {
 			new Set(connectedNodeMap.keys()),
 			new Set(testWorkspace.connectionMap.values()),
 		);
-		const jobSet = createJobSet(
+		const jobSet = createJobMap(
 			new Set(connectedNodeMap.values()),
 			new Set(connectedConnectionMap.values()),
 		);
@@ -195,7 +195,7 @@ describe("createJobsFromGraph", () => {
 			new Set(connectedNodeMap.keys()),
 			new Set(testWorkspace.connectionMap.values()),
 		);
-		const jobSet = createJobSet(
+		const jobSet = createJobMap(
 			new Set(connectedNodeMap.values()),
 			new Set(connectedConnectionMap.values()),
 		);

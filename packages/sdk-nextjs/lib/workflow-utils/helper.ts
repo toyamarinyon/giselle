@@ -99,7 +99,7 @@ export function findConnectedConnectionMap(
  * @param graph The input graph with nodes and connections
  * @returns Set of jobs where each job contains steps that can be executed in parallel
  */
-export function createJobSet(
+export function createJobMap(
 	nodeSet: Set<NodeData>,
 	connectionSet: Set<Connection>,
 ) {
@@ -234,20 +234,22 @@ export function createJobSet(
 	}
 	const levels = topologicalSort(actionNodeIdSet, actionConnectionSet);
 
-	const jobSet = new Set<Job>();
+	const jobMap = new Map<JobId, Job>();
 	for (const level of levels) {
-		const stepSet = new Set<Step>();
+		const stepMap = new Map<StepId, Step>();
 		for (const subLevel of level) {
-			stepSet.add({
+			const step = {
 				id: StepId.generate(),
 				nodeId: subLevel,
 				variableNodeIds: connectedVariableNodeIds(subLevel),
-			});
+			} satisfies Step;
+			stepMap.set(step.id, step);
 		}
-		jobSet.add({
+		const job = {
 			id: JobId.generate(),
-			stepMap: stepSet,
-		});
+			stepMap: stepMap,
+		} satisfies Job;
+		jobMap.set(job.id, job);
 	}
-	return jobSet;
+	return jobMap;
 }
