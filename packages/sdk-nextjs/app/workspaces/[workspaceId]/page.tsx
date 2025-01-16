@@ -45,6 +45,16 @@ export default function Page() {
 					add text node
 				</button>
 				<p>Nodes: {data.nodes.size}</p>
+				<div>
+					<p>Workflows</p>
+					{Array.from(data.workflows.values()).map((workflow) => (
+						<div key={workflow.id}>
+							<p>Workflow: {workflow.id}</p>
+							<p>Jobs: {workflow.jobSet.size}</p>
+							<p>Nodes: {workflow.nodeSet.size}</p>
+						</div>
+					))}
+				</div>
 			</div>
 			<div className="w-full h-full">
 				<Editor />
