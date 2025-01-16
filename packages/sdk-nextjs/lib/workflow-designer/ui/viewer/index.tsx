@@ -1,8 +1,18 @@
 "use client";
 
+import type {
+	JobRun,
+	NodeData,
+	Step,
+	StepRun,
+	WorkflowId,
+	WorkflowRun,
+	WorkflowRunId,
+} from "@/lib/giselle-data";
 import * as Tabs from "@radix-ui/react-tabs";
 import { CircleAlertIcon, CircleSlashIcon } from "lucide-react";
 import { type DetailedHTMLProps, useMemo } from "react";
+import { useWorkflowDesigner } from "../../workflow-designer-context";
 // import { useExecution } from "../contexts/execution";
 // import { useGraph } from "../contexts/graph";
 import { ContentTypeIcon, SpinnerIcon, WilliIcon } from "../icons";
@@ -21,11 +31,13 @@ interface StepExecutionButtonProps
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	stepExecution: StepExecution;
-	node: Node;
+	step: Step;
+	stepRun: StepRun;
+	node: NodeData;
 }
-function StepExecutionButton({
-	stepExecution,
+function StepButton({
+	step,
+	stepRun,
 	node,
 	...props
 }: StepExecutionButtonProps) {
@@ -35,19 +47,19 @@ function StepExecutionButton({
 			className="flex items-center gap-[8px] rounded-[4px] px-[8px] py-[4px] data-[state=active]:bg-black-80"
 			{...props}
 		>
-			{stepExecution.status === "pending" && (
+			{stepRun.status === "queued" && (
 				<SpinnerIcon className="w-[18px] h-[18px] stroke-black-30 fill-transparent" />
 			)}
-			{stepExecution.status === "failed" && (
+			{stepRun.status === "failed" && (
 				<CircleAlertIcon className="w-[18px] h-[18px] stroke-black-30 fill-transparent" />
 			)}
-			{stepExecution.status === "skipped" && (
+			{stepRun.status === "cancelled" && (
 				<CircleSlashIcon className="w-[18px] h-[18px] stroke-black-30 fill-transparent" />
 			)}
-			{stepExecution.status === "running" && (
+			{stepRun.status === "inProgress" && (
 				<SpinnerIcon className="w-[18px] h-[18px] stroke-black-30 animate-follow-through-spin fill-transparent" />
 			)}
-			{stepExecution.status === "completed" && (
+			{stepRun.status === "completed" && (
 				<ContentTypeIcon
 					contentType={node.content.type}
 					className="w-[18px] h-[18px] fill-current text-white"
@@ -57,67 +69,81 @@ function StepExecutionButton({
 			<div className="flex flex-col items-start">
 				<p className="truncate text-[14px] font-rosart">{node.content.type}</p>
 				<p className="line-clamp-1 font-rosart text-black-70 text-[8px]">
-					{node.name} / {stepExecution.status}
+					{node.name} / {stepRun.status}
 				</p>
 			</div>
 		</button>
 	);
 }
 
-function ExecutionViewer({
-	execution: tmpExecution,
-}: { execution: Execution }) {
-	const { graph } = useGraph();
-	const { retryFlowExecution } = useExecution();
-	const execution = useMemo(
-		() => ({
-			...tmpExecution,
-			jobExecutions: tmpExecution.jobExecutions.map((jobExecution) => ({
-				...jobExecution,
-				stepExecutions: jobExecution.stepExecutions
-					.map((stepExecution) => {
-						const node = graph.nodes.find(
-							(node) => node.id === stepExecution.nodeId,
-						);
-						if (node === undefined) {
-							console.log(`${stepExecution.nodeId} not found`);
-							return null;
-						}
-						const artifact = tmpExecution.artifacts.find((artifact) => {
-							return artifact.creatorNodeId === node.id;
-						});
-						return {
-							...stepExecution,
-							node,
-							artifact,
-						};
-					})
-					.filter((stepExecution) => stepExecution !== null),
-			})),
-		}),
-		[tmpExecution, graph.nodes],
-	);
+function jobRunKey(
+	workflowRun: WorkflowRun,
+	jobRun: JobRun,
+	jobRunIndex: number,
+) {
+	return `${workflowRun.id}.jobs[${jobRunIndex}]#${jobRun.attempts}`;
+}
 
+function stepRunKey(
+	workflowRun: WorkflowRun,
+	jobRun: JobRun,
+	jobRunIndex: number,
+	stepRun: StepRun,
+	stepRunIndex: number,
+) {
+	return `${workflowRun.id}.jobs[${jobRunIndex}].steps[${stepRun.stepId}]#${stepRun.attempts}`;
+}
+
+function WorkflowRunViewer({
+	workflowRunId,
+}: { workflowRunId: WorkflowRunId }) {
+	const { data } = useWorkflowDesigner();
+	const workflowRun = useMemo(() => {
+		const workflowRun = data.workflowRunMap.get(workflowRunId);
+		if (workflowRun === undefined) {
+			throw new Error(`Workflow run with id ${workflowRunId} not found`);
+		}
+		return workflowRun;
+	}, [data.workflowRunMap, workflowRunId]);
+	const workflow = useMemo(() => {
+		const workflow = data.workflowMap.get(workflowRun.workflowId);
+		if (workflow === undefined) {
+			throw new Error(`Workflow with id ${workflowRun.workflowId} not found`);
+		}
+		return workflow;
+	}, [data.workflowMap, workflowRun.workflowId]);
 	return (
 		<Tabs.Root className="flex-1 flex w-full gap-[16px] pt-[16px] overflow-hidden h-full mx-[20px]">
 			<div className="w-[200px]">
 				<Tabs.List className="flex flex-col gap-[8px]">
-					{execution.jobExecutions.map((jobExecution, index) => (
-						<div key={jobExecution.id}>
+					{Array.from(workflowRun.jobRunSet).map((jobRun, jobRunIndex) => (
+						<div key={jobRunKey(workflowRun, jobRun, jobRunIndex)}>
 							<p className="text-[12px] text-black-30 mb-[4px]">
-								Step {index + 1}
+								Job {jobRunIndex + 1}
 							</p>
 							<div className="flex flex-col gap-[4px]">
-								{jobExecution.stepExecutions.map((stepExecution) => (
+								{Array.from(jobRun.stepRunSet).map((stepRun, stepRunIndex) => (
 									<Tabs.Trigger
-										key={stepExecution.id}
-										value={stepExecution.id}
+										key={stepRunKey(
+											workflowRun,
+											jobRun,
+											jobRunIndex,
+											stepRun,
+											stepRunIndex,
+										)}
+										value={stepRunKey(
+											workflowRun,
+											jobRun,
+											jobRunIndex,
+											stepRun,
+											stepRunIndex,
+										)}
 										asChild
 									>
-										<StepExecutionButton
-											key={stepExecution.id}
-											stepExecution={stepExecution}
-											node={stepExecution.node}
+										<StepButton
+											step={workflow.}
+											stepRun={stepRun}
+											node={stepRun.node}
 										/>
 									</Tabs.Trigger>
 								))}
@@ -127,7 +153,7 @@ function ExecutionViewer({
 				</Tabs.List>
 			</div>
 			<div className="overflow-y-auto flex-1 pb-[20px]">
-				{execution.jobExecutions.flatMap((jobExecution) =>
+				{execution.jobRuns.flatMap((jobExecution) =>
 					jobExecution.stepExecutions.map((stepExecution) => (
 						<Tabs.Content key={stepExecution.id} value={stepExecution.id}>
 							{stepExecution.status === "pending" && <p>Pending</p>}
@@ -275,7 +301,7 @@ export function Viewer() {
 					output."
 					/>
 				) : (
-					<ExecutionViewer execution={execution} />
+					<WorkflowRunViewer execution={execution} />
 				)}
 			</div>
 		</div>

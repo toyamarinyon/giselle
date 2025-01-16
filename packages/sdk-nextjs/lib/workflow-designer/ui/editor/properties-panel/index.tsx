@@ -108,9 +108,9 @@ export function PropertiesPanel() {
 		useWorkflowDesigner();
 	const selectedNodes = useMemo(
 		() =>
-			Array.from(data.ui.nodeState)
+			Array.from(data.ui.nodeStateMap)
 				.filter(([_, nodeState]) => nodeState.selected)
-				.map(([nodeId]) => data.nodes.get(nodeId))
+				.map(([nodeId]) => data.nodeMap.get(nodeId))
 				.filter((node) => node !== undefined),
 		[data],
 	);

@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import {
 	type NodeData,
+	type WorkflowId,
 	type Workspace,
 	createConnection,
 	generateInitialWorkspace,
@@ -20,7 +21,7 @@ import {
 	type CreateTextNodeParams,
 	createTextNodeData,
 } from "../giselle-data/node/variables/text";
-import { buildWorkflowMap } from "../workflow-utils";
+import { buildWorkflowRun } from "../workflow-utils";
 
 interface addNodeOptions {
 	ui?: NodeUIState;
@@ -47,6 +48,7 @@ export interface WorkflowDesignerOperations {
 	deleteNode: (nodeId: string | NodeId) => void;
 	deleteConnection: (connectionId: ConnectionId) => void;
 	updateNodeData: <T extends NodeData>(node: T, data: Partial<T>) => void;
+	runWorkflow: (workflowId: WorkflowId) => void;
 }
 
 export function WorkflowDesigner({
@@ -54,10 +56,11 @@ export function WorkflowDesigner({
 }: {
 	defaultValue?: Workspace;
 }): WorkflowDesignerOperations {
-	const nodes = defaultValue.nodes;
-	const connections = defaultValue.connections;
+	const nodeMap = defaultValue.nodeMap;
+	const connectionMap = defaultValue.connectionMap;
 	const ui = defaultValue.ui;
-	const workflows = defaultValue.workflows;
+	const workflowMap = defaultValue.workflowMap;
+	const workflowRunMap = defaultValue.workflowRunMap;
 	function addTextGenerationNode(
 		params: z.infer<typeof CreateTextGenerationNodeParams>,
 		options?: {
@@ -65,9 +68,9 @@ export function WorkflowDesigner({
 		},
 	) {
 		const textgenerationNodeData = createTextGenerationNodeData(params);
-		nodes.set(textgenerationNodeData.id, textgenerationNodeData);
+		nodeMap.set(textgenerationNodeData.id, textgenerationNodeData);
 		if (options?.ui) {
-			ui.nodeState.set(textgenerationNodeData.id, options.ui);
+			ui.nodeStateMap.set(textgenerationNodeData.id, options.ui);
 		}
 	}
 	function addTextNode(
@@ -77,22 +80,23 @@ export function WorkflowDesigner({
 		},
 	) {
 		const textNodeData = createTextNodeData(params);
-		nodes.set(textNodeData.id, textNodeData);
+		nodeMap.set(textNodeData.id, textNodeData);
 		if (options?.ui) {
-			ui.nodeState.set(textNodeData.id, options.ui);
+			ui.nodeStateMap.set(textNodeData.id, options.ui);
 		}
 	}
 	function getData() {
 		return {
 			id: defaultValue.id,
-			nodes,
-			connections,
+			nodeMap,
+			connectionMap,
 			ui,
-			workflows,
+			workflowMap,
+			workflowRunMap,
 		};
 	}
 	function updateNodeData<T extends NodeData>(node: T, data: Partial<T>) {
-		nodes.set(node.id, { ...node, ...data });
+		nodeMap.set(node.id, { ...node, ...data });
 	}
 	function addConnection(
 		sourceNode: BaseNodeData,
@@ -102,26 +106,34 @@ export function WorkflowDesigner({
 			sourceNode,
 			targetNodeHandle,
 		});
-		connections.set(connection.id, connection);
+		connectionMap.set(connection.id, connection);
 	}
 	function setUiNodeState(
 		unsafeNodeId: string | NodeId,
 		newUiState: Partial<NodeUIState>,
 	): void {
 		const targetNodeId = NodeId.parse(unsafeNodeId);
-		const nodeState = ui.nodeState.get(targetNodeId);
-		ui.nodeState.set(
+		const nodeState = ui.nodeStateMap.get(targetNodeId);
+		ui.nodeStateMap.set(
 			targetNodeId,
 			NodeUIState.parse({ ...nodeState, ...newUiState }),
 		);
 	}
 	function deleteConnection(connectionId: ConnectionId) {
-		connections.delete(connectionId);
+		connectionMap.delete(connectionId);
 	}
 	function deleteNode(unsafeNodeId: string | NodeId) {
 		const deleteNodeId = NodeId.parse(unsafeNodeId);
-		ui.nodeState.delete(deleteNodeId);
-		nodes.delete(deleteNodeId);
+		ui.nodeStateMap.delete(deleteNodeId);
+		nodeMap.delete(deleteNodeId);
+	}
+	function runWorkflow(workflowId: WorkflowId) {
+		const workflow = workflowMap.get(workflowId);
+		if (workflow === undefined) {
+			throw new Error(`Workflow with id ${workflowId} not found`);
+		}
+		const workflowRun = buildWorkflowRun(workflow);
+		workflowRunMap.set(workflowRun.id, workflowRun);
 	}
 
 	return {
@@ -133,5 +145,6 @@ export function WorkflowDesigner({
 		setUiNodeState,
 		deleteNode,
 		deleteConnection,
+		runWorkflow,
 	};
 }

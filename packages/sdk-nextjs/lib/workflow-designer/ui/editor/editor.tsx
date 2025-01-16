@@ -27,9 +27,9 @@ function Editor() {
 	const updateNodeInternals = useUpdateNodeInternals();
 	useEffect(() => {
 		reactFlowInstance.setNodes(
-			Array.from(data.ui.nodeState)
+			Array.from(data.ui.nodeStateMap)
 				.map(([nodeId, nodeState]) => {
-					const nodeData = data.nodes.get(nodeId);
+					const nodeData = data.nodeMap.get(nodeId);
 					if (nodeData === undefined) {
 						return null;
 					}
@@ -43,11 +43,11 @@ function Editor() {
 				})
 				.filter((result) => result !== null),
 		);
-		updateNodeInternals(Array.from(data.ui.nodeState.keys()));
+		updateNodeInternals(Array.from(data.ui.nodeStateMap.keys()));
 	}, [data, reactFlowInstance.setNodes, updateNodeInternals]);
 	useEffect(() => {
 		reactFlowInstance.setEdges(
-			Array.from(data.connections).map(([connectionId, connection]) => ({
+			Array.from(data.connectionMap).map(([connectionId, connection]) => ({
 				id: connectionId,
 				source: connection.sourceNodeId,
 				target: connection.targetNodeId,
@@ -73,12 +73,14 @@ function Editor() {
 							break;
 						}
 						case "remove": {
-							for (const [connectionId, connectionData] of data.connections) {
+							for (const [connectionId, connectionData] of data.connectionMap) {
 								if (connectionData.sourceNodeId !== nodeChange.id) {
 									continue;
 								}
 								deleteConnection(connectionId);
-								const targetNode = data.nodes.get(connectionData.targetNodeId);
+								const targetNode = data.nodeMap.get(
+									connectionData.targetNodeId,
+								);
 								if (targetNode === undefined) {
 									continue;
 								}

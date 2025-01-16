@@ -45,7 +45,7 @@ function CustomNode({
 	}, [data]);
 	const hasTarget = useMemo(
 		() =>
-			Array.from(Workspace.connections).some(
+			Array.from(Workspace.connectionMap).some(
 				([_, connection]) => connection.sourceNodeId === data.nodeData.id,
 			),
 		[Workspace, data.nodeData.id],

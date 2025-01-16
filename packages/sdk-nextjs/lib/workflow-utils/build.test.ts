@@ -4,8 +4,8 @@ import { testWorkspace } from "./tests/fixtures";
 
 describe("buildWorkflowMap", () => {
 	const workflowMap = buildWorkflowMap(
-		testWorkspace.nodes,
-		testWorkspace.connections,
+		testWorkspace.nodeMap,
+		testWorkspace.connectionMap,
 	);
 	test("testWorkspace can build 3 workflows", () => {
 		expect(workflowMap.size).toBe(3);
@@ -13,6 +13,6 @@ describe("buildWorkflowMap", () => {
 	test("first workflow has 3 jobs", () => {
 		const workflowIterator = workflowMap.values();
 		const firstWorkflow = workflowIterator.next().value;
-		expect(firstWorkflow?.jobSet.size).toBe(3);
+		expect(firstWorkflow?.jobMap.size).toBe(3);
 	});
 });

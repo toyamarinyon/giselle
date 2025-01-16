@@ -44,14 +44,14 @@ export default function Page() {
 				>
 					add text node
 				</button>
-				<p>Nodes: {data.nodes.size}</p>
+				<p>Nodes: {data.nodeMap.size}</p>
 				<div>
 					<p>Workflows</p>
-					{Array.from(data.workflows.values()).map((workflow) => (
+					{Array.from(data.workflowMap.values()).map((workflow) => (
 						<div key={workflow.id}>
 							<p>Workflow: {workflow.id}</p>
-							<p>Jobs: {workflow.jobSet.size}</p>
-							<p>Nodes: {workflow.nodeSet.size}</p>
+							<p>Jobs: {workflow.jobMap.size}</p>
+							<p>Nodes: {workflow.nodeMap.size}</p>
 						</div>
 					))}
 				</div>

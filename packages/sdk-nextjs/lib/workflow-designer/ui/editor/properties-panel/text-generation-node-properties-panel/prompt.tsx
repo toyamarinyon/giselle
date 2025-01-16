@@ -63,7 +63,7 @@ export function TabsContentPrompt({
 
 	const removeSource = useCallback(
 		(removeSourceNode: NodeData) => {
-			for (const [connectionId, connectionData] of data.connections) {
+			for (const [connectionId, connectionData] of data.connectionMap) {
 				if (
 					connectionData.sourceNodeId !== removeSourceNode.id ||
 					connectionData.targetNodeId !== node.id
@@ -102,7 +102,7 @@ export function TabsContentPrompt({
 		if (requirementConnectionHandle === undefined) {
 			return;
 		}
-		for (const [connectionId, connectionData] of data.connections) {
+		for (const [connectionId, connectionData] of data.connectionMap) {
 			if (
 				connectionData.targetNodeHandleId !== requirementConnectionHandle.id
 			) {
@@ -118,14 +118,14 @@ export function TabsContentPrompt({
 
 	const connectableTextNodes = useMemo(
 		() =>
-			Array.from(data.nodes)
+			Array.from(data.nodeMap)
 				.filter(([_, nodeData]) => nodeData.content.type === "text")
 				.map(([_, nodeData]) => nodeData as TextNodeData),
 		[data],
 	);
 	const connectableTextGeneratorNodes = useMemo(
 		() =>
-			Array.from(data.nodes)
+			Array.from(data.nodeMap)
 				.filter(([_, nodeData]) => nodeData.content.type === "textGeneration")
 				.map(([_, nodeData]) => nodeData as TextGenerationNodeData),
 		[data],
@@ -135,11 +135,11 @@ export function TabsContentPrompt({
 			node.content.sources
 				.map((source) => {
 					let sourceNode: NodeData | undefined;
-					for (const [connectionId, connectionData] of data.connections) {
+					for (const [connectionId, connectionData] of data.connectionMap) {
 						if (connectionData.targetNodeHandleId !== source.id) {
 							continue;
 						}
-						sourceNode = data.nodes.get(connectionData.sourceNodeId);
+						sourceNode = data.nodeMap.get(connectionData.sourceNodeId);
 						if (sourceNode !== undefined) {
 							break;
 						}
@@ -153,11 +153,11 @@ export function TabsContentPrompt({
 		if (node.content.requirement === undefined) {
 			return null;
 		}
-		for (const [connectionId, connectionData] of data.connections) {
+		for (const [connectionId, connectionData] of data.connectionMap) {
 			if (connectionData.targetNodeHandleId !== node.content.requirement.id) {
 				continue;
 			}
-			const result = data.nodes.get(connectionData.sourceNodeId);
+			const result = data.nodeMap.get(connectionData.sourceNodeId);
 			if (result !== undefined) {
 				return result;
 			}

@@ -1,13 +1,12 @@
 import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
 import { NodeData, NodeId } from "../node";
+import { mapToObject, objectToMap } from "../utils";
 
 export const StepId = createIdGenerator("stp");
 export type StepId = z.infer<typeof StepId.schema>;
-export const StepStatus = z.enum(["queued", "in_progress", "completed"]);
 export const Step = z.object({
 	id: StepId.schema,
-	status: StepStatus.default("queued"),
 	nodeId: NodeId.schema,
 	variableNodeIds: z.preprocess((args) => {
 		if (!Array.isArray(args) || args === null || args instanceof Set) {
@@ -29,82 +28,26 @@ export const StepJson = Step.extend({
 
 export const JobId = createIdGenerator("jb");
 export type JobId = z.infer<typeof JobId.schema>;
-export const JobStatus = z.enum([
-	"queued",
-	"in_progress",
-	"completed",
-	"waiting",
-	"requested",
-	"pending",
-]);
 export const Job = z.object({
 	id: JobId.schema,
-	status: JobStatus.default("queued"),
-	stepSet: z.preprocess((args) => {
-		if (!Array.isArray(args) || args === null || args instanceof Map) {
-			return args;
-		}
-		return new Set(args);
-	}, z.set(Step)),
+	stepMap: z.preprocess(objectToMap, z.map(StepId.schema, Step)),
 });
 export type Job = z.infer<typeof Job>;
 
 export const JobJson = Job.extend({
-	stepSet: z.preprocess((args) => {
-		if (args instanceof Set) {
-			return Array.from(args);
-		}
-		return args;
-	}, z.array(StepJson)),
+	stepMap: z.preprocess(mapToObject, z.record(StepId.schema, StepJson)),
 });
 
 export const WorkflowId = createIdGenerator("wf");
 export type WorkflowId = z.infer<typeof WorkflowId.schema>;
-export const WorkflowStatus = z.enum([
-	"completed",
-	// "action_required",
-	"cancelled",
-	"failure",
-	"neutral",
-	"skipped",
-	// "stale",
-	"success",
-	"timed_out",
-	"in_progress",
-	"queued",
-	// "requested",
-	// "waiting",
-	// "pending",
-]);
 export const Workflow = z.object({
 	id: WorkflowId.schema,
-	status: WorkflowStatus.default("neutral"),
-	jobSet: z.preprocess((args) => {
-		if (!Array.isArray(args) || args === null || args instanceof Map) {
-			return args;
-		}
-		return new Set(args);
-	}, z.set(Job)),
-	nodeSet: z.preprocess((args) => {
-		if (!Array.isArray(args) || args === null || args instanceof Map) {
-			return args;
-		}
-		return new Set(args);
-	}, z.set(NodeData)),
+	jobMap: z.preprocess(objectToMap, z.map(JobId.schema, Job)),
+	nodeMap: z.preprocess(objectToMap, z.map(NodeId.schema, NodeData)),
 });
 export type Workflow = z.infer<typeof Workflow>;
 
 export const WorkflowJson = Workflow.extend({
-	jobSet: z.preprocess((args) => {
-		if (args instanceof Set) {
-			return Array.from(args);
-		}
-		return args;
-	}, z.array(JobJson)),
-	nodeSet: z.preprocess((args) => {
-		if (args instanceof Set) {
-			return Array.from(args);
-		}
-		return args;
-	}, z.array(NodeData)),
+	jobMap: z.preprocess(mapToObject, z.record(JobId.schema, JobJson)),
+	nodeMap: z.preprocess(mapToObject, z.record(NodeId.schema, NodeData)),
 });

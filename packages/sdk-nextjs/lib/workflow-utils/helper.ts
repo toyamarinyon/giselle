@@ -246,7 +246,7 @@ export function createJobSet(
 		}
 		jobSet.add({
 			id: JobId.generate(),
-			stepSet,
+			stepMap: stepSet,
 		});
 	}
 	return jobSet;
