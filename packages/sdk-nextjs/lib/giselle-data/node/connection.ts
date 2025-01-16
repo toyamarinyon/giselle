@@ -3,7 +3,7 @@ import {
 	type Connection,
 	type ConnectionHandle,
 	connectionHandleId,
-	connectionId,
+	ConnectionId,
 } from "./types";
 
 export function createConnection({
@@ -14,7 +14,7 @@ export function createConnection({
 	targetNodeHandle: ConnectionHandle;
 }): Connection {
 	return {
-		id: connectionId.generate(),
+		id: ConnectionId.generate(),
 		sourceNodeId: sourceNode.id,
 		sourceNodeType: sourceNode.type,
 		targetNodeId: targetNodeHandle.nodeId,

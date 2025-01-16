@@ -3,7 +3,7 @@ import {
 	Workspace,
 	createConnection,
 	createConnectionHandle,
-	createWorkspace,
+	generateInitialWorkspace,
 } from "@/lib/giselle-data";
 import { createTextGenerationNodeData } from "@/lib/giselle-data/node/actions/text-generation";
 import type { NodeId } from "@/lib/giselle-data/node/types";
@@ -64,7 +64,7 @@ export const connection4 = createConnection({
 	targetNodeHandle: connectionHandle4,
 });
 export const testWorkspace = Workspace.parse({
-	...createWorkspace(),
+	...generateInitialWorkspace(),
 	nodes: new Map<NodeId, NodeData>([
 		[textGenerationNode1.id, textGenerationNode1],
 		[textNode1.id, textNode1],

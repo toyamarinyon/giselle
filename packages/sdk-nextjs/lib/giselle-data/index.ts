@@ -2,15 +2,23 @@ import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
 import {
 	Connection,
+	ConnectionId,
 	NodeData,
 	NodeId,
 	NodeUIState,
-	connectionId,
 } from "./node";
 import { TextGenerationNodeData } from "./node/actions";
 import { createConnection, createConnectionHandle } from "./node/connection";
 import { TextNodeData } from "./node/variables";
-import { Workflow, WorkflowId, WorkflowJson } from "./workflow";
+import {
+	Job,
+	JobId,
+	Step,
+	StepId,
+	Workflow,
+	WorkflowId,
+	WorkflowJson,
+} from "./workflow";
 
 export const WorkspaceId = createIdGenerator("wrks");
 export type WorkspaceId = z.infer<typeof WorkspaceId.schema>;
@@ -33,7 +41,7 @@ export const Workspace = z.object({
 			}
 			return new Map(Object.entries(args));
 		},
-		z.map(connectionId.schema, Connection),
+		z.map(ConnectionId.schema, Connection),
 	),
 	ui: z.object({
 		nodeState: z.preprocess(
@@ -74,7 +82,7 @@ export const WorkspaceJson = Workspace.extend({
 			}
 			return args;
 		},
-		z.record(connectionId.schema, Connection),
+		z.record(ConnectionId.schema, Connection),
 	),
 	ui: z.object({
 		nodeState: z.preprocess(
@@ -94,7 +102,7 @@ export const WorkspaceJson = Workspace.extend({
 			}
 			return args;
 		},
-		z.record(WorkflowId.schema, Workflow),
+		z.record(WorkflowId.schema, WorkflowJson),
 	),
 });
 export type WorkspaceJson = z.infer<typeof WorkspaceJson>;
@@ -118,4 +126,11 @@ export {
 	createConnectionHandle,
 	NodeData,
 	NodeId,
+	Job,
+	JobId,
+	Step,
+	StepId,
+	Workflow,
+	Connection,
+	ConnectionId,
 };

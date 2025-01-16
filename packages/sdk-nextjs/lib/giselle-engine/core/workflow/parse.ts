@@ -1,10 +1,13 @@
-import type { NodeData, Workspace } from "@/lib/giselle-data";
-import type {
-	Connection,
-	ConnectionId,
-	NodeId,
-} from "@/lib/giselle-data/node/types";
-import { type Job, JobId, type Step, StepId } from "./types";
+import {
+	type Connection,
+	type ConnectionId,
+	type Job,
+	JobId,
+	type NodeData,
+	type NodeId,
+	type Step,
+	StepId,
+} from "@/lib/giselle-data";
 
 type ConnectionMap = Map<NodeId, Set<NodeId>>;
 export function createConnectionMap(
