@@ -15,5 +15,5 @@ export async function callCreateWorkspaceApi({
 	});
 	const data = await response.json();
 	const output = Output.parse(data);
-	return Workspace.parse(output.Workspace);
+	return Workspace.parse(output.workspace);
 }

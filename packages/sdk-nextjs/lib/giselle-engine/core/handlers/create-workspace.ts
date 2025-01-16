@@ -9,15 +9,15 @@ import { setGraphToStorage } from "../helpers/set-graph-to-storage";
 import type { WorkspaceEngineHandlerArgs } from "./types";
 
 export const Output = z.object({
-	Workspace: WorkspaceJson,
+	workspace: WorkspaceJson,
 });
 
 export async function createWorkspace({ context }: WorkspaceEngineHandlerArgs) {
-	const Workspace = generateInitialWorkspace();
+	const workspace = generateInitialWorkspace();
 	await setGraphToStorage({
 		storage: context.storage,
-		workflowId: Workspace.id,
-		Workspace: WorkspaceJson.parse(Workspace),
+		workspaceId: workspace.id,
+		workspace: WorkspaceJson.parse(workspace),
 	});
-	return Output.parse({ Workspace });
+	return Output.parse({ workspace });
 }

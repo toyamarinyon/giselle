@@ -19,8 +19,8 @@ export async function saveWorkspace({
 	const input = Input.parse(unsafeInput);
 	setGraphToStorage({
 		storage: context.storage,
-		workflowId: input.workflowId,
-		Workspace: input.Workspace,
+		workspaceId: input.workflowId,
+		workspace: input.Workspace,
 	});
 	const meta = await context.storage.getMeta(`${input.workflowId}.json`);
 	return Output.parse({

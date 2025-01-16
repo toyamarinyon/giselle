@@ -22,6 +22,31 @@ export type Job = z.infer<typeof Job>;
 export const WorkflowId = createIdGenerator("wf");
 export const Workflow = z.object({
 	id: WorkflowId.schema,
-	jobSet: z.set(Job),
-	nodeSet: z.set(NodeData),
+	jobSet: z.preprocess((args) => {
+		if (!Array.isArray(args) || args === null || args instanceof Map) {
+			return args;
+		}
+		return new Set(args);
+	}, z.set(Job)),
+	nodeSet: z.preprocess((args) => {
+		if (!Array.isArray(args) || args === null || args instanceof Map) {
+			return args;
+		}
+		return new Set(args);
+	}, z.set(NodeData)),
+});
+
+export const WorkflowJson = Workflow.extend({
+	jobSet: z.preprocess((args) => {
+		if (args instanceof Set) {
+			return Array.from(args);
+		}
+		return args;
+	}, z.array(Job)),
+	nodeSet: z.preprocess((args) => {
+		if (args instanceof Set) {
+			return Array.from(args);
+		}
+		return args;
+	}, z.array(NodeData)),
 });

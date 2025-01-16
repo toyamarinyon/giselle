@@ -87,6 +87,7 @@ export function WorkflowDesigner({
 			nodes,
 			connections,
 			ui,
+			workflows: defaultValue.workflows,
 		};
 	}
 	function updateNodeData<T extends NodeData>(node: T, data: Partial<T>) {

@@ -4,14 +4,14 @@ import { WorkspacePath } from "./workspace-path";
 
 export async function setGraphToStorage({
 	storage,
-	workflowId,
-	Workspace,
+	workspaceId,
+	workspace,
 }: {
 	storage: Storage<WorkspaceJson>;
-	workflowId: WorkspaceId;
-	Workspace: WorkspaceJson;
+	workspaceId: WorkspaceId;
+	workspace: WorkspaceJson;
 }) {
-	await storage.setItem(WorkspacePath(workflowId), Workspace, {
+	await storage.setItem(WorkspacePath(workspaceId), workspace, {
 		// Disable caching by setting cacheControlMaxAge to 0 for Vercel Blob storage
 		cacheControlMaxAge: 0,
 	});

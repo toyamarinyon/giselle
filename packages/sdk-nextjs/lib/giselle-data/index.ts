@@ -10,6 +10,7 @@ import {
 import { TextGenerationNodeData } from "./node/actions";
 import { createConnection, createConnectionHandle } from "./node/connection";
 import { TextNodeData } from "./node/variables";
+import { Workflow, WorkflowId, WorkflowJson } from "./workflow";
 
 export const WorkspaceId = createIdGenerator("wrks");
 export type WorkspaceId = z.infer<typeof WorkspaceId.schema>;
@@ -45,6 +46,15 @@ export const Workspace = z.object({
 			z.map(NodeId.schema, NodeUIState),
 		),
 	}),
+	workflows: z.preprocess(
+		(args) => {
+			if (typeof args !== "object" || args === null || args instanceof Map) {
+				return args;
+			}
+			return new Map(Object.entries(args));
+		},
+		z.map(WorkflowId.schema, Workflow),
+	),
 });
 export type Workspace = z.infer<typeof Workspace>;
 export const WorkspaceJson = Workspace.extend({
@@ -77,6 +87,15 @@ export const WorkspaceJson = Workspace.extend({
 			z.record(NodeId.schema, NodeUIState),
 		),
 	}),
+	workflows: z.preprocess(
+		(args) => {
+			if (args instanceof Map) {
+				return Object.fromEntries(args);
+			}
+			return args;
+		},
+		z.record(WorkflowId.schema, Workflow),
+	),
 });
 export type WorkspaceJson = z.infer<typeof WorkspaceJson>;
 
@@ -88,6 +107,7 @@ export function generateInitialWorkspace() {
 		ui: {
 			nodeState: new Map(),
 		},
+		workflows: new Map(),
 	});
 }
 
