@@ -4,8 +4,10 @@ import { NodeData, NodeId } from "../node";
 
 export const StepId = createIdGenerator("stp");
 export type StepId = z.infer<typeof StepId.schema>;
+export const StepStatus = z.enum(["queued", "in_progress", "completed"]);
 export const Step = z.object({
 	id: StepId.schema,
+	status: StepStatus.default("queued"),
 	nodeId: NodeId.schema,
 	variableNodeIds: z.preprocess((args) => {
 		if (!Array.isArray(args) || args === null || args instanceof Set) {
@@ -27,8 +29,17 @@ export const StepJson = Step.extend({
 
 export const JobId = createIdGenerator("jb");
 export type JobId = z.infer<typeof JobId.schema>;
+export const JobStatus = z.enum([
+	"queued",
+	"in_progress",
+	"completed",
+	"waiting",
+	"requested",
+	"pending",
+]);
 export const Job = z.object({
 	id: JobId.schema,
+	status: JobStatus.default("queued"),
 	stepSet: z.preprocess((args) => {
 		if (!Array.isArray(args) || args === null || args instanceof Map) {
 			return args;
@@ -49,8 +60,25 @@ export const JobJson = Job.extend({
 
 export const WorkflowId = createIdGenerator("wf");
 export type WorkflowId = z.infer<typeof WorkflowId.schema>;
+export const WorkflowStatus = z.enum([
+	"completed",
+	// "action_required",
+	"cancelled",
+	"failure",
+	"neutral",
+	"skipped",
+	// "stale",
+	"success",
+	"timed_out",
+	"in_progress",
+	"queued",
+	// "requested",
+	// "waiting",
+	// "pending",
+]);
 export const Workflow = z.object({
 	id: WorkflowId.schema,
+	status: WorkflowStatus.default("neutral"),
 	jobSet: z.preprocess((args) => {
 		if (!Array.isArray(args) || args === null || args instanceof Map) {
 			return args;

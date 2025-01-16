@@ -57,7 +57,7 @@ export function WorkflowDesigner({
 	const nodes = defaultValue.nodes;
 	const connections = defaultValue.connections;
 	const ui = defaultValue.ui;
-	let workflows = defaultValue.workflows;
+	const workflows = defaultValue.workflows;
 	function addTextGenerationNode(
 		params: z.infer<typeof CreateTextGenerationNodeParams>,
 		options?: {
@@ -69,7 +69,6 @@ export function WorkflowDesigner({
 		if (options?.ui) {
 			ui.nodeState.set(textgenerationNodeData.id, options.ui);
 		}
-		workflows = buildWorkflowMap(nodes, connections);
 	}
 	function addTextNode(
 		params: z.infer<typeof CreateTextNodeParams>,
@@ -82,7 +81,6 @@ export function WorkflowDesigner({
 		if (options?.ui) {
 			ui.nodeState.set(textNodeData.id, options.ui);
 		}
-		workflows = buildWorkflowMap(nodes, connections);
 	}
 	function getData() {
 		return {
@@ -105,7 +103,6 @@ export function WorkflowDesigner({
 			targetNodeHandle,
 		});
 		connections.set(connection.id, connection);
-		workflows = buildWorkflowMap(nodes, connections);
 	}
 	function setUiNodeState(
 		unsafeNodeId: string | NodeId,
@@ -120,13 +117,11 @@ export function WorkflowDesigner({
 	}
 	function deleteConnection(connectionId: ConnectionId) {
 		connections.delete(connectionId);
-		workflows = buildWorkflowMap(nodes, connections);
 	}
 	function deleteNode(unsafeNodeId: string | NodeId) {
 		const deleteNodeId = NodeId.parse(unsafeNodeId);
 		ui.nodeState.delete(deleteNodeId);
 		nodes.delete(deleteNodeId);
-		workflows = buildWorkflowMap(nodes, connections);
 	}
 
 	return {
