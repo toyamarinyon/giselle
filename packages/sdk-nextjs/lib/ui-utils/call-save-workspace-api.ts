@@ -5,7 +5,7 @@ import {
 } from "../giselle-data";
 import { Output } from "../giselle-engine/core/handlers/save-workspace";
 
-export async function callSaveWorkflowApi({
+export async function callSaveWorkspaceApi({
 	api = "/api/giselle/save-workspace",
 	workspaceId,
 	workspace,

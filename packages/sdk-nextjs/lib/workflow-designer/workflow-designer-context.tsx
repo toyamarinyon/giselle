@@ -1,5 +1,6 @@
 "use client";
 
+import { callSaveWorkflowApi } from "@/lib/ui-utils";
 import {
 	createContext,
 	useCallback,
@@ -17,7 +18,6 @@ import type {
 	NodeUIState,
 } from "../giselle-data/node/types";
 import type { CreateTextNodeParams } from "../giselle-data/node/variables/text";
-import { callSaveWorkflowApi } from "./call-save-workspace-api";
 import { usePropertiesPanel, useView } from "./state";
 import {
 	WorkflowDesigner,

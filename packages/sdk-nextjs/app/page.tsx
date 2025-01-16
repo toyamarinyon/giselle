@@ -1,6 +1,6 @@
 "use client";
 
-import { useCreateWorkspace } from "@/lib/workflow-designer";
+import { useCreateWorkspace } from "@/lib/ui-utils";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
