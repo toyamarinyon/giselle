@@ -15,7 +15,6 @@ import {
 	type ConnectionId,
 	NodeId,
 	NodeUIState,
-	ConnectionId,
 } from "../giselle-data/node/types";
 import {
 	type CreateTextNodeParams,
