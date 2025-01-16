@@ -20,6 +20,7 @@ export const Job = z.object({
 export type Job = z.infer<typeof Job>;
 
 export const WorkflowId = createIdGenerator("wf");
+export type WorkflowId = z.infer<typeof WorkflowId.schema>;
 export const Workflow = z.object({
 	id: WorkflowId.schema,
 	jobSet: z.preprocess((args) => {
@@ -35,6 +36,7 @@ export const Workflow = z.object({
 		return new Set(args);
 	}, z.set(NodeData)),
 });
+export type Workflow = z.infer<typeof Workflow>;
 
 export const WorkflowJson = Workflow.extend({
 	jobSet: z.preprocess((args) => {

@@ -9,12 +9,12 @@ import {
 	StepId,
 } from "@/lib/giselle-data";
 
-type ConnectionMap = Map<NodeId, Set<NodeId>>;
-export function createConnectionMap(
+type ConnectedNodeIdMap = Map<NodeId, Set<NodeId>>;
+export function createConnectedNodeIdMap(
 	connectionSet: Set<Connection>,
 	nodeIdSet: Set<NodeId>,
 ) {
-	const connectionMap: ConnectionMap = new Map();
+	const connectionMap: ConnectedNodeIdMap = new Map();
 	for (const connection of connectionSet) {
 		if (
 			!nodeIdSet.has(connection.sourceNodeId) ||
@@ -44,7 +44,7 @@ export function createConnectionMap(
 export function findConnectedNodeMap(
 	startNodeId: NodeId,
 	nodeMap: Map<NodeId, NodeData>,
-	connectionMap: ConnectionMap,
+	connectionMap: ConnectedNodeIdMap,
 ): Map<NodeId, NodeData> {
 	const connectedNodeMap = new Map<NodeId, NodeData>();
 	const stack: NodeId[] = [startNodeId];

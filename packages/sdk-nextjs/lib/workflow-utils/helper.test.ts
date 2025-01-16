@@ -1,11 +1,11 @@
 import type { NodeData, NodeId } from "@/lib/giselle-data";
 import { describe, expect, test } from "vitest";
 import {
-	createConnectionMap,
+	createConnectedNodeIdMap,
 	createJobSet,
 	findConnectedConnectionMap,
 	findConnectedNodeMap,
-} from "./parse";
+} from "./helper";
 import {
 	connection1,
 	connection2,
@@ -17,12 +17,13 @@ import {
 	textGenerationNode3,
 	textGenerationNode4,
 	textGenerationNode5,
+	textGenerationNode6,
 	textNode1,
 } from "./tests/fixtures";
 
 test("createConnectionMap", () => {
 	expect(
-		createConnectionMap(
+		createConnectedNodeIdMap(
 			new Set(testWorkspace.connections.values()),
 			new Set(testWorkspace.nodes.keys()),
 		),
@@ -41,8 +42,8 @@ test("createConnectionMap", () => {
 	);
 });
 
-describe("findConnectedComponent", () => {
-	const connectionMap = createConnectionMap(
+describe("findConnectedNodeMap", () => {
+	const connectionMap = createConnectedNodeIdMap(
 		new Set(testWorkspace.connections.values()),
 		new Set(testWorkspace.nodes.keys()),
 	);
@@ -50,6 +51,22 @@ describe("findConnectedComponent", () => {
 		expect(
 			findConnectedNodeMap(
 				textGenerationNode1.id,
+				testWorkspace.nodes,
+				connectionMap,
+			),
+		).toStrictEqual(
+			new Map<NodeId, NodeData>([
+				[textGenerationNode1.id, textGenerationNode1],
+				[textNode1.id, textNode1],
+				[textGenerationNode2.id, textGenerationNode2],
+				[textGenerationNode3.id, textGenerationNode3],
+			]),
+		);
+	});
+	test("start by textGenerationNode2", () => {
+		expect(
+			findConnectedNodeMap(
+				textGenerationNode2.id,
 				testWorkspace.nodes,
 				connectionMap,
 			),
@@ -76,10 +93,23 @@ describe("findConnectedComponent", () => {
 			]),
 		);
 	});
+	test("start by textGenerationNode6", () => {
+		expect(
+			findConnectedNodeMap(
+				textGenerationNode6.id,
+				testWorkspace.nodes,
+				connectionMap,
+			),
+		).toStrictEqual(
+			new Map<NodeId, NodeData>([
+				[textGenerationNode6.id, textGenerationNode6],
+			]),
+		);
+	});
 });
 
 describe("findConnectedConnections", () => {
-	const connectionMap = createConnectionMap(
+	const connectionMap = createConnectedNodeIdMap(
 		new Set(testWorkspace.connections.values()),
 		new Set(testWorkspace.nodes.keys()),
 	);
@@ -117,7 +147,7 @@ describe("findConnectedConnections", () => {
 	});
 });
 describe("createJobsFromGraph", () => {
-	const connectionMap = createConnectionMap(
+	const connectionMap = createConnectedNodeIdMap(
 		new Set(testWorkspace.connections.values()),
 		new Set(testWorkspace.nodes.keys()),
 	);

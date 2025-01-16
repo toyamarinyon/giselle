@@ -131,6 +131,7 @@ export {
 	Step,
 	StepId,
 	Workflow,
+	WorkflowId,
 	Connection,
 	ConnectionId,
 };

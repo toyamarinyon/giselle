@@ -63,6 +63,9 @@ export const connection4 = createConnection({
 	sourceNode: textGenerationNode4,
 	targetNodeHandle: connectionHandle4,
 });
+export const textGenerationNode6 = createTextGenerationNodeData({
+	name: "Text Generation Node 6",
+});
 export const testWorkspace = Workspace.parse({
 	...generateInitialWorkspace(),
 	nodes: new Map<NodeId, NodeData>([
@@ -72,6 +75,7 @@ export const testWorkspace = Workspace.parse({
 		[textGenerationNode3.id, textGenerationNode3],
 		[textGenerationNode4.id, textGenerationNode4],
 		[textGenerationNode5.id, textGenerationNode5],
+		[textGenerationNode6.id, textGenerationNode6],
 	]),
 	connections: new Map([
 		[connection1.id, connection1],
