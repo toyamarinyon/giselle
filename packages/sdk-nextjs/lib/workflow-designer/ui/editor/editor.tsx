@@ -1,4 +1,3 @@
-import { nodeId } from "@/lib/workflow-data/node/types";
 import {
 	Background,
 	BackgroundVariant,
@@ -9,8 +8,8 @@ import {
 	useUpdateNodeInternals,
 } from "@xyflow/react";
 import { useEffect } from "react";
+import bg from "../../images/bg.png";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
-import bg from "./bg.png";
 import { Header } from "./header";
 import { type GiselleWorkflowDesignerNode, nodeTypes } from "./node";
 import { PropertiesPanel } from "./properties-panel";

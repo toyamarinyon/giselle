@@ -1,7 +1,7 @@
 import type { NodeData } from "@/lib/workflow-data";
 import clsx from "clsx/lite";
 import type { ReactNode } from "react";
-import { ContentTypeIcon } from "../../content-type-icon";
+import { ContentTypeIcon } from "../../../icons";
 
 export function PropertiesPanelTitle({
 	node,
