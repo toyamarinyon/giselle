@@ -7,12 +7,12 @@ import { Output } from "../giselle-engine/core/handlers/save-workspace";
 
 export async function callSaveWorkflowApi({
 	api = "/api/giselle/save-workspace",
-	workflowId,
-	Workspace,
+	workspaceId,
+	workspace,
 }: {
 	api?: string;
-	workflowId: WorkspaceId;
-	Workspace: Workspace;
+	workspaceId: WorkspaceId;
+	workspace: Workspace;
 }) {
 	const response = await fetch(api, {
 		method: "POST",
@@ -20,8 +20,8 @@ export async function callSaveWorkflowApi({
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
-			workflowId,
-			Workspace: WorkspaceJson.parse(Workspace),
+			workspaceId,
+			workspace: WorkspaceJson.parse(workspace),
 		}),
 	});
 	const data = await response.json();

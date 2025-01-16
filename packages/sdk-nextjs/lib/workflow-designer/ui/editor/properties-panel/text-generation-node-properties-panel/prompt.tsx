@@ -63,26 +63,21 @@ export function TabsContentPrompt({
 
 	const removeSource = useCallback(
 		(removeSourceNode: NodeData) => {
-			const removeSourceConnectionHandle = node.content.sources.find(
-				(source) => source.nodeId === removeSourceNode.id,
-			);
-			if (removeSourceConnectionHandle === undefined) {
-				return;
-			}
 			for (const [connectionId, connectionData] of data.connections) {
 				if (
-					connectionData.targetNodeHandleId !== removeSourceConnectionHandle.id
+					connectionData.sourceNodeId !== removeSourceNode.id ||
+					connectionData.targetNodeId !== node.id
 				) {
 					continue;
 				}
 				deleteConnection(connectionId);
+				updateNodeDataContent(node, {
+					sources: node.content.sources.filter(
+						({ id }) => id !== connectionData.targetNodeHandleId,
+					),
+				});
 				break;
 			}
-			updateNodeDataContent(node, {
-				sources: node.content.sources.filter(
-					({ id }) => id !== removeSourceConnectionHandle.id,
-				),
-			});
 		},
 		[deleteConnection, data, node, updateNodeDataContent],
 	);

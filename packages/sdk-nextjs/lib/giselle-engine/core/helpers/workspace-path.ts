@@ -1,5 +1,5 @@
 import type { WorkspaceId } from "@/lib/giselle-data";
 
-export function WorkspacePath(workspaceId: WorkspaceId) {
+export function workspacePath(workspaceId: WorkspaceId) {
 	return `${workspaceId}/workspace.json`;
 }

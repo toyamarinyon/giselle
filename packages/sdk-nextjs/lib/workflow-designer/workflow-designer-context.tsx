@@ -64,7 +64,7 @@ export function WorkflowDesignerProvider({
 			defaultValue: data,
 		}),
 	);
-	const [Workspace, setWorkspace] = useState(data);
+	const [workspace, setWorkspace] = useState(data);
 	const persistTimeoutRef = useRef<Timer | null>(null);
 	const isPendingPersistRef = useRef(false);
 
@@ -73,13 +73,13 @@ export function WorkflowDesignerProvider({
 		try {
 			await callSaveWorkflowApi({
 				api: saveWorkflowApi,
-				workflowId: Workspace.id,
-				Workspace,
+				workspaceId: workspace.id,
+				workspace,
 			});
 		} catch (error) {
 			console.error("Failed to persist graph:", error);
 		}
-	}, [saveWorkflowApi, Workspace]);
+	}, [saveWorkflowApi, workspace]);
 
 	const setAndSaveWorkspace = useCallback(
 		(data: Workspace) => {
@@ -194,7 +194,7 @@ export function WorkflowDesignerProvider({
 	return (
 		<WorkflowDesignerContext.Provider
 			value={{
-				data: Workspace,
+				data: workspace,
 				textGenerationApi,
 				addTextGenerationNode,
 				addTextNode,

@@ -48,5 +48,9 @@ export function buildWorkflowMap(
 
 		processedNodeSet = processedNodeSet.union(new Set(connectedNodeMap.keys()));
 	}
-	return workflowSet;
+	const workflowMap = new Map<WorkflowId, Workflow>();
+	for (const workflow of workflowSet) {
+		workflowMap.set(workflow.id, workflow);
+	}
+	return workflowMap;
 }
