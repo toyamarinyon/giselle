@@ -1,9 +1,9 @@
 import type { z } from "zod";
 import {
 	type NodeData,
-	type WorkflowData,
+	type Workspace,
 	createConnection,
-	generateInitialWorkflowData,
+	generateInitialWorkspace,
 } from "../workflow-data";
 import {
 	type CreateTextGenerationNodeParams,
@@ -36,7 +36,7 @@ export interface WorkflowDesignerOperations {
 		params: z.infer<typeof CreateTextNodeParams>,
 		options?: addNodeOptions,
 	) => void;
-	getData: () => WorkflowData;
+	getData: () => Workspace;
 	addConnection: (
 		sourceNode: NodeData,
 		targetNodeHandle: ConnectionHandle,
@@ -51,9 +51,9 @@ export interface WorkflowDesignerOperations {
 }
 
 export function WorkflowDesigner({
-	defaultValue = generateInitialWorkflowData(),
+	defaultValue = generateInitialWorkspace(),
 }: {
-	defaultValue?: WorkflowData;
+	defaultValue?: Workspace;
 }): WorkflowDesignerOperations {
 	const nodes = defaultValue.nodes;
 	const connections = defaultValue.connections;

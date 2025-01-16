@@ -1,20 +1,20 @@
 import type { NextRequest } from "next/server";
-import { WorkflowEngine, type WorkflowEngineConfig } from "../core";
+import { GiselleEngine, type GiselleEngineConfig } from "../core";
 
 type AppRouteHandlers = Record<
 	"GET" | "POST",
 	(req: NextRequest) => Promise<Response>
 >;
 
-interface NextWorkflowEngineConfig extends WorkflowEngineConfig {}
+interface NextWorkflowEngineConfig extends GiselleEngineConfig {}
 interface NextWokrflowEngineResult {
 	handlers: AppRouteHandlers;
 }
 
-export function NextWorkflowEngine(
+export function NextGiselleEngine(
 	config: NextWorkflowEngineConfig,
 ): NextWokrflowEngineResult {
-	const httpHandler = (req: NextRequest) => WorkflowEngine(req, config);
+	const httpHandler = (req: NextRequest) => GiselleEngine(req, config);
 	return {
 		handlers: {
 			GET: httpHandler,

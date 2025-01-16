@@ -1,3 +1,4 @@
+import { textGenerationPrompt } from "@/lib/giselle-engine/core/prompts";
 import {
 	type NodeData,
 	type TextGenerationNodeData,
@@ -5,7 +6,6 @@ import {
 	createConnectionHandle,
 } from "@/lib/workflow-data";
 import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
-import { textGenerationPrompt } from "@/lib/workflow-engine/core/prompts";
 import clsx from "clsx/lite";
 import { CheckIcon, TrashIcon, UndoIcon } from "lucide-react";
 import {

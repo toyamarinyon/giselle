@@ -1,7 +1,7 @@
-import { workflowId } from "@/lib/workflow-data";
+import { WorkspaceId } from "@/lib/workflow-data";
 import {
 	WorkflowDesignerProvider,
-	callGetWorkflowApi,
+	callGetWorkspaceApi,
 } from "@/lib/workflow-designer";
 import type { ReactNode } from "react";
 import "@xyflow/react/dist/style.css";
@@ -11,11 +11,11 @@ export default async function Layout({
 	params,
 	children,
 }: {
-	params: Promise<{ workflowId: string }>;
+	params: Promise<{ workspaceId: string }>;
 	children: ReactNode;
 }) {
-	const data = await callGetWorkflowApi({
-		workflowId: workflowId.parse((await params).workflowId),
+	const data = await callGetWorkspaceApi({
+		workflowId: WorkspaceId.parse((await params).workspaceId),
 	});
 	return (
 		<WorkflowDesignerProvider data={data}>{children}</WorkflowDesignerProvider>

@@ -1,9 +1,9 @@
 import {
 	type NodeData,
-	WorkflowData,
+	Workspace,
 	createConnection,
 	createConnectionHandle,
-	generateInitialWorkflowData,
+	generateInitialWorkspace,
 } from "@/lib/workflow-data";
 import { createTextGenerationNodeData } from "@/lib/workflow-data/node/actions/text-generation";
 import type { NodeId } from "@/lib/workflow-data/node/types";
@@ -63,8 +63,8 @@ export const connection4 = createConnection({
 	sourceNode: textGenerationNode4,
 	targetNodeHandle: connectionHandle4,
 });
-export const testWorkflowData = WorkflowData.parse({
-	...generateInitialWorkflowData(),
+export const testWorkspace = Workspace.parse({
+	...generateInitialWorkspace(),
 	nodes: new Map<NodeId, NodeData>([
 		[textGenerationNode1.id, textGenerationNode1],
 		[textNode1.id, textNode1],

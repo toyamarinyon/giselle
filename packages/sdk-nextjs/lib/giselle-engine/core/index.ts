@@ -1,35 +1,35 @@
-import type { WorkflowDataJson } from "@/lib/workflow-data";
+import type { WorkspaceJson } from "@/lib/workflow-data";
 import type { Storage } from "unstorage";
 import { z } from "zod";
-import { createWorkflow } from "./handlers/create-workflow";
-import { getWorkflow } from "./handlers/get-workflow";
-import { saveWorkflow } from "./handlers/save-workflow";
+import { createWorkspace } from "./handlers/create-workspace";
+import { getWorkspace } from "./handlers/get-workspace";
+import { saveWorkspace } from "./handlers/save-workspace";
 import { textGeneration } from "./handlers/text-generation";
-import type { WorkflowEngineContext } from "./types";
+import type { GiselleEngineContext } from "./types";
 
-export const WorkflowEngineAction = z.enum([
-	"create-workflow",
-	"save-workflow",
-	"get-workflow",
+export const GiselleEngineAction = z.enum([
+	"create-workspace",
+	"save-workspace",
+	"get-workspace",
 	"text-generation",
 ]);
-type WorkflowEngineAction = z.infer<typeof WorkflowEngineAction>;
+type GiselleEngineAction = z.infer<typeof GiselleEngineAction>;
 
-export interface WorkflowEngineRequest {
-	action: WorkflowEngineAction;
+export interface GiselleEngineRequest {
+	action: GiselleEngineAction;
 	payload: unknown;
-	context: WorkflowEngineContext;
+	context: GiselleEngineContext;
 }
 
-export interface WorkflowEngineConfig {
+export interface GiselleEngineConfig {
 	basePath: string;
-	storage: Storage<WorkflowDataJson>;
+	storage: Storage<WorkspaceJson>;
 }
 
-async function toWorkflowEngineRequest(
+async function toGiselleEngineRequest(
 	request: Request,
-	config: WorkflowEngineConfig,
-): Promise<WorkflowEngineRequest> {
+	config: GiselleEngineConfig,
+): Promise<GiselleEngineRequest> {
 	request.url;
 	const url = new URL(request.url);
 	const pathname = url.pathname;
@@ -46,7 +46,7 @@ async function toWorkflowEngineRequest(
 
 	const [unsafeAction] = segments;
 
-	const action = WorkflowEngineAction.parse(unsafeAction);
+	const action = GiselleEngineAction.parse(unsafeAction);
 
 	async function getBody(
 		req: Request,
@@ -71,24 +71,24 @@ async function toWorkflowEngineRequest(
 	};
 }
 
-export async function WorkflowEngine(
+export async function GiselleEngine(
 	request: Request,
-	config: WorkflowEngineConfig,
+	config: GiselleEngineConfig,
 ): Promise<Response> {
-	const { action, payload, context } = await toWorkflowEngineRequest(
+	const { action, payload, context } = await toGiselleEngineRequest(
 		request,
 		config,
 	);
 	switch (action) {
-		case "save-workflow": {
-			const result = await saveWorkflow({
+		case "save-workspace": {
+			const result = await saveWorkspace({
 				context,
 				unsafeInput: payload,
 			});
 			return Response.json(result);
 		}
-		case "get-workflow": {
-			const result = await getWorkflow({
+		case "get-workspace": {
+			const result = await getWorkspace({
 				unsafeInput: payload,
 				context,
 			});
@@ -101,8 +101,8 @@ export async function WorkflowEngine(
 			});
 			return stream.toDataStreamResponse();
 		}
-		case "create-workflow": {
-			const result = await createWorkflow({ context });
+		case "create-workspace": {
+			const result = await createWorkspace({ context });
 			return Response.json(result);
 		}
 		default: {

@@ -9,14 +9,14 @@ export function useTextGenerationNode(
 		onSubmit?: () => void;
 	},
 ) {
-	const { data: workflowData, textGenerationApi } = useWorkflowDesigner();
+	const { data: Workspace, textGenerationApi } = useWorkflowDesigner();
 
 	const { handleSubmit, completion, input, handleInputChange, isLoading } =
 		useCompletion({
 			api: textGenerationApi,
 			initialInput: node.content.prompt,
 			body: {
-				workflowId: workflowData.id,
+				workflowId: Workspace.id,
 				nodeId: node.id,
 			},
 		});

@@ -1,4 +1,4 @@
-import type { NodeData, WorkflowData } from "@/lib/workflow-data";
+import type { NodeData, Workspace } from "@/lib/workflow-data";
 import type {
 	Connection,
 	ConnectionId,

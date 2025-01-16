@@ -12,7 +12,7 @@ import {
 	connection2,
 	connection3,
 	connection4,
-	testWorkflowData,
+	testWorkspace,
 	textGenerationNode1,
 	textGenerationNode2,
 	textGenerationNode3,
@@ -24,8 +24,8 @@ import {
 test("createConnectionMap", () => {
 	expect(
 		createConnectionMap(
-			new Set(testWorkflowData.connections.values()),
-			new Set(testWorkflowData.nodes.keys()),
+			new Set(testWorkspace.connections.values()),
+			new Set(testWorkspace.nodes.keys()),
 		),
 	).toStrictEqual(
 		new Map([
@@ -44,14 +44,14 @@ test("createConnectionMap", () => {
 
 describe("findConnectedComponent", () => {
 	const connectionMap = createConnectionMap(
-		new Set(testWorkflowData.connections.values()),
-		new Set(testWorkflowData.nodes.keys()),
+		new Set(testWorkspace.connections.values()),
+		new Set(testWorkspace.nodes.keys()),
 	);
 	test("start by textGenerationNode1", () => {
 		expect(
 			findConnectedNodeMap(
 				textGenerationNode1.id,
-				testWorkflowData.nodes,
+				testWorkspace.nodes,
 				connectionMap,
 			),
 		).toStrictEqual(
@@ -67,7 +67,7 @@ describe("findConnectedComponent", () => {
 		expect(
 			findConnectedNodeMap(
 				textGenerationNode4.id,
-				testWorkflowData.nodes,
+				testWorkspace.nodes,
 				connectionMap,
 			),
 		).toStrictEqual(
@@ -81,19 +81,19 @@ describe("findConnectedComponent", () => {
 
 describe("findConnectedConnections", () => {
 	const connectionMap = createConnectionMap(
-		new Set(testWorkflowData.connections.values()),
-		new Set(testWorkflowData.nodes.keys()),
+		new Set(testWorkspace.connections.values()),
+		new Set(testWorkspace.nodes.keys()),
 	);
 	test("start by textGenerationNode1", () => {
 		const connectedNodeMap = findConnectedNodeMap(
 			textGenerationNode1.id,
-			testWorkflowData.nodes,
+			testWorkspace.nodes,
 			connectionMap,
 		);
 		expect(
 			findConnectedConnectionMap(
 				new Set(connectedNodeMap.keys()),
-				new Set(testWorkflowData.connections.values()),
+				new Set(testWorkspace.connections.values()),
 			),
 		).toStrictEqual(
 			new Map([
@@ -106,31 +106,31 @@ describe("findConnectedConnections", () => {
 	test("start by textGenerationNode4", () => {
 		const connectedNodeMap = findConnectedNodeMap(
 			textGenerationNode4.id,
-			testWorkflowData.nodes,
+			testWorkspace.nodes,
 			connectionMap,
 		);
 		expect(
 			findConnectedConnectionMap(
 				new Set(connectedNodeMap.keys()),
-				new Set(testWorkflowData.connections.values()),
+				new Set(testWorkspace.connections.values()),
 			),
 		).toStrictEqual(new Map([[connection4.id, connection4]]));
 	});
 });
 describe("createJobsFromGraph", () => {
 	const connectionMap = createConnectionMap(
-		new Set(testWorkflowData.connections.values()),
-		new Set(testWorkflowData.nodes.keys()),
+		new Set(testWorkspace.connections.values()),
+		new Set(testWorkspace.nodes.keys()),
 	);
 	test("start by textGenerationNode1", () => {
 		const connectedNodeMap = findConnectedNodeMap(
 			textGenerationNode1.id,
-			testWorkflowData.nodes,
+			testWorkspace.nodes,
 			connectionMap,
 		);
 		const connectedConnectionMap = findConnectedConnectionMap(
 			new Set(connectedNodeMap.keys()),
-			new Set(testWorkflowData.connections.values()),
+			new Set(testWorkspace.connections.values()),
 		);
 		const jobSet = createJobSet(
 			new Set(connectedNodeMap.values()),
@@ -159,12 +159,12 @@ describe("createJobsFromGraph", () => {
 	test("start by textGenerationNode4", () => {
 		const connectedNodeMap = findConnectedNodeMap(
 			textGenerationNode4.id,
-			testWorkflowData.nodes,
+			testWorkspace.nodes,
 			connectionMap,
 		);
 		const connectedConnectionMap = findConnectedConnectionMap(
 			new Set(connectedNodeMap.keys()),
-			new Set(testWorkflowData.connections.values()),
+			new Set(testWorkspace.connections.values()),
 		);
 		const jobSet = createJobSet(
 			new Set(connectedNodeMap.values()),

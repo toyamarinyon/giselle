@@ -33,7 +33,7 @@ function CustomNode({
 	type,
 	selected,
 }: NodeProps<GiselleWorkflowDesignerNode>) {
-	const { data: workflowData } = useWorkflowDesigner();
+	const { data: Workspace } = useWorkflowDesigner();
 	const targetHandles = useMemo(() => {
 		if (data.nodeData.content.type !== "textGeneration") {
 			return [];
@@ -45,10 +45,10 @@ function CustomNode({
 	}, [data]);
 	const hasTarget = useMemo(
 		() =>
-			Array.from(workflowData.connections).some(
+			Array.from(Workspace.connections).some(
 				([_, connection]) => connection.sourceNodeId === data.nodeData.id,
 			),
-		[workflowData, data.nodeData.id],
+		[Workspace, data.nodeData.id],
 	);
 	return (
 		<div

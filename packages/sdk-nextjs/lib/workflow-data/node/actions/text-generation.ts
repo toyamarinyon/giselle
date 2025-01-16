@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BaseNodeData, ConnectionHandle, nodeId } from "../types";
-// import type { WorkflowData } from "./workflow-state";
+// import type { Workspace } from "./workflow-state";
 
 export const TextGenerationContent = z.object({
 	type: z.literal("textGeneration"),

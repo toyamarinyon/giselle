@@ -8,7 +8,7 @@ import {
 	useState,
 } from "react";
 import type { z } from "zod";
-import type { NodeData, WorkflowData } from "../workflow-data";
+import type { NodeData, Workspace } from "../workflow-data";
 import type { CreateTextGenerationNodeParams } from "../workflow-data/node/actions/text-generation";
 import type {
 	ConnectionHandle,
@@ -17,7 +17,7 @@ import type {
 	NodeUIState,
 } from "../workflow-data/node/types";
 import type { CreateTextNodeParams } from "../workflow-data/node/variables/text";
-import { callSaveWorkflowApi } from "./call-save-workflow-api";
+import { callSaveWorkflowApi } from "./call-save-workspace-api";
 import { usePropertiesPanel, useView } from "./state";
 import {
 	WorkflowDesigner,
@@ -37,7 +37,7 @@ interface WorkflowDesignerContextValue
 		>,
 		ReturnType<typeof usePropertiesPanel>,
 		ReturnType<typeof useView> {
-	data: WorkflowData;
+	data: Workspace;
 	textGenerationApi: string;
 	updateNodeDataContent: <T extends NodeData>(
 		node: T,
@@ -51,11 +51,11 @@ const WorkflowDesignerContext = createContext<
 export function WorkflowDesignerProvider({
 	children,
 	data,
-	saveWorkflowApi = "/api/workflow/save-workflow",
-	textGenerationApi = "/api/workflow/text-generation",
+	saveWorkflowApi = "/api/giselle/save-workspace",
+	textGenerationApi = "/api/giselle/text-generation",
 }: {
 	children: React.ReactNode;
-	data: WorkflowData;
+	data: Workspace;
 	saveWorkflowApi?: string;
 	textGenerationApi?: string;
 }) {
@@ -64,34 +64,34 @@ export function WorkflowDesignerProvider({
 			defaultValue: data,
 		}),
 	);
-	const [workflowData, setWorkflowData] = useState(data);
+	const [Workspace, setWorkspace] = useState(data);
 	const persistTimeoutRef = useRef<Timer | null>(null);
 	const isPendingPersistRef = useRef(false);
 
-	const saveWorkflowData = useCallback(async () => {
+	const saveWorkspace = useCallback(async () => {
 		isPendingPersistRef.current = false;
 		try {
 			await callSaveWorkflowApi({
 				api: saveWorkflowApi,
-				workflowId: workflowData.id,
-				workflowData,
+				workflowId: Workspace.id,
+				Workspace,
 			});
 		} catch (error) {
 			console.error("Failed to persist graph:", error);
 		}
-	}, [saveWorkflowApi, workflowData]);
+	}, [saveWorkflowApi, Workspace]);
 
-	const setAndSaveWorkflowData = useCallback(
-		(data: WorkflowData) => {
-			setWorkflowData(data);
+	const setAndSaveWorkspace = useCallback(
+		(data: Workspace) => {
+			setWorkspace(data);
 
 			isPendingPersistRef.current = true;
 			if (persistTimeoutRef.current) {
 				clearTimeout(persistTimeoutRef.current);
 			}
-			persistTimeoutRef.current = setTimeout(saveWorkflowData, 500);
+			persistTimeoutRef.current = setTimeout(saveWorkspace, 500);
 		},
-		[saveWorkflowData],
+		[saveWorkspace],
 	);
 
 	const addTextGenerationNode = useCallback(
@@ -103,9 +103,9 @@ export function WorkflowDesignerProvider({
 				return;
 			}
 			workflowDesignerRef.current.addTextGenerationNode(params, options);
-			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+			setAndSaveWorkspace(workflowDesignerRef.current.getData());
 		},
-		[setAndSaveWorkflowData],
+		[setAndSaveWorkspace],
 	);
 
 	const updateNodeData = useCallback(
@@ -114,9 +114,9 @@ export function WorkflowDesignerProvider({
 				return;
 			}
 			workflowDesignerRef.current.updateNodeData(node, data);
-			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+			setAndSaveWorkspace(workflowDesignerRef.current.getData());
 		},
-		[setAndSaveWorkflowData],
+		[setAndSaveWorkspace],
 	);
 
 	const updateNodeDataContent = useCallback(
@@ -128,17 +128,17 @@ export function WorkflowDesignerProvider({
 				...node,
 				content: { ...node.content, ...content },
 			});
-			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+			setAndSaveWorkspace(workflowDesignerRef.current.getData());
 		},
-		[setAndSaveWorkflowData],
+		[setAndSaveWorkspace],
 	);
 
 	const addConnection = useCallback(
 		(sourceNode: NodeData, targetHandle: ConnectionHandle) => {
 			workflowDesignerRef.current?.addConnection(sourceNode, targetHandle);
-			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+			setAndSaveWorkspace(workflowDesignerRef.current.getData());
 		},
-		[setAndSaveWorkflowData],
+		[setAndSaveWorkspace],
 	);
 
 	const addTextNode = useCallback(
@@ -150,9 +150,9 @@ export function WorkflowDesignerProvider({
 				return;
 			}
 			workflowDesignerRef.current.addTextNode(params, options);
-			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+			setAndSaveWorkspace(workflowDesignerRef.current.getData());
 		},
-		[setAndSaveWorkflowData],
+		[setAndSaveWorkspace],
 	);
 
 	const setUiNodeState = useCallback(
@@ -161,9 +161,9 @@ export function WorkflowDesignerProvider({
 				return;
 			}
 			workflowDesignerRef.current.setUiNodeState(nodeId, ui);
-			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+			setAndSaveWorkspace(workflowDesignerRef.current.getData());
 		},
-		[setAndSaveWorkflowData],
+		[setAndSaveWorkspace],
 	);
 
 	const deleteNode = useCallback(
@@ -172,9 +172,9 @@ export function WorkflowDesignerProvider({
 				return;
 			}
 			workflowDesignerRef.current.deleteNode(nodeId);
-			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+			setAndSaveWorkspace(workflowDesignerRef.current.getData());
 		},
-		[setAndSaveWorkflowData],
+		[setAndSaveWorkspace],
 	);
 
 	const deleteConnection = useCallback(
@@ -183,9 +183,9 @@ export function WorkflowDesignerProvider({
 				return;
 			}
 			workflowDesignerRef.current.deleteConnection(connectionId);
-			setAndSaveWorkflowData(workflowDesignerRef.current.getData());
+			setAndSaveWorkspace(workflowDesignerRef.current.getData());
 		},
-		[setAndSaveWorkflowData],
+		[setAndSaveWorkspace],
 	);
 
 	const usePropertiesPanelHelper = usePropertiesPanel();
@@ -194,7 +194,7 @@ export function WorkflowDesignerProvider({
 	return (
 		<WorkflowDesignerContext.Provider
 			value={{
-				data: workflowData,
+				data: Workspace,
 				textGenerationApi,
 				addTextGenerationNode,
 				addTextNode,

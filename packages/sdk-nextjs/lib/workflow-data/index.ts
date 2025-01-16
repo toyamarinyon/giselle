@@ -11,11 +11,11 @@ import { TextGenerationNodeData } from "./node/actions";
 import { createConnection, createConnectionHandle } from "./node/connection";
 import { TextNodeData } from "./node/variables";
 
-export const workflowId = createIdGenerator("wf");
-export type WorkflowId = z.infer<typeof workflowId.schema>;
+export const WorkspaceId = createIdGenerator("wrks");
+export type WorkspaceId = z.infer<typeof WorkspaceId.schema>;
 
-export const WorkflowData = z.object({
-	id: workflowId.schema,
+export const Workspace = z.object({
+	id: WorkspaceId.schema,
 	nodes: z.preprocess(
 		(args) => {
 			if (typeof args !== "object" || args === null || args instanceof Map) {
@@ -46,8 +46,8 @@ export const WorkflowData = z.object({
 		),
 	}),
 });
-export type WorkflowData = z.infer<typeof WorkflowData>;
-export const WorkflowDataJson = WorkflowData.extend({
+export type Workspace = z.infer<typeof Workspace>;
+export const WorkspaceJson = Workspace.extend({
 	nodes: z.preprocess(
 		(args) => {
 			if (args instanceof Map) {
@@ -78,11 +78,11 @@ export const WorkflowDataJson = WorkflowData.extend({
 		),
 	}),
 });
-export type WorkflowDataJson = z.infer<typeof WorkflowDataJson>;
+export type WorkspaceJson = z.infer<typeof WorkspaceJson>;
 
-export function generateInitialWorkflowData() {
-	return WorkflowData.parse({
-		id: workflowId.generate(),
+export function generateInitialWorkspace() {
+	return Workspace.parse({
+		id: WorkspaceId.generate(),
 		nodes: new Map(),
 		connections: new Map(),
 		ui: {

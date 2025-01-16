@@ -2,6 +2,6 @@ export {
 	WorkflowDesignerProvider,
 	useWorkflowDesigner,
 } from "./workflow-designer-context";
-export { callGetWorkflowApi } from "./call-get-workflow-api";
-export { callCreateWorkflowApi } from "./call-create-workflow-api";
-export { useCreateWorkflow } from "./use-create-workflow";
+export { callGetWorkspaceApi } from "./call-get-workspace-api";
+export { callCreateWorkspaceApi } from "./call-create-workspace-api";
+export { useCreateWorkspace } from "./use-create-workspace";

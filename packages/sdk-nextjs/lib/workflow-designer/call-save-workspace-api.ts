@@ -1,18 +1,18 @@
+import { Output } from "../giselle-engine/core/handlers/save-workspace";
 import {
-	type WorkflowData,
-	WorkflowDataJson,
-	type WorkflowId,
+	type Workspace,
+	type WorkspaceId,
+	WorkspaceJson,
 } from "../workflow-data";
-import { Output } from "../workflow-engine/core/handlers/save-workflow";
 
 export async function callSaveWorkflowApi({
-	api = "/api/workflow/save-workflow",
+	api = "/api/giselle/save-workspace",
 	workflowId,
-	workflowData,
+	Workspace,
 }: {
 	api?: string;
-	workflowId: WorkflowId;
-	workflowData: WorkflowData;
+	workflowId: WorkspaceId;
+	Workspace: Workspace;
 }) {
 	const response = await fetch(api, {
 		method: "POST",
@@ -21,7 +21,7 @@ export async function callSaveWorkflowApi({
 		},
 		body: JSON.stringify({
 			workflowId,
-			workflowData: WorkflowDataJson.parse(workflowData),
+			Workspace: WorkspaceJson.parse(Workspace),
 		}),
 	});
 	const data = await response.json();
