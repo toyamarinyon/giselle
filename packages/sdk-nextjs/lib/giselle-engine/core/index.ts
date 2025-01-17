@@ -108,8 +108,8 @@ export async function GiselleEngine(
 			return Response.json(result);
 		}
 		case "run-step": {
-			const result = await runStep({ context, unsafeInput: payload });
-			return Response.json(result);
+			const stream = await runStep({ context, unsafeInput: payload });
+			return stream.toDataStreamResponse();
 		}
 		default: {
 			const _exhaustiveCheck: never = action;
