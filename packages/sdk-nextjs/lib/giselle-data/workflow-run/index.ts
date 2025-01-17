@@ -22,7 +22,7 @@ export type StepRun = z.infer<typeof StepRun>;
 
 export const JobRunStatus = z.enum([
 	"queued",
-	"in_progress",
+	"inProgress",
 	"completed",
 	"waiting",
 	"requested",
@@ -52,7 +52,7 @@ export const WorkflowRunStatus = z.enum([
 	// "stale",
 	"success",
 	"timed_out",
-	"in_progress",
+	"inProgress",
 	"queued",
 	// "requested",
 	// "waiting",

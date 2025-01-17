@@ -197,7 +197,7 @@ export function WorkflowDesignerProvider({
 		[setAndSaveWorkspace],
 	);
 
-	const runWorkflow = useCallback(
+	const createWorkflow = useCallback(
 		(workflowId: WorkflowId) => {
 			if (workflowDesignerRef.current === undefined) {
 				throw new Error("Workflow designer not initialized");
@@ -234,7 +234,7 @@ export function WorkflowDesignerProvider({
 				setUiNodeState,
 				deleteNode,
 				deleteConnection,
-				createWorkflow: runWorkflow,
+				createWorkflow,
 				...usePropertiesPanelHelper,
 				...useViewHelper,
 				setActiveWorkflowRunId,

@@ -3,6 +3,7 @@ import {
 	type NodeData,
 	type WorkflowId,
 	type WorkflowRun,
+	type WorkflowRunId,
 	type Workspace,
 	createConnection,
 	generateInitialWorkspace,
@@ -22,7 +23,12 @@ import {
 	type CreateTextNodeParams,
 	createTextNodeData,
 } from "../giselle-data/node/variables/text";
-import { buildWorkflowMap, buildWorkflowRun } from "../workflow-utils";
+import {
+	type RunWorkflowEventHandlers,
+	buildWorkflowMap,
+	buildWorkflowRun,
+	runWorkflow as runWorkflowInternal,
+} from "../workflow-utils";
 
 interface addNodeOptions {
 	ui?: NodeUIState;
@@ -50,6 +56,9 @@ export interface WorkflowDesignerOperations {
 	deleteConnection: (connectionId: ConnectionId) => void;
 	updateNodeData: <T extends NodeData>(node: T, data: Partial<T>) => void;
 	createWorkflow: (workflowId: WorkflowId) => WorkflowRun;
+	runWorkflow: (
+		params: { workflowRunId: WorkflowRunId } & RunWorkflowEventHandlers,
+	) => void;
 }
 
 export function WorkflowDesigner({
@@ -145,6 +154,24 @@ export function WorkflowDesigner({
 		workflowRunMap.set(workflowRun.id, workflowRun);
 		return workflowRun;
 	}
+	async function runWorkflow({
+		workflowRunId,
+		...eventHandlers
+	}: { workflowRunId: WorkflowRunId } & RunWorkflowEventHandlers) {
+		const workflowRun = workflowRunMap.get(workflowRunId);
+		if (workflowRun === undefined) {
+			throw new Error(`Workflow run with id ${workflowRunId} not found`);
+		}
+		const workflow = workflowMap.get(workflowRun.workflowId);
+		if (workflow === undefined) {
+			throw new Error(`Workflow with id ${workflowRun.workflowId} not found`);
+		}
+		await runWorkflowInternal({
+			workflow,
+			workflowRun,
+			...eventHandlers,
+		});
+	}
 
 	return {
 		addTextGenerationNode,
@@ -156,5 +183,6 @@ export function WorkflowDesigner({
 		deleteNode,
 		deleteConnection,
 		createWorkflow,
+		runWorkflow,
 	};
 }

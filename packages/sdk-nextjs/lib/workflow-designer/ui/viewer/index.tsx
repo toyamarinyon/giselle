@@ -1,19 +1,7 @@
 "use client";
 
-import type {
-	Job,
-	JobId,
-	JobRun,
-	JobRunId,
-	NodeData,
-	Step,
-	StepId,
-	StepRun,
-	StepRunId,
-	Workflow,
-	WorkflowRun,
-	WorkflowRunId,
-} from "@/lib/giselle-data";
+import type { WorkflowRunId } from "@/lib/giselle-data";
+import { type StepWithRun, buildWorkflowWithRun } from "@/lib/workflow-utils";
 import * as Tabs from "@radix-ui/react-tabs";
 import { CircleAlertIcon, CircleSlashIcon } from "lucide-react";
 import { type DetailedHTMLProps, useMemo } from "react";
@@ -23,23 +11,6 @@ import { EmptyState } from "../_/empty-state";
 import { Header } from "../_/header";
 import { Markdown } from "../_/markdown";
 import { ContentTypeIcon, SpinnerIcon, WilliIcon } from "../icons";
-
-type StepWithRun = Step &
-	Pick<StepRun, "status" | "attempts"> & {
-		stepRunId: StepRunId;
-		node: NodeData;
-	};
-type JobWithRun = Job &
-	Pick<JobRun, "status" | "attempts"> & {
-		stepMap: Map<StepId, StepWithRun>;
-	} & {
-		jobRunId: JobRunId;
-	};
-type WorkflowWithRun = Pick<Workflow, "id"> &
-	Pick<WorkflowRun, "status"> & {
-		jobMap: Map<JobId, JobWithRun>;
-		workflowRunId: WorkflowRunId;
-	};
 
 interface StepRunButtonProps
 	extends DetailedHTMLProps<
@@ -90,7 +61,7 @@ function WorkflowRunViewer({
 	workflowRunId,
 }: { workflowRunId: WorkflowRunId }) {
 	const { data } = useWorkflowDesigner();
-	const workflowWithRun = useMemo<WorkflowWithRun>(() => {
+	const workflowWithRun = useMemo(() => {
 		const workflowRun = data.workflowRunMap.get(workflowRunId);
 		if (workflowRun === undefined) {
 			throw new Error(`Workflow run with id ${workflowRunId} not found`);
@@ -99,48 +70,7 @@ function WorkflowRunViewer({
 		if (workflow === undefined) {
 			throw new Error(`Workflow with id ${workflowRun.workflowId} not found`);
 		}
-		const jobWithRunMap = new Map<JobId, JobWithRun>();
-		for (const [jobRunId, jobRun] of workflowRun.jobRunMap) {
-			const job = workflow.jobMap.get(jobRun.jobId);
-			if (job === undefined) {
-				console.warn(`Job not found: ${jobRun.jobId}`);
-				continue;
-			}
-			const stepWithRunMap = new Map<StepId, StepWithRun>();
-			for (const [stepRunId, stepRun] of jobRun.stepRunMap) {
-				const step = job.stepMap.get(stepRun.stepId);
-				if (step === undefined) {
-					console.warn(`Step not found: ${stepRun.stepId}`);
-					continue;
-				}
-				const node = data.nodeMap.get(step.nodeId);
-				if (node === undefined) {
-					console.warn(`Node not found: ${step.nodeId}`);
-					continue;
-				}
-				stepWithRunMap.set(step.id, {
-					...step,
-					node,
-					stepRunId,
-					status: stepRun.status,
-					attempts: stepRun.attempts,
-				});
-			}
-			jobWithRunMap.set(job.id, {
-				...job,
-				jobRunId,
-				status: jobRun.status,
-				attempts: jobRun.attempts,
-				stepMap: stepWithRunMap,
-			});
-		}
-		const workflowWithRun = {
-			id: workflow.id,
-			status: workflowRun.status,
-			jobMap: jobWithRunMap,
-			workflowRunId,
-		} satisfies WorkflowWithRun;
-		return workflowWithRun;
+		return buildWorkflowWithRun(workflow, workflowRun);
 	}, [data, workflowRunId]);
 	return (
 		<Tabs.Root className="flex-1 flex w-full gap-[16px] pt-[16px] overflow-hidden h-full mx-[20px]">
