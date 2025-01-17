@@ -1,8 +1,4 @@
-import {
-	Workspace,
-	type WorkspaceId,
-	type WorkspaceJson,
-} from "@/lib/giselle-data";
+import { Workspace, type WorkspaceId } from "@/lib/giselle-data";
 import type { Storage } from "unstorage";
 import { workspacePath } from "./workspace-path";
 
@@ -10,7 +6,7 @@ export async function getWorkspace({
 	storage,
 	workspaceId,
 }: {
-	storage: Storage<WorkspaceJson>;
+	storage: Storage;
 	workspaceId: WorkspaceId;
 }) {
 	const result = await storage.getItem(workspacePath(workspaceId));
