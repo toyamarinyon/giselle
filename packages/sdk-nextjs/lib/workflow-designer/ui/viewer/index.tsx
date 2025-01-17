@@ -1,7 +1,11 @@
 "use client";
 
 import type { WorkflowRunId } from "@/lib/giselle-data";
-import { type StepWithRun, buildWorkflowWithRun } from "@/lib/workflow-utils";
+import {
+	type StepWithRun,
+	type WorkflowWithRun,
+	buildWorkflowWithRun,
+} from "@/lib/workflow-utils";
 import * as Tabs from "@radix-ui/react-tabs";
 import { CircleAlertIcon, CircleSlashIcon } from "lucide-react";
 import { type DetailedHTMLProps, useMemo } from "react";
@@ -58,20 +62,8 @@ function StepButton({ stepWithRun, ...props }: StepRunButtonProps) {
 }
 
 function WorkflowRunViewer({
-	workflowRunId,
-}: { workflowRunId: WorkflowRunId }) {
-	const { data } = useWorkflowDesigner();
-	const workflowWithRun = useMemo(() => {
-		const workflowRun = data.workflowRunMap.get(workflowRunId);
-		if (workflowRun === undefined) {
-			throw new Error(`Workflow run with id ${workflowRunId} not found`);
-		}
-		const workflow = data.workflowMap.get(workflowRun.workflowId);
-		if (workflow === undefined) {
-			throw new Error(`Workflow with id ${workflowRun.workflowId} not found`);
-		}
-		return buildWorkflowWithRun(workflow, workflowRun);
-	}, [data, workflowRunId]);
+	workflowWithRun,
+}: { workflowWithRun: WorkflowWithRun }) {
 	return (
 		<Tabs.Root className="flex-1 flex w-full gap-[16px] pt-[16px] overflow-hidden h-full mx-[20px]">
 			<div className="w-[200px]">
@@ -220,8 +212,7 @@ function WorkflowRunViewer({
 }
 
 export function Viewer() {
-	// const { execution } = useExecution();
-	const { data, activeWorkflowRun } = useWorkflowDesigner();
+	const { activeWorkflowWithRun } = useWorkflowDesigner();
 	return (
 		<div
 			className="w-full h-screen bg-black-100 flex flex-col"
@@ -234,7 +225,7 @@ export function Viewer() {
 		>
 			<Header />
 			<div className="flex-1 w-full flex items-center justify-center overflow-hidden">
-				{activeWorkflowRun === undefined ? (
+				{activeWorkflowWithRun === undefined ? (
 					<EmptyState
 						icon={
 							<WilliIcon className="fill-current w-[32px] h-[32px] text-black-30" />
@@ -245,7 +236,7 @@ export function Viewer() {
 					output."
 					/>
 				) : (
-					<WorkflowRunViewer workflowRunId={activeWorkflowRun.id} />
+					<WorkflowRunViewer workflowWithRun={activeWorkflowWithRun} />
 				)}
 			</div>
 		</div>

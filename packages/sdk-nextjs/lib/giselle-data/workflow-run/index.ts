@@ -1,7 +1,8 @@
 import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
+import { NodeData } from "../node";
 import { mapToObject, objectToMap } from "../utils";
-import { JobId, StepId, type Workflow, WorkflowId } from "../workflow";
+import { JobId, StepId, WorkflowId } from "../workflow";
 
 export const StepRunStatus = z.enum([
 	"queued",
@@ -13,11 +14,20 @@ export const StepRunStatus = z.enum([
 export type StepRunStatus = z.infer<typeof StepRunStatus>;
 export const StepRunId = createIdGenerator("str");
 export type StepRunId = z.infer<typeof StepRunId.schema>;
+export const JobRunId = createIdGenerator("jbr");
+export type JobRunId = z.infer<typeof JobRunId.schema>;
+export const WorkflowRunId = createIdGenerator("wfr");
+export type WorkflowRunId = z.infer<typeof WorkflowRunId.schema>;
+
 export const StepRun = z.object({
 	id: StepRunId.schema,
 	attempts: z.number(),
 	stepId: StepId.schema,
 	status: StepRunStatus,
+	jobRunId: JobRunId.schema,
+	workflowRunId: WorkflowRunId.schema,
+	node: NodeData,
+	result: z.any(),
 });
 export type StepRun = z.infer<typeof StepRun>;
 
@@ -29,12 +39,11 @@ export const JobRunStatus = z.enum([
 	"requested",
 	"pending",
 ]);
-export const JobRunId = createIdGenerator("jbr");
-export type JobRunId = z.infer<typeof JobRunId.schema>;
 export const JobRun = z.object({
 	id: JobRunId.schema,
 	attempts: z.number(),
 	jobId: JobId.schema,
+	workflowRunId: WorkflowRunId.schema,
 	status: JobRunStatus,
 	stepRunMap: z.preprocess(objectToMap, z.map(StepRunId.schema, StepRun)),
 });
@@ -59,8 +68,6 @@ export const WorkflowRunStatus = z.enum([
 	// "waiting",
 	// "pending",
 ]);
-export const WorkflowRunId = createIdGenerator("wfr");
-export type WorkflowRunId = z.infer<typeof WorkflowRunId.schema>;
 export const WorkflowRun = z.object({
 	id: WorkflowRunId.schema,
 	workflowId: WorkflowId.schema,

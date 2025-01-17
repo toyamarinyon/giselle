@@ -6,9 +6,16 @@ import { WorkspaceId } from "../workspace";
 
 export const StepId = createIdGenerator("stp");
 export type StepId = z.infer<typeof StepId.schema>;
+export const JobId = createIdGenerator("jb");
+export type JobId = z.infer<typeof JobId.schema>;
+export const WorkflowId = createIdGenerator("wf");
+export type WorkflowId = z.infer<typeof WorkflowId.schema>;
+
 export const Step = z.object({
 	id: StepId.schema,
 	nodeId: NodeId.schema,
+	jobId: JobId.schema,
+	workflowId: WorkflowId.schema,
 	variableNodeIds: z.preprocess((args) => {
 		if (!Array.isArray(args) || args === null || args instanceof Set) {
 			return args;
@@ -27,10 +34,9 @@ export const StepJson = Step.extend({
 	}, z.array(NodeId.schema)),
 });
 
-export const JobId = createIdGenerator("jb");
-export type JobId = z.infer<typeof JobId.schema>;
 export const Job = z.object({
 	id: JobId.schema,
+	workflowId: WorkflowId.schema,
 	stepMap: z.preprocess(objectToMap, z.map(StepId.schema, Step)),
 });
 export type Job = z.infer<typeof Job>;
@@ -39,8 +45,6 @@ export const JobJson = Job.extend({
 	stepMap: z.preprocess(mapToObject, z.record(StepId.schema, StepJson)),
 });
 
-export const WorkflowId = createIdGenerator("wf");
-export type WorkflowId = z.infer<typeof WorkflowId.schema>;
 export const Workflow = z.object({
 	id: WorkflowId.schema,
 	workspaceId: WorkspaceId.schema,
