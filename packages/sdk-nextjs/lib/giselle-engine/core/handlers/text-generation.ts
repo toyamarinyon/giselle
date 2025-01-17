@@ -1,4 +1,4 @@
-import { NodeId, WorkflowId, WorkspaceId } from "@/lib/giselle-data";
+import { NodeId, WorkspaceId } from "@/lib/giselle-data";
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { z } from "zod";
