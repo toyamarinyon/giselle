@@ -58,7 +58,7 @@ export interface WorkflowDesignerOperations {
 	createWorkflow: (workflowId: WorkflowId) => WorkflowRun;
 	runWorkflow: (
 		params: { workflowRunId: WorkflowRunId } & RunWorkflowEventHandlers,
-	) => void;
+	) => Promise<void>;
 }
 
 export function WorkflowDesigner({

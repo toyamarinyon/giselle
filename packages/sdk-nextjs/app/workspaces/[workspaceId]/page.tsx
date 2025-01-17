@@ -9,6 +9,7 @@ export default function Page() {
 		addTextGenerationNode,
 		addTextNode,
 		createWorkflow,
+		runWorkflow,
 		setView,
 		setActiveWorkflowRunId,
 	} = useWorkflowDesigner();
@@ -66,6 +67,18 @@ export default function Page() {
 										const workflowRun = createWorkflow(workflow.id);
 										setView("viewer");
 										setActiveWorkflowRunId(workflowRun.id);
+										runWorkflow({
+											workflowRunId: workflowRun.id,
+											onWorkflowRunStart: () => {
+												console.log("workflow run started");
+											},
+											onJobRunStart: (jobRunId) => {
+												console.log("job run started", jobRunId);
+											},
+											onStepRunStart: (stepRunId) => {
+												console.log("step run started", stepRunId);
+											},
+										});
 									}}
 								>
 									<WorkflowIcon className="stroke-1 w-[20px] h-[20px] group-hover:hidden" />

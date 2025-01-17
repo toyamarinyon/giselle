@@ -14,6 +14,7 @@ import type {
 	NodeData,
 	WorkflowId,
 	WorkflowRun,
+	WorkflowRunId,
 	Workspace,
 } from "../giselle-data";
 import type { CreateTextGenerationNodeParams } from "../giselle-data/node/actions/text-generation";
@@ -24,6 +25,7 @@ import type {
 	NodeUIState,
 } from "../giselle-data/node/types";
 import type { CreateTextNodeParams } from "../giselle-data/node/variables/text";
+import type { RunWorkflowEventHandlers } from "../workflow-utils";
 import { useActiveWorkflowRunId, usePropertiesPanel, useView } from "./state";
 import {
 	WorkflowDesigner,
@@ -41,6 +43,7 @@ interface WorkflowDesignerContextValue
 			| "deleteNode"
 			| "deleteConnection"
 			| "createWorkflow"
+			| "runWorkflow"
 		>,
 		ReturnType<typeof usePropertiesPanel>,
 		ReturnType<typeof useView>,
@@ -210,6 +213,19 @@ export function WorkflowDesignerProvider({
 		[setAndSaveWorkspace],
 	);
 
+	const runWorkflow = useCallback(
+		async (
+			params: { workflowRunId: WorkflowRunId } & RunWorkflowEventHandlers,
+		) => {
+			if (workflowDesignerRef.current === undefined) {
+				throw new Error("Workflow designer not initialized");
+			}
+			await workflowDesignerRef.current.runWorkflow(params);
+			setAndSaveWorkspace(workflowDesignerRef.current.getData());
+		},
+		[setAndSaveWorkspace],
+	);
+
 	const usePropertiesPanelHelper = usePropertiesPanel();
 	const useViewHelper = useView();
 	const { setActiveWorkflowRunId, activeWorkflowRunId } =
@@ -235,6 +251,7 @@ export function WorkflowDesignerProvider({
 				deleteNode,
 				deleteConnection,
 				createWorkflow,
+				runWorkflow,
 				...usePropertiesPanelHelper,
 				...useViewHelper,
 				setActiveWorkflowRunId,

@@ -48,7 +48,7 @@ export async function runJob({
 	onStepRunStart,
 }: RunJobParams) {
 	onJobRunStart?.(job.jobRunId);
-	Promise.all(
+	await Promise.all(
 		Array.from(job.stepMap.values()).map((step) =>
 			runStep({
 				step,
@@ -65,5 +65,7 @@ interface RunStepParams {
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export async function runStep({ step, onStepRunStart }: RunStepParams) {
 	onStepRunStart?.(step.stepRunId);
+	console.log("sleep");
 	await sleep(2000);
+	console.log("awake");
 }
