@@ -25,16 +25,22 @@ export const WorkflowRunnerContext =
 
 export function WorkflowRunnerProvider({
 	children,
-}: { children: React.ReactNode }) {
+	onWorkflowRunUpdate,
+}: {
+	children: React.ReactNode;
+	onWorkflowRunUpdate?: (workflowRun: WorkflowRun) => void;
+}) {
 	const workflowRunnerRef = useRef<WorkflowRunner | null>(null);
 	const [workflowRun, setWorkflowRunInternal] = useState<
 		WorkflowRun | undefined
 	>();
 	const updateWorkflowRun = useCallback(() => {
 		if (workflowRunnerRef.current !== null) {
-			setWorkflowRunInternal(workflowRunnerRef.current.getData());
+			const newWorkflowRun = workflowRunnerRef.current.getData();
+			setWorkflowRunInternal(newWorkflowRun);
+			onWorkflowRunUpdate?.(newWorkflowRun);
 		}
-	}, []);
+	}, [onWorkflowRunUpdate]);
 	const start = useCallback(() => {
 		workflowRunnerRef.current?.start();
 		updateWorkflowRun();

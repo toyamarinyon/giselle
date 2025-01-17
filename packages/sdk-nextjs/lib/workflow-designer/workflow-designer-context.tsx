@@ -26,7 +26,6 @@ import type {
 	NodeUIState,
 } from "../giselle-data/node/types";
 import type { CreateTextNodeParams } from "../giselle-data/node/variables/text";
-import { type WorkflowWithRun, buildWorkflowWithRun } from "../workflow-utils";
 import { useActiveWorkflowRunId, usePropertiesPanel, useView } from "./state";
 import {
 	WorkflowDesigner,
@@ -202,19 +201,6 @@ export function WorkflowDesignerProvider({
 		[setAndSaveWorkspace],
 	);
 
-	const runWorkflow = useCallback(
-		async (workflowRunId: WorkflowRunId) => {
-			await workflowDesignerRef.current.runWorkflow({
-				workflowRunId,
-				onStepRunUpdate: () => {
-					setAndSaveWorkspace();
-				},
-			});
-			setAndSaveWorkspace();
-		},
-		[setAndSaveWorkspace],
-	);
-
 	const usePropertiesPanelHelper = usePropertiesPanel();
 	const useViewHelper = useView();
 	const { setActiveWorkflowRunId, activeWorkflowRunId } =
@@ -245,14 +231,15 @@ export function WorkflowDesignerProvider({
 				deleteNode,
 				deleteConnection,
 				createWorkflowRun,
-				runWorkflow,
 				...usePropertiesPanelHelper,
 				...useViewHelper,
 				setActiveWorkflowRunId,
 				activeWorkflowRun: activeWorkflowRun,
 			}}
 		>
-			<WorkflowRunnerProvider>{children}</WorkflowRunnerProvider>
+			<WorkflowRunnerProvider onWorkflowRunUpdate={() => {}}>
+				{children}
+			</WorkflowRunnerProvider>
 		</WorkflowDesignerContext.Provider>
 	);
 }

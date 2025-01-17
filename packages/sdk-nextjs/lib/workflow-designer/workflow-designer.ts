@@ -59,9 +59,6 @@ export interface WorkflowDesignerOperations {
 	deleteConnection: (connectionId: ConnectionId) => void;
 	updateNodeData: <T extends NodeData>(node: T, data: Partial<T>) => void;
 	createWorkflow: (workflowId: WorkflowId) => WorkflowRun;
-	runWorkflow: (
-		params: { workflowRunId: WorkflowRunId } & RunWorkflowEventHandlers,
-	) => Promise<void>;
 }
 
 export function WorkflowDesigner({
@@ -170,49 +167,6 @@ export function WorkflowDesigner({
 		workflowRunMap.set(workflowRun.id, workflowRun);
 		return workflowRun;
 	}
-	function updateStepRun(
-		workflowRunId: WorkflowRunId,
-		jobRunId: JobRunId,
-		stepRunId: StepRunId,
-		data: Partial<StepRun>,
-	) {
-		const targetStepRun = workflowRunMap
-			.get(workflowRunId)
-			?.jobRunMap?.get(jobRunId)
-			?.stepRunMap?.get(stepRunId);
-		if (targetStepRun === undefined) {
-			console.warn(`Step run not found: ${stepRunId}`);
-			return;
-		}
-		workflowRunMap
-			.get(workflowRunId)
-			?.jobRunMap?.get(jobRunId)
-			?.stepRunMap?.set(stepRunId, { ...targetStepRun, ...data });
-	}
-	async function runWorkflow({
-		workflowRunId,
-		onStepRunUpdate,
-	}: { workflowRunId: WorkflowRunId } & RunWorkflowEventHandlers) {
-		const workflowRun = workflowRunMap.get(workflowRunId);
-		if (workflowRun === undefined) {
-			throw new Error(`Workflow run with id ${workflowRunId} not found`);
-		}
-		const workflow = workflowMap.get(workflowRun.workflowId);
-		if (workflow === undefined) {
-			throw new Error(`Workflow with id ${workflowRun.workflowId} not found`);
-		}
-		// await runWorkflowInternal({
-		// 	workflow,
-		// 	workflowRun,
-		// 	onStepRunUpdate(event) {
-		// 		updateStepRun(event.workflowRunId, event.jobRunId, event.stepRunId, {
-		// 			status: event.status,
-		// 		});
-		// 		onStepRunUpdate?.(event);
-		// 	},
-		// });
-	}
-
 	return {
 		addTextGenerationNode,
 		addTextNode,
@@ -223,6 +177,5 @@ export function WorkflowDesigner({
 		deleteNode,
 		deleteConnection,
 		createWorkflow,
-		runWorkflow,
 	};
 }
