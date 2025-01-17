@@ -3,6 +3,7 @@ import { z } from "zod";
 import { NodeData } from "../node";
 import { mapToObject, objectToMap } from "../utils";
 import { JobId, StepId, WorkflowId } from "../workflow";
+import { WorkspaceId } from "../workspace";
 
 export const StepRunStatus = z.enum([
 	"queued",
@@ -27,6 +28,8 @@ export const StepRun = z.object({
 	status: StepRunStatus,
 	jobRunId: JobRunId.schema,
 	workflowRunId: WorkflowRunId.schema,
+	workflowId: WorkflowId.schema,
+	workspaceId: WorkspaceId.schema,
 	node: NodeData,
 	result: z.any(),
 });
@@ -45,6 +48,8 @@ export const JobRun = z.object({
 	attempts: z.number(),
 	jobId: JobId.schema,
 	workflowRunId: WorkflowRunId.schema,
+	workflowId: WorkflowId.schema,
+	workspaceId: WorkspaceId.schema,
 	status: JobRunStatus,
 	stepRunMap: z.preprocess(objectToMap, z.map(StepRunId.schema, StepRun)),
 });

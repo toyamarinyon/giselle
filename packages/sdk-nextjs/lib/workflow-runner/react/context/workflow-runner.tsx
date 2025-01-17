@@ -2,15 +2,26 @@ import type {
 	JobRun,
 	JobRunId,
 	StepRun,
-	StepRunId,
 	WorkflowRun,
 } from "@/lib/giselle-data";
-import { createContext, useContext, useState } from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
+import { WorkflowRunner } from "../../workflow-runner";
 
 export interface WorkflowRunnerContextValue {
 	workflowRun: WorkflowRun;
-	updateStepRun: (stepRun: StepRun, data: Partial<StepRun>) => void;
-	startNextJob: (jobRunId: JobRunId) => void;
+	steps: StepRun[];
+	start: ReturnType<typeof WorkflowRunner>["start"];
+	startJob: ReturnType<typeof WorkflowRunner>["startJob"];
+	startStep: ReturnType<typeof WorkflowRunner>["startStep"];
+	updateStep: ReturnType<typeof WorkflowRunner>["updateStep"];
+	completeStep: ReturnType<typeof WorkflowRunner>["completeStep"];
 }
 
 export const WorkflowRunnerContext =
@@ -20,31 +31,56 @@ export function WorkflowRunnerProvider({
 	defaultWorkflowRun,
 	children,
 }: { children: React.ReactNode; defaultWorkflowRun: WorkflowRun }) {
+	const workflowRunnerRef = useRef(WorkflowRunner(defaultWorkflowRun));
 	const [workflowRun, setWorkflowRun] = useState(defaultWorkflowRun);
+	const start = useCallback(() => {
+		workflowRunnerRef.current.start();
+		setWorkflowRun(workflowRunnerRef.current.getData());
+	}, []);
 
-	const startNextJob = (currentJobRunId: JobRunId) => {
-		let found = false;
-		let nextJob: JobRun | undefined;
+	const startJob = useCallback((startJobRun: JobRun) => {
+		workflowRunnerRef.current.startJob(startJobRun);
+		setWorkflowRun(workflowRunnerRef.current.getData());
+	}, []);
 
-		for (const [jobRunId, job] of workflowRun.jobRunMap) {
-			if (jobRunId === currentJobRunId) {
-				found = true;
-				continue;
-			}
-			if (found) {
-				nextJob = job;
-				break;
+	const startStep = useCallback((startStepRun: StepRun) => {
+		workflowRunnerRef.current.startStep(startStepRun);
+		setWorkflowRun(workflowRunnerRef.current.getData());
+	}, []);
+
+	const updateStep = useCallback((stepRun: StepRun, data: Partial<StepRun>) => {
+		workflowRunnerRef.current.updateStep(stepRun, data);
+		setWorkflowRun(workflowRunnerRef.current.getData());
+	}, []);
+
+	const completeStep = useCallback((completeStepRun: StepRun) => {
+		workflowRunnerRef.current.completeStep(completeStepRun);
+		setWorkflowRun(workflowRunnerRef.current.getData());
+	}, []);
+
+	const steps = useMemo(() => {
+		const stepSet = new Set<StepRun>();
+
+		for (const jobRun of workflowRun.jobRunMap.values()) {
+			for (const stepRun of jobRun.stepRunMap.values()) {
+				stepSet.add(stepRun);
 			}
 		}
-
-		if (nextJob) {
-			for (const [stepRunId, stepRun] of nextJob.stepRunMap) {
-			}
-		}
-	};
+		return Array.from(stepSet);
+	}, [workflowRun]);
 
 	return (
-		<WorkflowRunnerContext.Provider value={null}>
+		<WorkflowRunnerContext.Provider
+			value={{
+				workflowRun,
+				start,
+				startJob,
+				startStep,
+				updateStep,
+				completeStep,
+				steps,
+			}}
+		>
 			{children}
 		</WorkflowRunnerContext.Provider>
 	);

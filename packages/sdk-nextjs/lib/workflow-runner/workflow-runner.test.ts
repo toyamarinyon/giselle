@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { JobRunStatus } from "../giselle-data/workflow-run";
+import { JobRunStatus, WorkflowRunStatus } from "../giselle-data/workflow-run";
 import { testWorkspace } from "../test-utils";
 import { buildWorkflowMap, buildWorkflowRun } from "../workflow-utils";
 import { WorkflowRunner } from "./workflow-runner";
@@ -22,18 +22,18 @@ describe("workflow-runner", () => {
 	});
 
 	test("start", () => {
-		expect(workflowRunner.getData().status).toBe("waiting");
+		expect(workflowRunner.getData().status).toBe(WorkflowRunStatus.Enum.queued);
 		workflowRunner.start();
 		const data = workflowRunner.getData();
-		expect(data.status).toBe("inProgress");
+		expect(data.status).toBe(WorkflowRunStatus.Enum.inProgress);
 		const jobRunIterator = data.jobRunMap.values();
 		const firstJobRun = jobRunIterator.next().value;
 		if (firstJobRun === undefined) {
 			throw new Error("firstJobRun is undefined");
 		}
-		expect(firstJobRun.status).toBe(JobRunStatus.Enum.queued);
+		expect(firstJobRun.status).toBe(JobRunStatus.Enum.inProgress);
 		for (const stepRun of firstJobRun.stepRunMap.values()) {
-			expect(stepRun.status).toBe(JobRunStatus.Enum.queued);
+			expect(stepRun.status).toBe(JobRunStatus.Enum.inProgress);
 		}
 		const secondJobRun = jobRunIterator.next().value;
 		if (secondJobRun === undefined) {
@@ -52,7 +52,7 @@ describe("workflow-runner", () => {
 		}
 		workflowRunner.startJob(firstJob);
 		const data = workflowRunner.getData();
-		expect(data.status).toBe("inProgress");
+		expect(data.status).toBe(WorkflowRunStatus.Enum.inProgress);
 		const jobRunIterator = data.jobRunMap.values();
 		const firstJobRun = jobRunIterator.next().value;
 		if (firstJobRun === undefined) {
@@ -60,7 +60,7 @@ describe("workflow-runner", () => {
 		}
 		expect(firstJobRun.status).toBe(JobRunStatus.Enum.inProgress);
 		for (const stepRun of firstJobRun.stepRunMap.values()) {
-			expect(stepRun.status).toBe(JobRunStatus.Enum.queued);
+			expect(stepRun.status).toBe(JobRunStatus.Enum.inProgress);
 		}
 		const secondJobRun = jobRunIterator.next().value;
 		if (secondJobRun === undefined) {
@@ -82,7 +82,7 @@ describe("workflow-runner", () => {
 		}
 		workflowRunner.startStep(firstStep);
 		const data = workflowRunner.getData();
-		expect(data.status).toBe("inProgress");
+		expect(data.status).toBe(WorkflowRunStatus.Enum.inProgress);
 		const jobRunIterator = data.jobRunMap.values();
 		const firstJobRun = jobRunIterator.next().value;
 		if (firstJobRun === undefined) {
@@ -118,7 +118,7 @@ describe("workflow-runner", () => {
 		}
 		workflowRunner.completeStep(firstStep);
 		const data = workflowRunner.getData();
-		expect(data.status).toBe("inProgress");
+		expect(data.status).toBe(WorkflowRunStatus.Enum.inProgress);
 		const jobRunIterator = data.jobRunMap.values();
 		const firstJobRun = jobRunIterator.next().value;
 		if (firstJobRun === undefined) {
@@ -160,7 +160,7 @@ describe("workflow-runner", () => {
 			throw new Error("firstStep is undefined");
 		}
 		const data = workflowRunner.getData();
-		expect(data.status).toBe("inProgress");
+		expect(data.status).toBe(WorkflowRunStatus.Enum.inProgress);
 		const jobRunIterator = data.jobRunMap.values();
 		const firstJobRun = jobRunIterator.next().value;
 		if (firstJobRun === undefined) {
@@ -182,7 +182,7 @@ describe("workflow-runner", () => {
 		if (secondJobRun === undefined) {
 			throw new Error("secondJobRun is undefined");
 		}
-		expect(secondJobRun.status).toBe(JobRunStatus.Enum.queued);
+		expect(secondJobRun.status).toBe(JobRunStatus.Enum.inProgress);
 		for (const stepRun of secondJobRun.stepRunMap.values()) {
 			expect(stepRun.status).toBe(JobRunStatus.Enum.queued);
 		}

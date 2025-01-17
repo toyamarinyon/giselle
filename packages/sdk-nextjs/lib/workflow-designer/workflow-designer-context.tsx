@@ -53,7 +53,7 @@ interface WorkflowDesignerContextValue
 		node: T,
 		content: Partial<T["content"]>,
 	) => void;
-	activeWorkflowWithRun: WorkflowWithRun | undefined;
+	activeWorkflowRun: WorkflowRun | undefined;
 	runWorkflow: (workflowRunId: WorkflowRunId) => Promise<void>;
 }
 const WorkflowDesignerContext = createContext<
@@ -111,9 +111,6 @@ export function WorkflowDesignerProvider({
 			params: z.infer<typeof CreateTextGenerationNodeParams>,
 			options?: { ui?: NodeUIState },
 		) => {
-			if (workflowDesignerRef.current === undefined) {
-				return;
-			}
 			workflowDesignerRef.current.addTextGenerationNode(params, options);
 			setAndSaveWorkspace();
 		},
@@ -122,9 +119,6 @@ export function WorkflowDesignerProvider({
 
 	const updateNodeData = useCallback(
 		<T extends NodeData>(node: T, data: Partial<T>) => {
-			if (workflowDesignerRef.current === undefined) {
-				return;
-			}
 			workflowDesignerRef.current.updateNodeData(node, data);
 			setAndSaveWorkspace();
 		},
@@ -133,9 +127,6 @@ export function WorkflowDesignerProvider({
 
 	const updateNodeDataContent = useCallback(
 		<T extends NodeData>(node: T, content: Partial<T["content"]>) => {
-			if (workflowDesignerRef.current === undefined) {
-				return;
-			}
 			workflowDesignerRef.current.updateNodeData(node, {
 				...node,
 				content: { ...node.content, ...content },
@@ -158,9 +149,6 @@ export function WorkflowDesignerProvider({
 			params: z.infer<typeof CreateTextNodeParams>,
 			options?: { ui?: NodeUIState },
 		) => {
-			if (workflowDesignerRef.current === undefined) {
-				return;
-			}
 			workflowDesignerRef.current.addTextNode(params, options);
 			setAndSaveWorkspace();
 		},
@@ -169,9 +157,6 @@ export function WorkflowDesignerProvider({
 
 	const setUiNodeState = useCallback(
 		(nodeId: string | NodeId, ui: Partial<NodeUIState>) => {
-			if (workflowDesignerRef.current === undefined) {
-				return;
-			}
 			workflowDesignerRef.current.setUiNodeState(nodeId, ui);
 			setAndSaveWorkspace();
 		},
@@ -180,9 +165,6 @@ export function WorkflowDesignerProvider({
 
 	const deleteNode = useCallback(
 		(nodeId: NodeId | string) => {
-			if (workflowDesignerRef.current === undefined) {
-				return;
-			}
 			workflowDesignerRef.current.deleteNode(nodeId);
 			setAndSaveWorkspace();
 		},
@@ -191,9 +173,6 @@ export function WorkflowDesignerProvider({
 
 	const deleteConnection = useCallback(
 		(connectionId: ConnectionId) => {
-			if (workflowDesignerRef.current === undefined) {
-				return;
-			}
 			workflowDesignerRef.current.deleteConnection(connectionId);
 			setAndSaveWorkspace();
 		},
@@ -202,9 +181,6 @@ export function WorkflowDesignerProvider({
 
 	const createWorkflow = useCallback(
 		(workflowId: WorkflowId) => {
-			if (workflowDesignerRef.current === undefined) {
-				throw new Error("Workflow designer not initialized");
-			}
 			const workflowRun =
 				workflowDesignerRef.current.createWorkflow(workflowId);
 			setAndSaveWorkspace();
@@ -215,9 +191,6 @@ export function WorkflowDesignerProvider({
 
 	const runWorkflow = useCallback(
 		async (workflowRunId: WorkflowRunId) => {
-			if (workflowDesignerRef.current === undefined) {
-				throw new Error("Workflow designer not initialized");
-			}
 			await workflowDesignerRef.current.runWorkflow({
 				workflowRunId,
 				onStepRunUpdate: () => {
@@ -234,7 +207,7 @@ export function WorkflowDesignerProvider({
 	const { setActiveWorkflowRunId, activeWorkflowRunId } =
 		useActiveWorkflowRunId();
 
-	const activeWorkflowWithRun = useMemo(() => {
+	const activeWorkflowRun = useMemo(() => {
 		if (activeWorkflowRunId === undefined) {
 			return undefined;
 		}
@@ -242,11 +215,7 @@ export function WorkflowDesignerProvider({
 		if (workflowRun === undefined) {
 			throw new Error(`Workflow run with id ${activeWorkflowRunId} not found`);
 		}
-		const workflow = workspace.workflowMap.get(workflowRun.workflowId);
-		if (workflow === undefined) {
-			throw new Error(`Workflow with id ${workflowRun.workflowId} not found`);
-		}
-		return buildWorkflowWithRun(workflow, workflowRun);
+		return workflowRun;
 	}, [workspace, activeWorkflowRunId]);
 
 	return (
@@ -267,7 +236,7 @@ export function WorkflowDesignerProvider({
 				...usePropertiesPanelHelper,
 				...useViewHelper,
 				setActiveWorkflowRunId,
-				activeWorkflowWithRun: activeWorkflowWithRun,
+				activeWorkflowRun: activeWorkflowRun,
 			}}
 		>
 			{children}

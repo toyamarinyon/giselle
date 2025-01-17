@@ -201,16 +201,16 @@ export function WorkflowDesigner({
 		if (workflow === undefined) {
 			throw new Error(`Workflow with id ${workflowRun.workflowId} not found`);
 		}
-		await runWorkflowInternal({
-			workflow,
-			workflowRun,
-			onStepRunUpdate(event) {
-				updateStepRun(event.workflowRunId, event.jobRunId, event.stepRunId, {
-					status: event.status,
-				});
-				onStepRunUpdate?.(event);
-			},
-		});
+		// await runWorkflowInternal({
+		// 	workflow,
+		// 	workflowRun,
+		// 	onStepRunUpdate(event) {
+		// 		updateStepRun(event.workflowRunId, event.jobRunId, event.stepRunId, {
+		// 			status: event.status,
+		// 		});
+		// 		onStepRunUpdate?.(event);
+		// 	},
+		// });
 	}
 
 	return {

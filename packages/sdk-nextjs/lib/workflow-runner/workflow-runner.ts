@@ -1,19 +1,13 @@
-import type {
-	JobRun,
-	JobRunId,
-	StepRun,
-	StepRunId,
-	WorkflowRun,
-} from "@/lib/giselle-data";
+import type { JobRun, StepRun, WorkflowRun } from "@/lib/giselle-data";
 
 export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 	const workflowRun = defaultWorkflowRun;
 	function start() {
 		workflowRun.status = "inProgress";
 		for (const [_, job] of workflowRun.jobRunMap) {
-			job.status = "queued";
+			startJob(job);
 			for (const [_, stepRun] of job.stepRunMap) {
-				stepRun.status = "queued";
+				startStep(stepRun);
 			}
 			break;
 		}
@@ -31,7 +25,7 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 			throw new Error(`JobRun with id ${completeJobRun.id} not found`);
 		}
 		jobRun.status = "completed";
-		queueingNextJob(jobRun);
+		startNextJob(jobRun);
 	}
 	function startStep(startStepRun: StepRun) {
 		const jobRun = workflowRun.jobRunMap.get(startStepRun.jobRunId);
@@ -62,7 +56,7 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 			completeJob(jobRun);
 		}
 	}
-	function queueingNextJob(currentJobRun: JobRun) {
+	function startNextJob(currentJobRun: JobRun) {
 		let found = false;
 		let nextJob: JobRun | undefined;
 
@@ -78,7 +72,7 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 		}
 
 		if (nextJob) {
-			nextJob.status = "queued";
+			nextJob.status = "inProgress";
 			for (const [_, stepRun] of nextJob.stepRunMap) {
 				stepRun.status = "queued";
 			}
@@ -87,6 +81,17 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 	function getData() {
 		return workflowRun;
 	}
+	function updateStep(updateStepRun: StepRun, data: Partial<StepRun>) {
+		const jobRun = workflowRun.jobRunMap.get(updateStepRun.jobRunId);
+		if (jobRun === undefined) {
+			throw new Error(`JobRun with id ${updateStepRun.jobRunId} not found`);
+		}
+		const stepRun = jobRun.stepRunMap.get(updateStepRun.id);
+		if (stepRun === undefined) {
+			throw new Error(`StepRun with id ${updateStepRun.id} not found`);
+		}
+		Object.assign(stepRun, data);
+	}
 
 	return {
 		start,
@@ -94,7 +99,7 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 		completeJob,
 		startStep,
 		completeStep,
-		queueingNextJob,
 		getData,
+		updateStep,
 	};
 }

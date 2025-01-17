@@ -1,81 +1,70 @@
-import type { JobRun, StepRun, WorkflowRun } from "@/lib/giselle-data";
+import type { StepRun } from "@/lib/giselle-data";
 import { useCompletion } from "ai/react";
 import { useEffect } from "react";
-import { useWorkflowRunner } from "./context/workflow-runner";
+import {
+	WorkflowRunnerProvider,
+	useWorkflowRunner,
+} from "./context/workflow-runner";
 
 export function WorkflowRunner() {
-	const { workflowRun, startNextJob } = useWorkflowRunner();
-
-	return (
-		<>
-			{Array.from(workflowRun.jobRunMap).map(([jobRunId, jobRun]) => (
-				<JobRunner
-					key={jobRunId}
-					jobRun={jobRun}
-					onComplete={() => {
-						startNextJob(jobRunId);
-					}}
-				/>
-			))}
-		</>
-	);
-}
-
-function JobRunner({
-	jobRun,
-	onComplete,
-}: {
-	jobRun: JobRun;
-	onComplete: () => void;
-}) {
-	return Array.from(jobRun.stepRunMap).map(([stepRunId, stepRun]) => (
+	const { steps, completeStep, start, workflowRun } = useWorkflowRunner();
+	useEffect(() => {
+		if (workflowRun.status === "queued") {
+			start();
+		}
+	}, [start, workflowRun.status]);
+	return steps.map((step) => (
 		<StepRunner
-			key={stepRunId}
-			stepRun={stepRun}
+			key={step.id}
+			step={step}
 			onComplete={() => {
-				const allStepCompleted = Array.from(jobRun.stepRunMap.values()).every(
-					(stepRun) => stepRun.status === "completed",
-				);
-				if (allStepCompleted) {
-					onComplete();
-				}
+				completeStep(step);
 			}}
 		/>
 	));
 }
 
 function StepRunner({
-	stepRun,
+	step,
 	onComplete,
 }: {
-	stepRun: StepRun;
+	step: StepRun;
 	onComplete: () => void;
 }) {
-	const { updateStepRun } = useWorkflowRunner();
+	const { updateStep, startStep } = useWorkflowRunner();
 	const { handleSubmit, completion } = useCompletion({
+		api: "/api/giselle/run-step",
+		body: {
+			workspaceId: step.workspaceId,
+			workflowId: step.workflowId,
+			workflowRunId: step.workflowRunId,
+			jobRunId: step.jobRunId,
+			stepRunId: step.id,
+		},
+
 		onFinish() {
-			updateStepRun(stepRun, {
+			updateStep(step, {
 				status: "completed",
 			});
 			onComplete();
 		},
 	});
 	useEffect(() => {
-		if (stepRun.status !== "queued") {
+		if (step.status !== "queued") {
 			return;
 		}
-		updateStepRun(stepRun, {
-			status: "inProgress",
-		});
+		startStep(step);
 		handleSubmit();
-	}, [stepRun, handleSubmit, updateStepRun]);
+	}, [step, handleSubmit, startStep]);
 	useEffect(() => {
-		if (stepRun.status !== "inProgress") {
+		if (step.status !== "inProgress") {
 			return;
 		}
-		updateStepRun(stepRun, {
+		updateStep(step, {
 			result: completion,
 		});
-	}, [stepRun, updateStepRun, completion]);
+	}, [step, updateStep, completion]);
 	return null;
 }
+
+export { WorkflowRunnerProvider, useWorkflowRunner };

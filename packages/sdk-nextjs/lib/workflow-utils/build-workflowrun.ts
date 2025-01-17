@@ -23,6 +23,8 @@ export function buildWorkflowRun(workflow: Workflow) {
 				id: StepRunId.generate(),
 				jobRunId,
 				workflowRunId,
+				workflowId: workflow.id,
+				workspaceId: workflow.workspaceId,
 				attempts: 1,
 				stepId: step.id,
 				status: "waiting",
@@ -37,13 +39,15 @@ export function buildWorkflowRun(workflow: Workflow) {
 			jobId: job.id,
 			status: "waiting",
 			stepRunMap,
+			workflowId: workflow.id,
+			workspaceId: workflow.workspaceId,
 		} satisfies JobRun;
 		jobRunMap.set(jobRun.id, jobRun);
 	}
 	return {
 		id: workflowRunId,
 		workflowId: workflow.id,
-		status: "waiting",
+		status: "queued",
 		jobRunMap,
 	} satisfies WorkflowRun;
 }
