@@ -49,7 +49,7 @@ export interface WorkflowDesignerOperations {
 	deleteNode: (nodeId: string | NodeId) => void;
 	deleteConnection: (connectionId: ConnectionId) => void;
 	updateNodeData: <T extends NodeData>(node: T, data: Partial<T>) => void;
-	runWorkflow: (workflowId: WorkflowId) => WorkflowRun;
+	createWorkflow: (workflowId: WorkflowId) => WorkflowRun;
 }
 
 export function WorkflowDesigner({
@@ -135,7 +135,7 @@ export function WorkflowDesigner({
 		nodeMap.delete(deleteNodeId);
 		updateWorkflowMap();
 	}
-	function runWorkflow(workflowId: WorkflowId) {
+	function createWorkflow(workflowId: WorkflowId) {
 		const workflow = workflowMap.get(workflowId);
 		if (workflow === undefined) {
 			buildWorkflowMap(nodeMap, connectionMap);
@@ -155,6 +155,6 @@ export function WorkflowDesigner({
 		setUiNodeState,
 		deleteNode,
 		deleteConnection,
-		runWorkflow,
+		createWorkflow,
 	};
 }

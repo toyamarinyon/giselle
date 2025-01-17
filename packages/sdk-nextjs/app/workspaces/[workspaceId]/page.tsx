@@ -8,7 +8,7 @@ export default function Page() {
 		data,
 		addTextGenerationNode,
 		addTextNode,
-		runWorkflow,
+		createWorkflow,
 		setView,
 		setActiveWorkflowRunId,
 	} = useWorkflowDesigner();
@@ -63,7 +63,7 @@ export default function Page() {
 									type="button"
 									className="w-[20px] h-[20px] flex-shrink-0 hover:bg-black-70 rounded flex items-center justify-center"
 									onClick={() => {
-										const workflowRun = runWorkflow(workflow.id);
+										const workflowRun = createWorkflow(workflow.id);
 										setView("viewer");
 										setActiveWorkflowRunId(workflowRun.id);
 									}}

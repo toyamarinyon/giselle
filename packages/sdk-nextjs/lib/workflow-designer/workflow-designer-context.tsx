@@ -40,7 +40,7 @@ interface WorkflowDesignerContextValue
 			| "setUiNodeState"
 			| "deleteNode"
 			| "deleteConnection"
-			| "runWorkflow"
+			| "createWorkflow"
 		>,
 		ReturnType<typeof usePropertiesPanel>,
 		ReturnType<typeof useView>,
@@ -202,7 +202,8 @@ export function WorkflowDesignerProvider({
 			if (workflowDesignerRef.current === undefined) {
 				throw new Error("Workflow designer not initialized");
 			}
-			const workflowRun = workflowDesignerRef.current.runWorkflow(workflowId);
+			const workflowRun =
+				workflowDesignerRef.current.createWorkflow(workflowId);
 			setAndSaveWorkspace(workflowDesignerRef.current.getData());
 			return workflowRun;
 		},
@@ -233,7 +234,7 @@ export function WorkflowDesignerProvider({
 				setUiNodeState,
 				deleteNode,
 				deleteConnection,
-				runWorkflow,
+				createWorkflow: runWorkflow,
 				...usePropertiesPanelHelper,
 				...useViewHelper,
 				setActiveWorkflowRunId,
