@@ -6,6 +6,7 @@ import type {
 	WorkflowRun,
 	WorkflowRunId,
 } from "../giselle-data";
+import { callRunStepApi } from "./call-run-step-api";
 import {
 	type JobWithRun,
 	type StepWithRun,
@@ -82,13 +83,14 @@ type StepRunEvent =
 	| StepRunStartEvent
 	| StepRunEndEvent;
 interface RunStepParams {
+	api?: string;
 	workflow: WorkflowWithRun;
 	step: StepWithRun;
 	job: JobWithRun;
 	onStepRunUpdate?: (event: StepRunEvent) => void;
 }
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export async function runStep({
+	api = "/api/giselle/run-step",
 	workflow,
 	job,
 	step,
@@ -100,7 +102,14 @@ export async function runStep({
 		jobRunId: job.jobRunId,
 		stepRunId: step.stepRunId,
 	});
-	await sleep(2000);
+	await callRunStepApi({
+		api,
+		workspaceId: workflow.workspaceId,
+		workflowId: workflow.id,
+		workflowRunId: workflow.workflowRunId,
+		jobRunId: job.jobRunId,
+		stepRunId: step.stepRunId,
+	});
 	onStepRunUpdate?.({
 		status: "completed",
 		workflowRunId: workflow.workflowRunId,

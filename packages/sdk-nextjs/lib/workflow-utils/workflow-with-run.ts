@@ -24,7 +24,7 @@ export type JobWithRun = Omit<Job, "stepMap"> &
 	} & {
 		jobRunId: JobRunId;
 	};
-export type WorkflowWithRun = Pick<Workflow, "id"> &
+export type WorkflowWithRun = Pick<Workflow, "id" | "workspaceId"> &
 	Pick<WorkflowRun, "status"> & {
 		jobMap: Map<JobId, JobWithRun>;
 		workflowRunId: WorkflowRunId;
@@ -71,6 +71,7 @@ export function buildWorkflowWithRun(
 	}
 	const workflowWithRun = {
 		id: workflow.id,
+		workspaceId: workflow.workspaceId,
 		status: workflowRun.status,
 		jobMap: jobWithRunMap,
 		workflowRunId: workflowRun.id,

@@ -30,9 +30,7 @@ import {
 	WorkflowRunId,
 	WorkflowRunJson,
 } from "./workflow-run";
-
-export const WorkspaceId = createIdGenerator("wrks");
-export type WorkspaceId = z.infer<typeof WorkspaceId.schema>;
+import { WorkspaceId } from "./workspace";
 
 export const Workspace = z.object({
 	id: WorkspaceId.schema,
@@ -109,4 +107,5 @@ export {
 	WorkflowRunId,
 	Connection,
 	ConnectionId,
+	WorkspaceId,
 };

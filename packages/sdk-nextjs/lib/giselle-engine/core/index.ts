@@ -3,6 +3,7 @@ import type { Storage } from "unstorage";
 import { z } from "zod";
 import { createWorkspace } from "./handlers/create-workspace";
 import { getWorkspace } from "./handlers/get-workspace";
+import { runStep } from "./handlers/run-step";
 import { saveWorkspace } from "./handlers/save-workspace";
 import { textGeneration } from "./handlers/text-generation";
 import type { GiselleEngineContext } from "./types";
@@ -12,6 +13,7 @@ export const GiselleEngineAction = z.enum([
 	"save-workspace",
 	"get-workspace",
 	"text-generation",
+	"run-step",
 ]);
 type GiselleEngineAction = z.infer<typeof GiselleEngineAction>;
 
@@ -103,6 +105,10 @@ export async function GiselleEngine(
 		}
 		case "create-workspace": {
 			const result = await createWorkspace({ context });
+			return Response.json(result);
+		}
+		case "run-step": {
+			const result = await runStep({ context, unsafeInput: payload });
 			return Response.json(result);
 		}
 		default: {

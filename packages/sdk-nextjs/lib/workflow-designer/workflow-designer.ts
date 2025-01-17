@@ -75,7 +75,7 @@ export function WorkflowDesigner({
 	let workflowMap = defaultValue.workflowMap;
 	const workflowRunMap = defaultValue.workflowRunMap;
 	function updateWorkflowMap() {
-		workflowMap = buildWorkflowMap(nodeMap, connectionMap);
+		workflowMap = buildWorkflowMap(nodeMap, connectionMap, defaultValue.id);
 	}
 	function addTextGenerationNode(
 		params: z.infer<typeof CreateTextGenerationNodeParams>,
@@ -150,7 +150,6 @@ export function WorkflowDesigner({
 	function createWorkflow(workflowId: WorkflowId) {
 		const workflow = workflowMap.get(workflowId);
 		if (workflow === undefined) {
-			buildWorkflowMap(nodeMap, connectionMap);
 			throw new Error(`Workflow with id ${workflowId} not found`);
 		}
 		const workflowRun = buildWorkflowRun(workflow);

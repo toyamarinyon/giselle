@@ -2,6 +2,7 @@ import { createIdGenerator } from "@/lib/utils/generate-id";
 import { z } from "zod";
 import { NodeData, NodeId } from "../node";
 import { mapToObject, objectToMap } from "../utils";
+import { WorkspaceId } from "../workspace";
 
 export const StepId = createIdGenerator("stp");
 export type StepId = z.infer<typeof StepId.schema>;
@@ -42,6 +43,7 @@ export const WorkflowId = createIdGenerator("wf");
 export type WorkflowId = z.infer<typeof WorkflowId.schema>;
 export const Workflow = z.object({
 	id: WorkflowId.schema,
+	workspaceId: WorkspaceId.schema,
 	jobMap: z.preprocess(objectToMap, z.map(JobId.schema, Job)),
 	nodeMap: z.preprocess(objectToMap, z.map(NodeId.schema, NodeData)),
 });

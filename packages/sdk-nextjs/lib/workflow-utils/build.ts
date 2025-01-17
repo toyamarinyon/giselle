@@ -11,6 +11,7 @@ import {
 	WorkflowId,
 	type WorkflowRun,
 	WorkflowRunId,
+	type WorkspaceId,
 } from "@/lib/giselle-data";
 import {
 	createConnectedNodeIdMap,
@@ -22,6 +23,7 @@ import {
 export function buildWorkflowMap(
 	nodeMap: Map<NodeId, NodeData>,
 	connectionMap: Map<ConnectionId, Connection>,
+	workspaceId: WorkspaceId,
 ) {
 	const workflowSet = new Set<Workflow>();
 	let processedNodeSet = new Set<NodeId>();
@@ -47,6 +49,7 @@ export function buildWorkflowMap(
 			new Set(connectedConnectionMap.values()),
 		);
 		workflowSet.add({
+			workspaceId,
 			id: WorkflowId.generate(),
 			jobMap: jobSet,
 			nodeMap: connectedNodeMap,
