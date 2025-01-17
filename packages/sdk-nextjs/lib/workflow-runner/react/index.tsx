@@ -33,6 +33,7 @@ function StepRunner({
 }) {
 	const { updateStep, startStep } = useWorkflowRunner();
 	const { handleSubmit, completion } = useCompletion({
+		initialInput: "dummy",
 		api: "/api/giselle/run-step",
 		body: {
 			workspaceId: step.workspaceId,
@@ -41,7 +42,6 @@ function StepRunner({
 			jobRunId: step.jobRunId,
 			stepRunId: step.id,
 		},
-
 		onFinish() {
 			updateStep(step, {
 				status: "completed",

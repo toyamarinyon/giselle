@@ -7,7 +7,7 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 		for (const [_, job] of workflowRun.jobRunMap) {
 			startJob(job);
 			for (const [_, stepRun] of job.stepRunMap) {
-				startStep(stepRun);
+				stepRun.status = "queued";
 			}
 			break;
 		}
