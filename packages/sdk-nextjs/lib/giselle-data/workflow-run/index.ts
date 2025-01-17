@@ -10,6 +10,7 @@ export const StepRunStatus = z.enum([
 	"completed",
 	"failed",
 	"cancelled",
+	"waiting",
 ]);
 export type StepRunStatus = z.infer<typeof StepRunStatus>;
 export const StepRunId = createIdGenerator("str");
@@ -65,7 +66,7 @@ export const WorkflowRunStatus = z.enum([
 	"inProgress",
 	"queued",
 	// "requested",
-	// "waiting",
+	"waiting",
 	// "pending",
 ]);
 export const WorkflowRun = z.object({

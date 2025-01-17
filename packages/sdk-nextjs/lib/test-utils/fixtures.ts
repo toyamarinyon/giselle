@@ -18,6 +18,9 @@ export const textGenerationNode2 = createTextGenerationNodeData({
 export const textGenerationNode3 = createTextGenerationNodeData({
 	name: "Text Generation Node 3",
 });
+export const textGenerationNode4 = createTextGenerationNodeData({
+	name: "Text Generation Node 4",
+});
 export const textNode1 = createTextNodeData({
 	name: "Text Node 1",
 });
@@ -43,32 +46,42 @@ export const connection2 = createConnection({
 });
 export const connectionHandle3 = createConnectionHandle({
 	label: "source",
+	nodeId: textGenerationNode2.id,
+	nodeType: textGenerationNode2.type,
+	connectedNodeId: textGenerationNode4.id,
+});
+export const connection3 = createConnection({
+	sourceNode: textGenerationNode4,
+	targetNodeHandle: connectionHandle3,
+});
+export const connectionHandle4 = createConnectionHandle({
+	label: "source",
 	nodeId: textGenerationNode3.id,
 	nodeType: textGenerationNode3.type,
 	connectedNodeId: textGenerationNode2.id,
 });
-export const connection3 = createConnection({
+export const connection4 = createConnection({
 	sourceNode: textGenerationNode2,
-	targetNodeHandle: connectionHandle3,
-});
-export const textGenerationNode4 = createTextGenerationNodeData({
-	name: "Text Generation Node 4",
+	targetNodeHandle: connectionHandle4,
 });
 export const textGenerationNode5 = createTextGenerationNodeData({
 	name: "Text Generation Node 5",
 });
-export const connectionHandle4 = createConnectionHandle({
-	label: "source",
-	nodeId: textGenerationNode5.id,
-	nodeType: textGenerationNode5.type,
-	connectedNodeId: textGenerationNode4.id,
-});
-export const connection4 = createConnection({
-	sourceNode: textGenerationNode4,
-	targetNodeHandle: connectionHandle4,
-});
 export const textGenerationNode6 = createTextGenerationNodeData({
 	name: "Text Generation Node 6",
+});
+export const connectionHandle5 = createConnectionHandle({
+	label: "source",
+	nodeId: textGenerationNode6.id,
+	nodeType: textGenerationNode6.type,
+	connectedNodeId: textGenerationNode5.id,
+});
+export const connection5 = createConnection({
+	sourceNode: textGenerationNode5,
+	targetNodeHandle: connectionHandle5,
+});
+export const textGenerationNode7 = createTextGenerationNodeData({
+	name: "Text Generation Node 7",
 });
 export const testWorkspace = Workspace.parse({
 	...generateInitialWorkspace(),
@@ -80,11 +93,13 @@ export const testWorkspace = Workspace.parse({
 		[textGenerationNode4.id, textGenerationNode4],
 		[textGenerationNode5.id, textGenerationNode5],
 		[textGenerationNode6.id, textGenerationNode6],
+		[textGenerationNode7.id, textGenerationNode7],
 	]),
 	connectionMap: new Map([
 		[connection1.id, connection1],
 		[connection2.id, connection2],
 		[connection3.id, connection3],
 		[connection4.id, connection4],
+		[connection5.id, connection5],
 	]),
 });

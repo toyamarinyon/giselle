@@ -1,16 +1,10 @@
 import type { NodeData, NodeId } from "@/lib/giselle-data";
-import { describe, expect, test } from "vitest";
-import {
-	createConnectedNodeIdMap,
-	createJobMap,
-	findConnectedConnectionMap,
-	findConnectedNodeMap,
-} from "./helper";
 import {
 	connection1,
 	connection2,
 	connection3,
 	connection4,
+	connection5,
 	testWorkspace,
 	textGenerationNode1,
 	textGenerationNode2,
@@ -18,8 +12,16 @@ import {
 	textGenerationNode4,
 	textGenerationNode5,
 	textGenerationNode6,
+	textGenerationNode7,
 	textNode1,
-} from "./tests/fixtures";
+} from "@/lib/test-utils/fixtures";
+import { describe, expect, test } from "vitest";
+import {
+	createConnectedNodeIdMap,
+	createJobMap,
+	findConnectedConnectionMap,
+	findConnectedNodeMap,
+} from "./helper";
 
 test("createConnectionMap", () => {
 	expect(
@@ -33,11 +35,16 @@ test("createConnectionMap", () => {
 			[textGenerationNode1.id, new Set([textNode1.id, textGenerationNode2.id])],
 			[
 				textGenerationNode2.id,
-				new Set([textGenerationNode1.id, textGenerationNode3.id]),
+				new Set([
+					textGenerationNode1.id,
+					textGenerationNode3.id,
+					textGenerationNode4.id,
+				]),
 			],
 			[textGenerationNode3.id, new Set([textGenerationNode2.id])],
-			[textGenerationNode4.id, new Set([textGenerationNode5.id])],
-			[textGenerationNode5.id, new Set([textGenerationNode4.id])],
+			[textGenerationNode4.id, new Set([textGenerationNode2.id])],
+			[textGenerationNode5.id, new Set([textGenerationNode6.id])],
+			[textGenerationNode6.id, new Set([textGenerationNode5.id])],
 		]),
 	);
 });
@@ -60,6 +67,7 @@ describe("findConnectedNodeMap", () => {
 				[textNode1.id, textNode1],
 				[textGenerationNode2.id, textGenerationNode2],
 				[textGenerationNode3.id, textGenerationNode3],
+				[textGenerationNode4.id, textGenerationNode4],
 			]),
 		);
 	});
@@ -76,33 +84,34 @@ describe("findConnectedNodeMap", () => {
 				[textNode1.id, textNode1],
 				[textGenerationNode2.id, textGenerationNode2],
 				[textGenerationNode3.id, textGenerationNode3],
+				[textGenerationNode4.id, textGenerationNode4],
 			]),
 		);
 	});
 	test("start by textGenerationNode4", () => {
 		expect(
 			findConnectedNodeMap(
-				textGenerationNode4.id,
+				textGenerationNode5.id,
 				testWorkspace.nodeMap,
 				connectionMap,
 			),
 		).toStrictEqual(
 			new Map<NodeId, NodeData>([
-				[textGenerationNode4.id, textGenerationNode4],
 				[textGenerationNode5.id, textGenerationNode5],
+				[textGenerationNode6.id, textGenerationNode6],
 			]),
 		);
 	});
 	test("start by textGenerationNode6", () => {
 		expect(
 			findConnectedNodeMap(
-				textGenerationNode6.id,
+				textGenerationNode7.id,
 				testWorkspace.nodeMap,
 				connectionMap,
 			),
 		).toStrictEqual(
 			new Map<NodeId, NodeData>([
-				[textGenerationNode6.id, textGenerationNode6],
+				[textGenerationNode7.id, textGenerationNode7],
 			]),
 		);
 	});
@@ -129,12 +138,13 @@ describe("findConnectedConnections", () => {
 				[connection1.id, connection1],
 				[connection2.id, connection2],
 				[connection3.id, connection3],
+				[connection4.id, connection4],
 			]),
 		);
 	});
 	test("start by textGenerationNode4", () => {
 		const connectedNodeMap = findConnectedNodeMap(
-			textGenerationNode4.id,
+			textGenerationNode5.id,
 			testWorkspace.nodeMap,
 			connectionMap,
 		);
@@ -143,7 +153,7 @@ describe("findConnectedConnections", () => {
 				new Set(connectedNodeMap.keys()),
 				new Set(testWorkspace.connectionMap.values()),
 			),
-		).toStrictEqual(new Map([[connection4.id, connection4]]));
+		).toStrictEqual(new Map([[connection5.id, connection5]]));
 	});
 });
 describe("createJobsFromGraph", () => {
@@ -168,7 +178,7 @@ describe("createJobsFromGraph", () => {
 		expect(jobSet.size).toBe(3);
 		const jobSetIterator = jobSet.values();
 		const firstJob = jobSetIterator.next().value;
-		expect(firstJob?.stepMap.size).toBe(1);
+		expect(firstJob?.stepMap.size).toBe(2);
 		const firstJobFirstStep = firstJob?.stepMap.values().next().value;
 		expect(firstJobFirstStep?.nodeId).toBe(textGenerationNode1.id);
 		expect(firstJobFirstStep?.variableNodeIds).toStrictEqual(
@@ -187,7 +197,7 @@ describe("createJobsFromGraph", () => {
 	});
 	test("start by textGenerationNode4", () => {
 		const connectedNodeMap = findConnectedNodeMap(
-			textGenerationNode4.id,
+			textGenerationNode5.id,
 			testWorkspace.nodeMap,
 			connectionMap,
 		);
@@ -203,6 +213,6 @@ describe("createJobsFromGraph", () => {
 		const firstJob = jobSet.values().next().value;
 		expect(firstJob?.stepMap.size).toBe(1);
 		const firstJobFirstStep = firstJob?.stepMap.values().next().value;
-		expect(firstJobFirstStep?.nodeId).toBe(textGenerationNode4.id);
+		expect(firstJobFirstStep?.nodeId).toBe(textGenerationNode5.id);
 	});
 });

@@ -1,16 +1,10 @@
 import {
 	type Connection,
 	type ConnectionId,
-	type JobRun,
-	JobRunId,
 	type NodeData,
 	type NodeId,
-	type StepRun,
-	StepRunId,
 	type Workflow,
 	WorkflowId,
-	type WorkflowRun,
-	WorkflowRunId,
 	type WorkspaceId,
 } from "@/lib/giselle-data";
 import {
@@ -62,34 +56,4 @@ export function buildWorkflowMap(
 		workflowMap.set(workflow.id, workflow);
 	}
 	return workflowMap;
-}
-
-export function buildWorkflowRun(workflow: Workflow) {
-	const jobRunMap = new Map<JobRunId, JobRun>();
-	for (const [_, job] of workflow.jobMap) {
-		const stepRunMap = new Map<StepRunId, StepRun>();
-		for (const [_, step] of job.stepMap) {
-			const stepRun = {
-				id: StepRunId.generate(),
-				attempts: 1,
-				stepId: step.id,
-				status: "queued",
-			} satisfies StepRun;
-			stepRunMap.set(stepRun.id, stepRun);
-		}
-		const jobRun = {
-			id: JobRunId.generate(),
-			attempts: 1,
-			jobId: job.id,
-			status: "queued",
-			stepRunMap,
-		} satisfies JobRun;
-		jobRunMap.set(jobRun.id, jobRun);
-	}
-	return {
-		id: WorkflowRunId.generate(),
-		workflowId: workflow.id,
-		status: "queued",
-		jobRunMap,
-	} satisfies WorkflowRun;
 }
