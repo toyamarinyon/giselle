@@ -22,7 +22,9 @@ describe("workflow-runner", () => {
 	});
 
 	test("start", () => {
-		expect(workflowRunner.getData().status).toBe(WorkflowRunStatus.Enum.queued);
+		expect(workflowRunner.getData().status).toBe(
+			WorkflowRunStatus.Enum.waiting,
+		);
 		workflowRunner.start();
 		const data = workflowRunner.getData();
 		expect(data.status).toBe(WorkflowRunStatus.Enum.inProgress);
@@ -33,7 +35,7 @@ describe("workflow-runner", () => {
 		}
 		expect(firstJobRun.status).toBe(JobRunStatus.Enum.inProgress);
 		for (const stepRun of firstJobRun.stepRunMap.values()) {
-			expect(stepRun.status).toBe(JobRunStatus.Enum.inProgress);
+			expect(stepRun.status).toBe(JobRunStatus.Enum.queued);
 		}
 		const secondJobRun = jobRunIterator.next().value;
 		if (secondJobRun === undefined) {
@@ -60,7 +62,7 @@ describe("workflow-runner", () => {
 		}
 		expect(firstJobRun.status).toBe(JobRunStatus.Enum.inProgress);
 		for (const stepRun of firstJobRun.stepRunMap.values()) {
-			expect(stepRun.status).toBe(JobRunStatus.Enum.inProgress);
+			expect(stepRun.status).toBe(JobRunStatus.Enum.queued);
 		}
 		const secondJobRun = jobRunIterator.next().value;
 		if (secondJobRun === undefined) {

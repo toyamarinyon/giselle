@@ -7,6 +7,11 @@ import {
 	type WorkflowRun,
 	WorkflowRunId,
 } from "@/lib/giselle-data";
+import {
+	JobRunStatus,
+	StepRunStatus,
+	WorkflowRunStatus,
+} from "../giselle-data/workflow-run";
 
 export function buildWorkflowRun(workflow: Workflow) {
 	const workflowRunId = WorkflowRunId.generate();
@@ -27,7 +32,7 @@ export function buildWorkflowRun(workflow: Workflow) {
 				workspaceId: workflow.workspaceId,
 				attempts: 1,
 				stepId: step.id,
-				status: "waiting",
+				status: StepRunStatus.Enum.waiting,
 				node,
 			} satisfies StepRun;
 			stepRunMap.set(stepRun.id, stepRun);
@@ -37,7 +42,7 @@ export function buildWorkflowRun(workflow: Workflow) {
 			workflowRunId,
 			attempts: 1,
 			jobId: job.id,
-			status: "waiting",
+			status: JobRunStatus.Enum.waiting,
 			stepRunMap,
 			workflowId: workflow.id,
 			workspaceId: workflow.workspaceId,
@@ -47,7 +52,7 @@ export function buildWorkflowRun(workflow: Workflow) {
 	return {
 		id: workflowRunId,
 		workflowId: workflow.id,
-		status: "queued",
+		status: WorkflowRunStatus.Enum.waiting,
 		jobRunMap,
 	} satisfies WorkflowRun;
 }

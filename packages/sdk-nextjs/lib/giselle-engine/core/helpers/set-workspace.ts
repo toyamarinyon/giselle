@@ -2,7 +2,7 @@ import type { Workspace, WorkspaceId, WorkspaceJson } from "@/lib/giselle-data";
 import type { Storage } from "unstorage";
 import { workspacePath } from "./workspace-path";
 
-export async function setGraphToStorage({
+export async function setWorkspace({
 	storage,
 	workspaceId,
 	workspace,
