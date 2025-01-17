@@ -25,6 +25,7 @@ export const connectionHandle1 = createConnectionHandle({
 	label: "source",
 	nodeId: textGenerationNode1.id,
 	nodeType: textGenerationNode1.type,
+	connectedNodeId: textNode1.id,
 });
 export const connection1 = createConnection({
 	sourceNode: textNode1,
@@ -34,6 +35,7 @@ export const connectionHandle2 = createConnectionHandle({
 	label: "source",
 	nodeId: textGenerationNode2.id,
 	nodeType: textGenerationNode2.type,
+	connectedNodeId: textGenerationNode1.id,
 });
 export const connection2 = createConnection({
 	sourceNode: textGenerationNode1,
@@ -43,6 +45,7 @@ export const connectionHandle3 = createConnectionHandle({
 	label: "source",
 	nodeId: textGenerationNode3.id,
 	nodeType: textGenerationNode3.type,
+	connectedNodeId: textGenerationNode2.id,
 });
 export const connection3 = createConnection({
 	sourceNode: textGenerationNode2,
@@ -58,6 +61,7 @@ export const connectionHandle4 = createConnectionHandle({
 	label: "source",
 	nodeId: textGenerationNode5.id,
 	nodeType: textGenerationNode5.type,
+	connectedNodeId: textGenerationNode4.id,
 });
 export const connection4 = createConnection({
 	sourceNode: textGenerationNode4,

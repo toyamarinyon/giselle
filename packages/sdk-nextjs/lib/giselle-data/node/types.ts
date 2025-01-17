@@ -24,6 +24,7 @@ export const ConnectionHandle = z.object({
 	nodeId: NodeId.schema,
 	nodeType: BaseNodeData.shape.type,
 	label: z.string(),
+	connectedNodeId: NodeId.schema,
 });
 export type ConnectionHandle = z.infer<typeof ConnectionHandle>;
 

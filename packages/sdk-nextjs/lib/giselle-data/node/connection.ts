@@ -2,8 +2,8 @@ import {
 	type BaseNodeData,
 	type Connection,
 	type ConnectionHandle,
-	connectionHandleId,
 	ConnectionId,
+	connectionHandleId,
 } from "./types";
 
 export function createConnection({
@@ -27,11 +27,13 @@ export function createConnectionHandle({
 	nodeId,
 	nodeType,
 	label,
+	connectedNodeId,
 }: Omit<ConnectionHandle, "id">): ConnectionHandle {
 	return {
 		id: connectionHandleId.generate(),
 		nodeId,
 		nodeType,
 		label,
+		connectedNodeId,
 	};
 }

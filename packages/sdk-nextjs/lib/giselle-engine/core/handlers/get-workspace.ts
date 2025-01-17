@@ -1,6 +1,6 @@
 import { WorkspaceId, WorkspaceJson } from "@/lib/giselle-data";
 import { z } from "zod";
-import { workspacePath } from "../helpers/workspace-path";
+import { getWorkspace as getWorkspaceInternal } from "../helpers/get-workspace";
 import type { WorkspaceEngineHandlerArgs } from "./types";
 
 const Input = z.object({
@@ -15,11 +15,9 @@ export async function getWorkspace({
 	unsafeInput,
 }: WorkspaceEngineHandlerArgs<z.infer<typeof Input>>) {
 	const input = Input.parse(unsafeInput);
-	const result = await context.storage.getItem(
-		workspacePath(input.workspaceId),
-	);
-	if (result === null) {
-		throw new Error("Workflow not found");
-	}
-	return Output.parse({ workspace: result });
+	const workspace = await getWorkspaceInternal({
+		storage: context.storage,
+		workspaceId: input.workspaceId,
+	});
+	return Output.parse({ workspace });
 }

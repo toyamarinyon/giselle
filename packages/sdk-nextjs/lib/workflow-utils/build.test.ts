@@ -6,6 +6,7 @@ describe("buildWorkflowMap", () => {
 	const workflowMap = buildWorkflowMap(
 		testWorkspace.nodeMap,
 		testWorkspace.connectionMap,
+		testWorkspace.id,
 	);
 	test("testWorkspace can build 3 workflows", () => {
 		expect(workflowMap.size).toBe(3);
@@ -21,6 +22,7 @@ describe("buildWorkflowRun", () => {
 	const workflowMap = buildWorkflowMap(
 		testWorkspace.nodeMap,
 		testWorkspace.connectionMap,
+		testWorkspace.id,
 	);
 	const workflowIterator = workflowMap.values();
 	const firstWorkflow = workflowIterator.next().value;

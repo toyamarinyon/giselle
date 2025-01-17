@@ -51,6 +51,7 @@ export function TabsContentPrompt({
 				label: "Source",
 				nodeId: node.id,
 				nodeType: node.type,
+				connectedNodeId: sourceNode.id,
 			});
 			addConnection(sourceNode, connectionHandle);
 			connectionHandle;
@@ -88,6 +89,7 @@ export function TabsContentPrompt({
 				label: "Requirement",
 				nodeId: node.id,
 				nodeType: node.type,
+				connectedNodeId: requirementNode.id,
 			});
 			addConnection(requirementNode, connectionHandle);
 			updateNodeDataContent(node, {
