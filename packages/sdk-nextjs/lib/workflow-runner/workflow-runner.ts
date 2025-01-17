@@ -103,3 +103,5 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 		updateStep,
 	};
 }
+
+export type WorkflowRunner = ReturnType<typeof WorkflowRunner>;

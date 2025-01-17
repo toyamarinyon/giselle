@@ -1,6 +1,7 @@
 "use client";
 import { useWorkflowDesigner } from "@/lib/workflow-designer";
 import { Designer } from "@/lib/workflow-designer/ui";
+import { useWorkflowRunner } from "@/lib/workflow-runner/react";
 import { PlayIcon, WorkflowIcon } from "lucide-react";
 
 export default function Page() {
@@ -8,11 +9,10 @@ export default function Page() {
 		data,
 		addTextGenerationNode,
 		addTextNode,
-		createWorkflow,
-		runWorkflow,
+		createWorkflowRun,
 		setView,
-		setActiveWorkflowRunId,
 	} = useWorkflowDesigner();
+	const { setWorkflowRun, start } = useWorkflowRunner();
 
 	return (
 		<div className="grid grid-cols-[200px_1fr] h-screen">
@@ -64,8 +64,15 @@ export default function Page() {
 									type="button"
 									className="w-[20px] h-[20px] flex-shrink-0 hover:bg-black-70 rounded flex items-center justify-center"
 									onClick={async () => {
-										const workflowRun = createWorkflow(workflow.id);
-										setView("viewer");
+										const workflowRun = await createWorkflowRun({
+											workflowId: workflow.id,
+											onBeforeWorkflowRunCreate: () => {
+												setView("viewer");
+											},
+										});
+										setWorkflowRun(workflowRun);
+										start();
+
 										// setActiveWorkflowRunId(workflowRun.id);
 										// await runWorkflow(workflowRun.id);
 									}}

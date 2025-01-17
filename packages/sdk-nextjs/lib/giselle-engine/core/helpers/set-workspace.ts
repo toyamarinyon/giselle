@@ -1,4 +1,4 @@
-import type { Workspace, WorkspaceId, WorkspaceJson } from "@/lib/giselle-data";
+import type { WorkspaceId, WorkspaceJson } from "@/lib/giselle-data";
 import type { Storage } from "unstorage";
 import { workspacePath } from "./workspace-path";
 
@@ -7,7 +7,7 @@ export async function setWorkspace({
 	workspaceId,
 	workspace,
 }: {
-	storage: Storage<WorkspaceJson>;
+	storage: Storage;
 	workspaceId: WorkspaceId;
 	workspace: WorkspaceJson;
 }) {

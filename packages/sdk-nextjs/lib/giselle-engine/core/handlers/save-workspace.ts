@@ -1,7 +1,7 @@
 import { WorkspaceId, WorkspaceJson } from "@/lib/giselle-data";
 import type { StorageMeta } from "unstorage";
 import { z } from "zod";
-import { setWorkspace } from "../helpers/set-graph-to-storage";
+import { setWorkspace } from "../helpers/set-workspace";
 import { workspacePath } from "../helpers/workspace-path";
 import type { WorkspaceEngineHandlerArgs } from "./types";
 
@@ -18,7 +18,7 @@ export async function saveWorkspace({
 	unsafeInput,
 }: WorkspaceEngineHandlerArgs<z.infer<typeof Input>>) {
 	const input = Input.parse(unsafeInput);
-	setWorkspace({
+	await setWorkspace({
 		storage: context.storage,
 		workspaceId: input.workspaceId,
 		workspace: input.workspace,

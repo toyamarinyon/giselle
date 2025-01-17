@@ -1,17 +1,11 @@
 "use client";
 
-import type { StepRun } from "@/lib/giselle-data";
-import {
-	WorkflowRunner,
-	WorkflowRunnerProvider,
-	useWorkflowRunner,
-} from "@/lib/workflow-runner/react";
-import type { StepWithRun, WorkflowWithRun } from "@/lib/workflow-utils";
+import type { StepRun, WorkflowRun } from "@/lib/giselle-data";
+import { WorkflowRunner, useWorkflowRunner } from "@/lib/workflow-runner/react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { CircleAlertIcon, CircleSlashIcon } from "lucide-react";
 import type { DetailedHTMLProps } from "react";
 import bg from "../../images/bg.png";
-import { useWorkflowDesigner } from "../../workflow-designer-context";
 import { EmptyState } from "../_/empty-state";
 import { Header } from "../_/header";
 import { Markdown } from "../_/markdown";
@@ -62,8 +56,7 @@ function StepButton({ stepRun, ...props }: StepRunButtonProps) {
 	);
 }
 
-function WorkflowRunViewer() {
-	const { workflowRun } = useWorkflowRunner();
+function WorkflowRunViewer({ workflowRun }: { workflowRun: WorkflowRun }) {
 	return (
 		<Tabs.Root className="flex-1 flex w-full gap-[16px] pt-[16px] overflow-hidden h-full mx-[20px]">
 			<div className="w-[200px]">
@@ -110,7 +103,9 @@ function WorkflowRunViewer() {
 								</div>
 							)}
 							{(step.status === "inProgress" ||
-								step.status === "completed") && <Markdown>Completed</Markdown>}
+								step.status === "completed") && (
+								<Markdown>{step.result}</Markdown>
+							)}
 							{/* {stepExecution.artifact?.type === "generatedArtifact" && (
 								<div className="mt-[10px] flex gap-[12px] items-center">
 									<div className="text-[14px] font-bold text-black-70 ">
@@ -212,7 +207,7 @@ function WorkflowRunViewer() {
 }
 
 export function Viewer() {
-	const { activeWorkflowRun } = useWorkflowDesigner();
+	const { workflowRun } = useWorkflowRunner();
 	return (
 		<div
 			className="w-full h-screen bg-black-100 flex flex-col"
@@ -225,7 +220,7 @@ export function Viewer() {
 		>
 			<Header />
 			<div className="flex-1 w-full flex items-center justify-center overflow-hidden">
-				{activeWorkflowRun === undefined ? (
+				{workflowRun === undefined ? (
 					<EmptyState
 						icon={
 							<WilliIcon className="fill-current w-[32px] h-[32px] text-black-30" />
@@ -236,10 +231,10 @@ export function Viewer() {
 					output."
 					/>
 				) : (
-					<WorkflowRunnerProvider defaultWorkflowRun={activeWorkflowRun}>
-						<WorkflowRunViewer />
+					<>
+						<WorkflowRunViewer workflowRun={workflowRun} />
 						<WorkflowRunner />
-					</WorkflowRunnerProvider>
+					</>
 				)}
 			</div>
 		</div>

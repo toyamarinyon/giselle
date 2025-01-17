@@ -1,9 +1,8 @@
 import { createStorage } from "unstorage";
 import fsDriver from "unstorage/drivers/fs";
-import type { WorkspaceJson } from "./lib/giselle-data";
 import { NextGiselleEngine } from "./lib/giselle-engine/next";
 
-const storage = createStorage<WorkspaceJson>({
+const storage = createStorage({
 	// driver: vercelBlobDriver({
 	// 	access: "public",
 	// 	base: "workflow-data",

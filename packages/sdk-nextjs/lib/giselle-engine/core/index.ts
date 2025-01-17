@@ -1,4 +1,3 @@
-import type { WorkspaceJson } from "@/lib/giselle-data";
 import type { Storage } from "unstorage";
 import { z } from "zod";
 import { createWorkspace } from "./handlers/create-workspace";
@@ -25,7 +24,7 @@ export interface GiselleEngineRequest {
 
 export interface GiselleEngineConfig {
 	basePath: string;
-	storage: Storage<WorkspaceJson>;
+	storage: Storage;
 }
 
 async function toGiselleEngineRequest(

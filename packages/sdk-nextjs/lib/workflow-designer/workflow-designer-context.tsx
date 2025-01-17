@@ -1,6 +1,7 @@
 "use client";
 
 import { callSaveWorkflowApi } from "@/lib/ui-utils";
+import { WorkflowRunnerProvider } from "@/lib/workflow-runner/react";
 import {
 	createContext,
 	useCallback,
@@ -32,6 +33,10 @@ import {
 	type WorkflowDesignerOperations,
 } from "./workflow-designer";
 
+interface CreateWorkflowRunParams {
+	workflowId: WorkflowId;
+	onBeforeWorkflowRunCreate?: () => void;
+}
 interface WorkflowDesignerContextValue
 	extends Pick<
 			WorkflowDesignerOperations,
@@ -42,7 +47,6 @@ interface WorkflowDesignerContextValue
 			| "setUiNodeState"
 			| "deleteNode"
 			| "deleteConnection"
-			| "createWorkflow"
 		>,
 		ReturnType<typeof usePropertiesPanel>,
 		ReturnType<typeof useView>,
@@ -54,6 +58,7 @@ interface WorkflowDesignerContextValue
 		content: Partial<T["content"]>,
 	) => void;
 	activeWorkflowRun: WorkflowRun | undefined;
+	createWorkflowRun: (params: CreateWorkflowRunParams) => Promise<WorkflowRun>;
 	runWorkflow: (workflowRunId: WorkflowRunId) => Promise<void>;
 }
 const WorkflowDesignerContext = createContext<
@@ -183,10 +188,14 @@ export function WorkflowDesignerProvider({
 		[setAndSaveWorkspace],
 	);
 
-	const createWorkflow = useCallback(
-		(workflowId: WorkflowId) => {
+	const createWorkflowRun = useCallback(
+		async ({
+			workflowId,
+			onBeforeWorkflowRunCreate,
+		}: CreateWorkflowRunParams) => {
 			const workflowRun =
 				workflowDesignerRef.current.createWorkflow(workflowId);
+			onBeforeWorkflowRunCreate?.();
 			setAndSaveWorkspace(0);
 			return workflowRun;
 		},
@@ -235,7 +244,7 @@ export function WorkflowDesignerProvider({
 				setUiNodeState,
 				deleteNode,
 				deleteConnection,
-				createWorkflow,
+				createWorkflowRun,
 				runWorkflow,
 				...usePropertiesPanelHelper,
 				...useViewHelper,
@@ -243,7 +252,7 @@ export function WorkflowDesignerProvider({
 				activeWorkflowRun: activeWorkflowRun,
 			}}
 		>
-			{children}
+			<WorkflowRunnerProvider>{children}</WorkflowRunnerProvider>
 		</WorkflowDesignerContext.Provider>
 	);
 }

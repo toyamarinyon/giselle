@@ -9,10 +9,10 @@ import {
 export function WorkflowRunner() {
 	const { steps, completeStep, start, workflowRun } = useWorkflowRunner();
 	useEffect(() => {
-		if (workflowRun.status === "queued") {
+		if (workflowRun?.status === "queued") {
 			start();
 		}
-	}, [start, workflowRun.status]);
+	}, [start, workflowRun?.status]);
 	return steps.map((step) => (
 		<StepRunner
 			key={step.id}
