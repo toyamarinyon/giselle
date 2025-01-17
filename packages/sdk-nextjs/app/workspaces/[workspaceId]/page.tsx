@@ -66,8 +66,8 @@ export default function Page() {
 									onClick={async () => {
 										const workflowRun = createWorkflow(workflow.id);
 										setView("viewer");
-										setActiveWorkflowRunId(workflowRun.id);
-										await runWorkflow(workflowRun.id);
+										// setActiveWorkflowRunId(workflowRun.id);
+										// await runWorkflow(workflowRun.id);
 									}}
 								>
 									<WorkflowIcon className="stroke-1 w-[20px] h-[20px] group-hover:hidden" />

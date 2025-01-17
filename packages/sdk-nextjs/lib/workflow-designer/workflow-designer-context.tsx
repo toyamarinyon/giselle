@@ -78,10 +78,8 @@ export function WorkflowDesignerProvider({
 	);
 	const [workspace, setWorkspace] = useState(data);
 	const persistTimeoutRef = useRef<Timer | null>(null);
-	const isPendingPersistRef = useRef(false);
 
 	const saveWorkspace = useCallback(async () => {
-		isPendingPersistRef.current = false;
 		try {
 			await callSaveWorkflowApi({
 				api: saveWorkflowApi,
@@ -97,14 +95,20 @@ export function WorkflowDesignerProvider({
 		const data = workflowDesignerRef.current.getData();
 		setWorkspace(data);
 	}, []);
-	const setAndSaveWorkspace = useCallback(() => {
-		setWorkspaceInternal();
-		isPendingPersistRef.current = true;
-		if (persistTimeoutRef.current) {
-			clearTimeout(persistTimeoutRef.current);
-		}
-		persistTimeoutRef.current = setTimeout(saveWorkspace, 500);
-	}, [setWorkspaceInternal, saveWorkspace]);
+	const setAndSaveWorkspace = useCallback(
+		(saveWorkspaceDelay = 500) => {
+			setWorkspaceInternal();
+			if (persistTimeoutRef.current) {
+				clearTimeout(persistTimeoutRef.current);
+			}
+			if (saveWorkspaceDelay === 0) {
+				saveWorkspace();
+				return;
+			}
+			persistTimeoutRef.current = setTimeout(saveWorkspace, saveWorkspaceDelay);
+		},
+		[setWorkspaceInternal, saveWorkspace],
+	);
 
 	const addTextGenerationNode = useCallback(
 		(
@@ -183,7 +187,7 @@ export function WorkflowDesignerProvider({
 		(workflowId: WorkflowId) => {
 			const workflowRun =
 				workflowDesignerRef.current.createWorkflow(workflowId);
-			setAndSaveWorkspace();
+			setAndSaveWorkspace(0);
 			return workflowRun;
 		},
 		[setAndSaveWorkspace],
