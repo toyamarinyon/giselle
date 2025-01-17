@@ -38,9 +38,11 @@ export function buildWorkflowMap(
 			new Set(connectedNodeMap.keys()),
 			new Set(connectionMap.values()),
 		);
+		const workflowId = WorkflowId.generate();
 		const jobSet = createJobMap(
 			new Set(connectedNodeMap.values()),
 			new Set(connectedConnectionMap.values()),
+			workflowId,
 		);
 		workflowSet.add({
 			workspaceId,

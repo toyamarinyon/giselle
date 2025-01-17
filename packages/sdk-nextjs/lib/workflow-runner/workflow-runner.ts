@@ -31,7 +31,7 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 			throw new Error(`JobRun with id ${completeJobRun.id} not found`);
 		}
 		jobRun.status = "completed";
-		startNextJob(jobRun);
+		queueingNextJob(jobRun);
 	}
 	function startStep(startStepRun: StepRun) {
 		const jobRun = workflowRun.jobRunMap.get(startStepRun.jobRunId);
@@ -62,7 +62,7 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 			completeJob(jobRun);
 		}
 	}
-	function startNextJob(currentJobRun: JobRun) {
+	function queueingNextJob(currentJobRun: JobRun) {
 		let found = false;
 		let nextJob: JobRun | undefined;
 
@@ -94,7 +94,7 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 		completeJob,
 		startStep,
 		completeStep,
-		startNextJob,
+		queueingNextJob,
 		getData,
 	};
 }

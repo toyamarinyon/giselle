@@ -1,4 +1,4 @@
-import type { NodeData, NodeId } from "@/lib/giselle-data";
+import { type NodeData, type NodeId, WorkflowId } from "@/lib/giselle-data";
 import {
 	connection1,
 	connection2,
@@ -171,9 +171,11 @@ describe("createJobsFromGraph", () => {
 			new Set(connectedNodeMap.keys()),
 			new Set(testWorkspace.connectionMap.values()),
 		);
+		const workflowId = WorkflowId.generate();
 		const jobSet = createJobMap(
 			new Set(connectedNodeMap.values()),
 			new Set(connectedConnectionMap.values()),
+			workflowId,
 		);
 		expect(jobSet.size).toBe(3);
 		const jobSetIterator = jobSet.values();
@@ -205,9 +207,11 @@ describe("createJobsFromGraph", () => {
 			new Set(connectedNodeMap.keys()),
 			new Set(testWorkspace.connectionMap.values()),
 		);
+		const workflowId = WorkflowId.generate();
 		const jobSet = createJobMap(
 			new Set(connectedNodeMap.values()),
 			new Set(connectedConnectionMap.values()),
+			workflowId,
 		);
 		expect(jobSet.size).toBe(2);
 		const firstJob = jobSet.values().next().value;

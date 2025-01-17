@@ -7,6 +7,7 @@ import {
 	type NodeId,
 	type Step,
 	StepId,
+	type WorkflowId,
 } from "@/lib/giselle-data";
 
 type ConnectedNodeIdMap = Map<NodeId, Set<NodeId>>;
@@ -102,6 +103,7 @@ export function findConnectedConnectionMap(
 export function createJobMap(
 	nodeSet: Set<NodeData>,
 	connectionSet: Set<Connection>,
+	workflowId: WorkflowId,
 ) {
 	/**
 	 * Calculates the number of incoming edges for each node.
@@ -236,18 +238,22 @@ export function createJobMap(
 
 	const jobMap = new Map<JobId, Job>();
 	for (const level of levels) {
+		const jobId = JobId.generate();
 		const stepMap = new Map<StepId, Step>();
 		for (const subLevel of level) {
 			const step = {
 				id: StepId.generate(),
 				nodeId: subLevel,
+				jobId,
 				variableNodeIds: connectedVariableNodeIds(subLevel),
+				workflowId,
 			} satisfies Step;
 			stepMap.set(step.id, step);
 		}
 		const job = {
-			id: JobId.generate(),
+			id: jobId,
 			stepMap: stepMap,
+			workflowId,
 		} satisfies Job;
 		jobMap.set(job.id, job);
 	}
