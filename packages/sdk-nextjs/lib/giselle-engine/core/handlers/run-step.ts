@@ -30,7 +30,6 @@ export async function runStep({
 		storage: context.storage,
 		workspaceId: input.workspaceId,
 	});
-	console.log(input);
 	const workflowRun = workspace.workflowRunMap.get(input.workflowRunId);
 	const jobRun = workflowRun?.jobRunMap.get(input.jobRunId);
 	const stepRun = jobRun?.stepRunMap.get(input.stepRunId);
