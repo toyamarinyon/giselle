@@ -63,22 +63,11 @@ export default function Page() {
 								<button
 									type="button"
 									className="w-[20px] h-[20px] flex-shrink-0 hover:bg-black-70 rounded flex items-center justify-center"
-									onClick={() => {
+									onClick={async () => {
 										const workflowRun = createWorkflow(workflow.id);
 										setView("viewer");
 										setActiveWorkflowRunId(workflowRun.id);
-										runWorkflow({
-											workflowRunId: workflowRun.id,
-											onWorkflowRunStart: () => {
-												console.log("workflow run started");
-											},
-											onJobRunStart: (jobRunId) => {
-												console.log("job run started", jobRunId);
-											},
-											onStepRunStart: (stepRunId) => {
-												console.log("step run started", stepRunId);
-											},
-										});
+										await runWorkflow(workflowRun.id);
 									}}
 								>
 									<WorkflowIcon className="stroke-1 w-[20px] h-[20px] group-hover:hidden" />

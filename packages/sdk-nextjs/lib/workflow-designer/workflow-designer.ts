@@ -1,6 +1,9 @@
 import type { z } from "zod";
 import {
+	type JobRunId,
 	type NodeData,
+	type StepRun,
+	type StepRunId,
 	type WorkflowId,
 	type WorkflowRun,
 	type WorkflowRunId,
@@ -154,9 +157,28 @@ export function WorkflowDesigner({
 		workflowRunMap.set(workflowRun.id, workflowRun);
 		return workflowRun;
 	}
+	function updateStepRun(
+		workflowRunId: WorkflowRunId,
+		jobRunId: JobRunId,
+		stepRunId: StepRunId,
+		data: Partial<StepRun>,
+	) {
+		const targetStepRun = workflowRunMap
+			.get(workflowRunId)
+			?.jobRunMap?.get(jobRunId)
+			?.stepRunMap?.get(stepRunId);
+		if (targetStepRun === undefined) {
+			console.warn(`Step run not found: ${stepRunId}`);
+			return;
+		}
+		workflowRunMap
+			.get(workflowRunId)
+			?.jobRunMap?.get(jobRunId)
+			?.stepRunMap?.set(stepRunId, { ...targetStepRun, ...data });
+	}
 	async function runWorkflow({
 		workflowRunId,
-		...eventHandlers
+		onStepRunUpdate,
 	}: { workflowRunId: WorkflowRunId } & RunWorkflowEventHandlers) {
 		const workflowRun = workflowRunMap.get(workflowRunId);
 		if (workflowRun === undefined) {
@@ -169,7 +191,12 @@ export function WorkflowDesigner({
 		await runWorkflowInternal({
 			workflow,
 			workflowRun,
-			...eventHandlers,
+			onStepRunUpdate(event) {
+				updateStepRun(event.workflowRunId, event.jobRunId, event.stepRunId, {
+					status: event.status,
+				});
+				onStepRunUpdate?.(event);
+			},
 		});
 	}
 

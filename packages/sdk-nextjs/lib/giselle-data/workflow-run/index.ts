@@ -10,6 +10,7 @@ export const StepRunStatus = z.enum([
 	"failed",
 	"cancelled",
 ]);
+export type StepRunStatus = z.infer<typeof StepRunStatus>;
 export const StepRunId = createIdGenerator("str");
 export type StepRunId = z.infer<typeof StepRunId.schema>;
 export const StepRun = z.object({
