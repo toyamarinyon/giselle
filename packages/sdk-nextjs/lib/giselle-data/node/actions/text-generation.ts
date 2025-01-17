@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { BaseNodeData, ConnectionHandle, NodeId } from "../types";
-// import type { Workspace } from "./workflow-state";
 
 export const TextGenerationContent = z.object({
 	type: z.literal("textGeneration"),
@@ -11,6 +10,7 @@ export const TextGenerationContent = z.object({
 	requirement: z.optional(ConnectionHandle),
 	system: z.string(),
 	sources: z.array(ConnectionHandle),
+	generatedText: z.optional(z.string()),
 });
 export type TextGenerationContent = z.infer<typeof TextGenerationContent>;
 

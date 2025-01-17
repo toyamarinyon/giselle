@@ -1,3 +1,4 @@
+import { Data } from "@/lib/giselle-engine/core/handlers/text-generation";
 import { useCompletion } from "ai/react";
 import { type FormEvent, useCallback } from "react";
 import type { TextGenerationNodeData } from "../giselle-data";
@@ -9,15 +10,19 @@ export function useTextGenerationNode(
 		onSubmit?: () => void;
 	},
 ) {
-	const { data: Workspace, textGenerationApi } = useWorkflowDesigner();
+	const { data, textGenerationApi, updateNodeDataContent } =
+		useWorkflowDesigner();
 
 	const { handleSubmit, completion, input, handleInputChange, isLoading } =
 		useCompletion({
 			api: textGenerationApi,
 			initialInput: node.content.prompt,
-			body: {
-				workflowId: Workspace.id,
+			body: Data.parse({
+				workspaceId: data.id,
 				nodeId: node.id,
+			}),
+			onFinish: (_, completion) => {
+				updateNodeDataContent(node, { generatedText: completion });
 			},
 		});
 
