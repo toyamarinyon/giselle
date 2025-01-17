@@ -13,7 +13,7 @@ export default async function Layout({
 	children: ReactNode;
 }) {
 	const data = await callGetWorkspaceApi({
-		workflowId: WorkspaceId.parse((await params).workspaceId),
+		workspaceId: WorkspaceId.parse((await params).workspaceId),
 	});
 	return (
 		<WorkflowDesignerProvider data={data}>{children}</WorkflowDesignerProvider>

@@ -4,20 +4,20 @@ import { Output } from "../giselle-engine/core/handlers/get-workspace";
 export async function callGetWorkspaceApi({
 	host = process.env.NEXT_PUBLIC_VERCEL_URL ?? "localhost:3000",
 	api = "/api/giselle/get-workspace",
-	workflowId,
+	workspaceId,
 }: {
 	api?: string;
 	host?: string;
-	workflowId: WorkspaceId;
+	workspaceId: WorkspaceId;
 }) {
 	const response = await fetch(`http://${host}${api}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ workflowId }),
+		body: JSON.stringify({ workspaceId }),
 	});
 	const json = await response.json();
 	const output = Output.parse(json);
-	return Workspace.parse(output.Workspace);
+	return Workspace.parse(output.workspace);
 }

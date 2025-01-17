@@ -4,10 +4,10 @@ import { workspacePath } from "../helpers/workspace-path";
 import type { WorkspaceEngineHandlerArgs } from "./types";
 
 const Input = z.object({
-	workflowId: WorkspaceId.schema,
+	workspaceId: WorkspaceId.schema,
 });
 export const Output = z.object({
-	Workspace: WorkspaceJson,
+	workspace: WorkspaceJson,
 });
 
 export async function getWorkspace({
@@ -15,9 +15,11 @@ export async function getWorkspace({
 	unsafeInput,
 }: WorkspaceEngineHandlerArgs<z.infer<typeof Input>>) {
 	const input = Input.parse(unsafeInput);
-	const result = await context.storage.getItem(workspacePath(input.workflowId));
+	const result = await context.storage.getItem(
+		workspacePath(input.workspaceId),
+	);
 	if (result === null) {
 		throw new Error("Workflow not found");
 	}
-	return Output.parse({ Workspace: result });
+	return Output.parse({ workspace: result });
 }
