@@ -26,7 +26,7 @@ import type {
 	NodeUIState,
 } from "../giselle-data/node/types";
 import type { CreateTextNodeParams } from "../giselle-data/node/variables/text";
-import { useActiveWorkflowRunId, usePropertiesPanel, useView } from "./state";
+import { usePropertiesPanel, useView } from "./state";
 import {
 	WorkflowDesigner,
 	type WorkflowDesignerOperations,
@@ -48,17 +48,14 @@ interface WorkflowDesignerContextValue
 			| "deleteConnection"
 		>,
 		ReturnType<typeof usePropertiesPanel>,
-		ReturnType<typeof useView>,
-		Pick<ReturnType<typeof useActiveWorkflowRunId>, "setActiveWorkflowRunId"> {
+		ReturnType<typeof useView> {
 	data: Workspace;
 	textGenerationApi: string;
 	updateNodeDataContent: <T extends NodeData>(
 		node: T,
 		content: Partial<T["content"]>,
 	) => void;
-	activeWorkflowRun: WorkflowRun | undefined;
 	createWorkflowRun: (params: CreateWorkflowRunParams) => Promise<WorkflowRun>;
-	runWorkflow: (workflowRunId: WorkflowRunId) => Promise<void>;
 }
 const WorkflowDesignerContext = createContext<
 	WorkflowDesignerContextValue | undefined
@@ -203,19 +200,6 @@ export function WorkflowDesignerProvider({
 
 	const usePropertiesPanelHelper = usePropertiesPanel();
 	const useViewHelper = useView();
-	const { setActiveWorkflowRunId, activeWorkflowRunId } =
-		useActiveWorkflowRunId();
-
-	const activeWorkflowRun = useMemo(() => {
-		if (activeWorkflowRunId === undefined) {
-			return undefined;
-		}
-		const workflowRun = workspace.workflowRunMap.get(activeWorkflowRunId);
-		if (workflowRun === undefined) {
-			throw new Error(`Workflow run with id ${activeWorkflowRunId} not found`);
-		}
-		return workflowRun;
-	}, [workspace, activeWorkflowRunId]);
 
 	return (
 		<WorkflowDesignerContext.Provider
@@ -233,8 +217,6 @@ export function WorkflowDesignerProvider({
 				createWorkflowRun,
 				...usePropertiesPanelHelper,
 				...useViewHelper,
-				setActiveWorkflowRunId,
-				activeWorkflowRun: activeWorkflowRun,
 			}}
 		>
 			<WorkflowRunnerProvider onWorkflowRunUpdate={() => {}}>
