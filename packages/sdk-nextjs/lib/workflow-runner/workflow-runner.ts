@@ -79,7 +79,7 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 		}
 	}
 	function getData() {
-		return workflowRun;
+		return { ...workflowRun };
 	}
 	function updateStep(updateStepRun: StepRun, data: Partial<StepRun>) {
 		const jobRun = workflowRun.jobRunMap.get(updateStepRun.jobRunId);

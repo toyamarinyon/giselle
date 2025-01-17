@@ -22,7 +22,7 @@ export function Markdown(props: {
 		<div
 			// biome-ignore lint: lint/security/noDangerouslySetInnerHtml
 			dangerouslySetInnerHTML={{ __html: markdown }}
-			className="prose prose-sm prose-giselle max-w-none"
+			className="prose prose-sm prose-giselle max-w-none text-black-30"
 		/>
 	);
 }

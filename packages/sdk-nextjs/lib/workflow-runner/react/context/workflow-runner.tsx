@@ -92,7 +92,6 @@ export function WorkflowRunnerProvider({
 		},
 		[updateWorkflowRun],
 	);
-	console.log(workflowRun);
 
 	return (
 		<WorkflowRunnerContext.Provider

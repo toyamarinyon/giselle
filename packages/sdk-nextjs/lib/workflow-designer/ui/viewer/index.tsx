@@ -1,6 +1,6 @@
 "use client";
 
-import type { StepRun, WorkflowRun } from "@/lib/giselle-data";
+import type { StepRun } from "@/lib/giselle-data";
 import { WorkflowRunner, useWorkflowRunner } from "@/lib/workflow-runner/react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { CircleAlertIcon, CircleSlashIcon } from "lucide-react";
@@ -56,7 +56,11 @@ function StepButton({ stepRun, ...props }: StepRunButtonProps) {
 	);
 }
 
-function WorkflowRunViewer({ workflowRun }: { workflowRun: WorkflowRun }) {
+function WorkflowRunViewer() {
+	const { workflowRun, steps } = useWorkflowRunner();
+	if (workflowRun === undefined) {
+		return null;
+	}
 	return (
 		<Tabs.Root className="flex-1 flex w-full gap-[16px] pt-[16px] overflow-hidden h-full mx-[20px]">
 			<div className="w-[200px]">
@@ -71,7 +75,7 @@ function WorkflowRunViewer({ workflowRun }: { workflowRun: WorkflowRun }) {
 									{Array.from(jobRun.stepRunMap).map(
 										([stepRunId, stepRun], stepRunIndex) => (
 											<Tabs.Trigger key={stepRunId} value={stepRunId} asChild>
-												<StepButton stepRun={stepRun} />
+												<StepButton stepRun={stepRun} key={stepRunId} />
 											</Tabs.Trigger>
 										),
 									)}
@@ -232,7 +236,7 @@ export function Viewer() {
 					/>
 				) : (
 					<>
-						<WorkflowRunViewer workflowRun={workflowRun} />
+						<WorkflowRunViewer />
 						<WorkflowRunner />
 					</>
 				)}

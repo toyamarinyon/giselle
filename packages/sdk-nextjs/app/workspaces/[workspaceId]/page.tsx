@@ -12,7 +12,7 @@ export default function Page() {
 		createWorkflowRun,
 		setView,
 	} = useWorkflowDesigner();
-	const { setWorkflowRun, start } = useWorkflowRunner();
+	const { setWorkflowRun, start, steps } = useWorkflowRunner();
 
 	return (
 		<div className="grid grid-cols-[200px_1fr] h-screen">
@@ -72,9 +72,6 @@ export default function Page() {
 										});
 										setWorkflowRun(workflowRun);
 										start();
-
-										// setActiveWorkflowRunId(workflowRun.id);
-										// await runWorkflow(workflowRun.id);
 									}}
 								>
 									<WorkflowIcon className="stroke-1 w-[20px] h-[20px] group-hover:hidden" />
@@ -88,6 +85,19 @@ export default function Page() {
 							</div>
 						</div>
 					))}
+				</div>
+				<hr className="border-black-30/50 my-2" />
+				<div className="overflow-x-hidden">
+					<p>[Workflow Run]</p>
+					{steps.length === 0 ? (
+						<p>null</p>
+					) : (
+						steps.map((step) => (
+							<p key={step.id}>
+								{step.id}, {step.status}
+							</p>
+						))
+					)}
 				</div>
 			</div>
 			<div className="w-full h-full">
