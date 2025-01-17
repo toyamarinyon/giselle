@@ -2,6 +2,7 @@ import type { z } from "zod";
 import {
 	type NodeData,
 	type WorkflowId,
+	type WorkflowRun,
 	type Workspace,
 	createConnection,
 	generateInitialWorkspace,
@@ -48,7 +49,7 @@ export interface WorkflowDesignerOperations {
 	deleteNode: (nodeId: string | NodeId) => void;
 	deleteConnection: (connectionId: ConnectionId) => void;
 	updateNodeData: <T extends NodeData>(node: T, data: Partial<T>) => void;
-	runWorkflow: (workflowId: WorkflowId) => void;
+	runWorkflow: (workflowId: WorkflowId) => WorkflowRun;
 }
 
 export function WorkflowDesigner({
@@ -142,6 +143,7 @@ export function WorkflowDesigner({
 		}
 		const workflowRun = buildWorkflowRun(workflow);
 		workflowRunMap.set(workflowRun.id, workflowRun);
+		return workflowRun;
 	}
 
 	return {

@@ -14,8 +14,6 @@ export async function callSaveWorkspaceApi({
 	workspaceId: WorkspaceId;
 	workspace: Workspace;
 }) {
-	console.log(workspace);
-	console.log(WorkspaceJson.parse(workspace));
 	const response = await fetch(api, {
 		method: "POST",
 		headers: {
@@ -27,6 +25,5 @@ export async function callSaveWorkspaceApi({
 		}),
 	});
 	const data = await response.json();
-	console.log(data);
 	return Output.parse(data);
 }

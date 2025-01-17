@@ -4,8 +4,14 @@ import { Designer } from "@/lib/workflow-designer/ui";
 import { PlayIcon, WorkflowIcon } from "lucide-react";
 
 export default function Page() {
-	const { data, addTextGenerationNode, addTextNode, runWorkflow, setView } =
-		useWorkflowDesigner();
+	const {
+		data,
+		addTextGenerationNode,
+		addTextNode,
+		runWorkflow,
+		setView,
+		setActiveWorkflowRunId,
+	} = useWorkflowDesigner();
 
 	return (
 		<div className="grid grid-cols-[200px_1fr] h-screen">
@@ -57,8 +63,9 @@ export default function Page() {
 									type="button"
 									className="w-[20px] h-[20px] flex-shrink-0 hover:bg-black-70 rounded flex items-center justify-center"
 									onClick={() => {
-										runWorkflow(workflow.id);
+										const workflowRun = runWorkflow(workflow.id);
 										setView("viewer");
+										setActiveWorkflowRunId(workflowRun.id);
 									}}
 								>
 									<WorkflowIcon className="stroke-1 w-[20px] h-[20px] group-hover:hidden" />

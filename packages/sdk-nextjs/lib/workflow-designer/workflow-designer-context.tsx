@@ -5,11 +5,17 @@ import {
 	createContext,
 	useCallback,
 	useContext,
+	useMemo,
 	useRef,
 	useState,
 } from "react";
 import type { z } from "zod";
-import type { NodeData, WorkflowId, Workspace } from "../giselle-data";
+import type {
+	NodeData,
+	WorkflowId,
+	WorkflowRun,
+	Workspace,
+} from "../giselle-data";
 import type { CreateTextGenerationNodeParams } from "../giselle-data/node/actions/text-generation";
 import type {
 	ConnectionHandle,
@@ -18,7 +24,7 @@ import type {
 	NodeUIState,
 } from "../giselle-data/node/types";
 import type { CreateTextNodeParams } from "../giselle-data/node/variables/text";
-import { usePropertiesPanel, useView } from "./state";
+import { useActiveWorkflowRunId, usePropertiesPanel, useView } from "./state";
 import {
 	WorkflowDesigner,
 	type WorkflowDesignerOperations,
@@ -37,13 +43,15 @@ interface WorkflowDesignerContextValue
 			| "runWorkflow"
 		>,
 		ReturnType<typeof usePropertiesPanel>,
-		ReturnType<typeof useView> {
+		ReturnType<typeof useView>,
+		Pick<ReturnType<typeof useActiveWorkflowRunId>, "setActiveWorkflowRunId"> {
 	data: Workspace;
 	textGenerationApi: string;
 	updateNodeDataContent: <T extends NodeData>(
 		node: T,
 		content: Partial<T["content"]>,
 	) => void;
+	activeWorkflowRun: WorkflowRun | undefined;
 }
 const WorkflowDesignerContext = createContext<
 	WorkflowDesignerContextValue | undefined
@@ -192,16 +200,25 @@ export function WorkflowDesignerProvider({
 	const runWorkflow = useCallback(
 		(workflowId: WorkflowId) => {
 			if (workflowDesignerRef.current === undefined) {
-				return;
+				throw new Error("Workflow designer not initialized");
 			}
-			workflowDesignerRef.current.runWorkflow(workflowId);
+			const workflowRun = workflowDesignerRef.current.runWorkflow(workflowId);
 			setAndSaveWorkspace(workflowDesignerRef.current.getData());
+			return workflowRun;
 		},
 		[setAndSaveWorkspace],
 	);
 
 	const usePropertiesPanelHelper = usePropertiesPanel();
 	const useViewHelper = useView();
+	const { setActiveWorkflowRunId, activeWorkflowRunId } =
+		useActiveWorkflowRunId();
+	const activeWorkflowRun = useMemo(() => {
+		if (activeWorkflowRunId === undefined) {
+			return undefined;
+		}
+		return workspace.workflowRunMap.get(activeWorkflowRunId);
+	}, [workspace, activeWorkflowRunId]);
 
 	return (
 		<WorkflowDesignerContext.Provider
@@ -219,6 +236,8 @@ export function WorkflowDesignerProvider({
 				runWorkflow,
 				...usePropertiesPanelHelper,
 				...useViewHelper,
+				setActiveWorkflowRunId,
+				activeWorkflowRun,
 			}}
 		>
 			{children}

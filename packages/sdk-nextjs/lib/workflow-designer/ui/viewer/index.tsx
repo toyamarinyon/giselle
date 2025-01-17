@@ -19,9 +19,10 @@ import { CircleAlertIcon, CircleSlashIcon } from "lucide-react";
 import { type DetailedHTMLProps, useMemo } from "react";
 import bg from "../../images/bg.png";
 import { useWorkflowDesigner } from "../../workflow-designer-context";
+import { EmptyState } from "../_/empty-state";
 import { Header } from "../_/header";
 import { Markdown } from "../_/markdown";
-import { ContentTypeIcon, SpinnerIcon } from "../icons";
+import { ContentTypeIcon, SpinnerIcon, WilliIcon } from "../icons";
 
 type StepWithRun = Step &
 	Pick<StepRun, "status" | "attempts"> & {
@@ -51,7 +52,7 @@ function StepButton({ stepWithRun, ...props }: StepRunButtonProps) {
 	return (
 		<button
 			type="button"
-			className="flex items-center gap-[8px] rounded-[4px] px-[8px] py-[4px] data-[state=active]:bg-black-80"
+			className="flex items-center gap-[8px] rounded-[4px] px-[8px] py-[4px] data-[state=active]:bg-black-80 text-white"
 			{...props}
 		>
 			{stepWithRun.status === "queued" && (
@@ -290,6 +291,7 @@ function WorkflowRunViewer({
 
 export function Viewer() {
 	// const { execution } = useExecution();
+	const { data, activeWorkflowRun } = useWorkflowDesigner();
 	return (
 		<div
 			className="w-full h-screen bg-black-100 flex flex-col"
@@ -302,7 +304,7 @@ export function Viewer() {
 		>
 			<Header />
 			<div className="flex-1 w-full flex items-center justify-center overflow-hidden">
-				{/* {execution === null ? (
+				{activeWorkflowRun === undefined ? (
 					<EmptyState
 						icon={
 							<WilliIcon className="fill-current w-[32px] h-[32px] text-black-30" />
@@ -313,8 +315,8 @@ export function Viewer() {
 					output."
 					/>
 				) : (
-					<WorkflowRunViewer execution={execution} />
-				)} */}
+					<WorkflowRunViewer workflowRunId={activeWorkflowRun.id} />
+				)}
 			</div>
 		</div>
 	);
