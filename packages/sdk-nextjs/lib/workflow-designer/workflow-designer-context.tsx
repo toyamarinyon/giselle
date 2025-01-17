@@ -9,7 +9,7 @@ import {
 	useState,
 } from "react";
 import type { z } from "zod";
-import type { NodeData, Workspace } from "../giselle-data";
+import type { NodeData, WorkflowId, Workspace } from "../giselle-data";
 import type { CreateTextGenerationNodeParams } from "../giselle-data/node/actions/text-generation";
 import type {
 	ConnectionHandle,
@@ -34,6 +34,7 @@ interface WorkflowDesignerContextValue
 			| "setUiNodeState"
 			| "deleteNode"
 			| "deleteConnection"
+			| "runWorkflow"
 		>,
 		ReturnType<typeof usePropertiesPanel>,
 		ReturnType<typeof useView> {
@@ -188,6 +189,17 @@ export function WorkflowDesignerProvider({
 		[setAndSaveWorkspace],
 	);
 
+	const runWorkflow = useCallback(
+		(workflowId: WorkflowId) => {
+			if (workflowDesignerRef.current === undefined) {
+				return;
+			}
+			workflowDesignerRef.current.runWorkflow(workflowId);
+			setAndSaveWorkspace(workflowDesignerRef.current.getData());
+		},
+		[setAndSaveWorkspace],
+	);
+
 	const usePropertiesPanelHelper = usePropertiesPanel();
 	const useViewHelper = useView();
 
@@ -204,6 +216,7 @@ export function WorkflowDesignerProvider({
 				setUiNodeState,
 				deleteNode,
 				deleteConnection,
+				runWorkflow,
 				...usePropertiesPanelHelper,
 				...useViewHelper,
 			}}

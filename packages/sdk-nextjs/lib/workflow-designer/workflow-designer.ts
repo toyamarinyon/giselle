@@ -21,7 +21,7 @@ import {
 	type CreateTextNodeParams,
 	createTextNodeData,
 } from "../giselle-data/node/variables/text";
-import { buildWorkflowRun } from "../workflow-utils";
+import { buildWorkflowMap, buildWorkflowRun } from "../workflow-utils";
 
 interface addNodeOptions {
 	ui?: NodeUIState;
@@ -59,8 +59,11 @@ export function WorkflowDesigner({
 	const nodeMap = defaultValue.nodeMap;
 	const connectionMap = defaultValue.connectionMap;
 	const ui = defaultValue.ui;
-	const workflowMap = defaultValue.workflowMap;
+	let workflowMap = defaultValue.workflowMap;
 	const workflowRunMap = defaultValue.workflowRunMap;
+	function updateWorkflowMap() {
+		workflowMap = buildWorkflowMap(nodeMap, connectionMap);
+	}
 	function addTextGenerationNode(
 		params: z.infer<typeof CreateTextGenerationNodeParams>,
 		options?: {
@@ -72,6 +75,7 @@ export function WorkflowDesigner({
 		if (options?.ui) {
 			ui.nodeStateMap.set(textgenerationNodeData.id, options.ui);
 		}
+		updateWorkflowMap();
 	}
 	function addTextNode(
 		params: z.infer<typeof CreateTextNodeParams>,
@@ -84,6 +88,7 @@ export function WorkflowDesigner({
 		if (options?.ui) {
 			ui.nodeStateMap.set(textNodeData.id, options.ui);
 		}
+		updateWorkflowMap();
 	}
 	function getData() {
 		return {
@@ -107,6 +112,7 @@ export function WorkflowDesigner({
 			targetNodeHandle,
 		});
 		connectionMap.set(connection.id, connection);
+		updateWorkflowMap();
 	}
 	function setUiNodeState(
 		unsafeNodeId: string | NodeId,
@@ -126,10 +132,12 @@ export function WorkflowDesigner({
 		const deleteNodeId = NodeId.parse(unsafeNodeId);
 		ui.nodeStateMap.delete(deleteNodeId);
 		nodeMap.delete(deleteNodeId);
+		updateWorkflowMap();
 	}
 	function runWorkflow(workflowId: WorkflowId) {
 		const workflow = workflowMap.get(workflowId);
 		if (workflow === undefined) {
+			buildWorkflowMap(nodeMap, connectionMap);
 			throw new Error(`Workflow with id ${workflowId} not found`);
 		}
 		const workflowRun = buildWorkflowRun(workflow);

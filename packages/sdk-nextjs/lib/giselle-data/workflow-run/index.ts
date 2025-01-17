@@ -39,7 +39,7 @@ export const JobRun = z.object({
 });
 export type JobRun = z.infer<typeof JobRun>;
 export const JobRunJson = JobRun.extend({
-	stepRunMap: z.preprocess(mapToObject, z.map(StepRunId.schema, StepRun)),
+	stepRunMap: z.preprocess(mapToObject, z.record(StepRunId.schema, StepRun)),
 });
 
 export const WorkflowRunStatus = z.enum([
@@ -68,5 +68,5 @@ export const WorkflowRun = z.object({
 });
 export type WorkflowRun = z.infer<typeof WorkflowRun>;
 export const WorkflowRunJson = WorkflowRun.extend({
-	jobRunMap: z.preprocess(mapToObject, z.map(JobRunId.schema, JobRunJson)),
+	jobRunMap: z.preprocess(mapToObject, z.record(JobRunId.schema, JobRunJson)),
 });
