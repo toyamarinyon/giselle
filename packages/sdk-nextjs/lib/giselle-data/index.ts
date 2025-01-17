@@ -43,6 +43,10 @@ export const Workspace = z.object({
 		nodeStateMap: z.preprocess(objectToMap, z.map(NodeId.schema, NodeUIState)),
 	}),
 	workflowMap: z.preprocess(objectToMap, z.map(WorkflowId.schema, Workflow)),
+	editingWorkflowMap: z.preprocess(
+		objectToMap,
+		z.map(WorkflowId.schema, Workflow),
+	),
 	workflowRunMap: z.preprocess(
 		objectToMap,
 		z.map(WorkflowRunId.schema, WorkflowRun),
@@ -65,6 +69,10 @@ export const WorkspaceJson = Workspace.extend({
 		mapToObject,
 		z.record(WorkflowId.schema, WorkflowJson),
 	),
+	editingWorkflowMap: z.preprocess(
+		mapToObject,
+		z.record(WorkflowId.schema, WorkflowJson),
+	),
 	workflowRunMap: z.preprocess(
 		mapToObject,
 		z.record(WorkflowRunId.schema, WorkflowRunJson),
@@ -73,7 +81,7 @@ export const WorkspaceJson = Workspace.extend({
 export type WorkspaceJson = z.infer<typeof WorkspaceJson>;
 
 export function generateInitialWorkspace() {
-	return Workspace.parse({
+	return {
 		id: WorkspaceId.generate(),
 		nodeMap: new Map(),
 		connectionMap: new Map(),
@@ -82,7 +90,8 @@ export function generateInitialWorkspace() {
 		},
 		workflowMap: new Map(),
 		workflowRunMap: new Map(),
-	});
+		editingWorkflowMap: new Map(),
+	} satisfies Workspace;
 }
 
 export {

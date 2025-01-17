@@ -72,10 +72,20 @@ export function WorkflowDesigner({
 	const nodeMap = defaultValue.nodeMap;
 	const connectionMap = defaultValue.connectionMap;
 	const ui = defaultValue.ui;
-	let workflowMap = defaultValue.workflowMap;
+	let editingWorkflowMap = defaultValue.editingWorkflowMap;
+	const workflowMap = defaultValue.workflowMap;
 	const workflowRunMap = defaultValue.workflowRunMap;
 	function updateWorkflowMap() {
-		workflowMap = buildWorkflowMap(nodeMap, connectionMap, defaultValue.id);
+		editingWorkflowMap = buildWorkflowMap(
+			nodeMap,
+			connectionMap,
+			defaultValue.id,
+		);
+		editingWorkflowMap = buildWorkflowMap(
+			nodeMap,
+			connectionMap,
+			defaultValue.id,
+		);
 	}
 	function addTextGenerationNode(
 		params: z.infer<typeof CreateTextGenerationNodeParams>,
@@ -111,6 +121,7 @@ export function WorkflowDesigner({
 			ui,
 			workflowMap,
 			workflowRunMap,
+			editingWorkflowMap,
 		};
 	}
 	function updateNodeData<T extends NodeData>(node: T, data: Partial<T>) {
@@ -148,9 +159,12 @@ export function WorkflowDesigner({
 		updateWorkflowMap();
 	}
 	function createWorkflow(workflowId: WorkflowId) {
-		const workflow = workflowMap.get(workflowId);
+		const workflow = editingWorkflowMap.get(workflowId);
 		if (workflow === undefined) {
 			throw new Error(`Workflow with id ${workflowId} not found`);
+		}
+		if (workflowMap.get(workflow.id) === undefined) {
+			workflowMap.set(workflow.id, workflow);
 		}
 		const workflowRun = buildWorkflowRun(workflow);
 		workflowRunMap.set(workflowRun.id, workflowRun);

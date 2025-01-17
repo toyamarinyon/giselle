@@ -57,7 +57,7 @@ export default function Page() {
 				<hr className="border-black-30/50 my-2" />
 				<div className="overflow-x-hidden">
 					<p>[Workflows]</p>
-					{Array.from(data.workflowMap.values()).map((workflow) => (
+					{Array.from(data.editingWorkflowMap.values()).map((workflow) => (
 						<div key={workflow.id} className="group">
 							<div className="flex gap-1 items-center">
 								<button

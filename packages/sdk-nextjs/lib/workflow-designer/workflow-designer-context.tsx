@@ -11,10 +11,7 @@ import {
 } from "react";
 import type { z } from "zod";
 import type {
-	JobRunId,
 	NodeData,
-	StepRun,
-	StepRunId,
 	WorkflowId,
 	WorkflowRun,
 	WorkflowRunId,
