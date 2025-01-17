@@ -145,4 +145,46 @@ describe("workflow-runner", () => {
 			expect(stepRun.status).toBe(JobRunStatus.Enum.waiting);
 		}
 	});
+	test("completeAllStep", () => {
+		const firstJob = workflowRun.jobRunMap.values().next().value;
+		if (firstJob === undefined) {
+			throw new Error("firstJob is undefined");
+		}
+		workflowRunner.startJob(firstJob);
+		for (const stepRun of firstJob.stepRunMap.values()) {
+			workflowRunner.startStep(stepRun);
+			workflowRunner.completeStep(stepRun);
+		}
+		const firstStep = firstJob.stepRunMap.values().next().value;
+		if (firstStep === undefined) {
+			throw new Error("firstStep is undefined");
+		}
+		const data = workflowRunner.getData();
+		expect(data.status).toBe("inProgress");
+		const jobRunIterator = data.jobRunMap.values();
+		const firstJobRun = jobRunIterator.next().value;
+		if (firstJobRun === undefined) {
+			throw new Error("firstJobRun is undefined");
+		}
+		const stepRunIterator = firstJobRun.stepRunMap.values();
+		expect(firstJobRun.status).toBe(JobRunStatus.Enum.completed);
+		const firstStepRun = stepRunIterator.next().value;
+		if (firstStepRun === undefined) {
+			throw new Error("firstStepRun is undefined");
+		}
+		expect(firstStepRun.status).toBe(JobRunStatus.Enum.completed);
+		const secondStepRun = stepRunIterator.next().value;
+		if (secondStepRun === undefined) {
+			throw new Error("secondStepRun is undefined");
+		}
+		expect(secondStepRun.status).toBe(JobRunStatus.Enum.completed);
+		const secondJobRun = jobRunIterator.next().value;
+		if (secondJobRun === undefined) {
+			throw new Error("secondJobRun is undefined");
+		}
+		expect(secondJobRun.status).toBe(JobRunStatus.Enum.queued);
+		for (const stepRun of secondJobRun.stepRunMap.values()) {
+			expect(stepRun.status).toBe(JobRunStatus.Enum.queued);
+		}
+	});
 });

@@ -25,6 +25,14 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 		}
 		jobRun.status = "inProgress";
 	}
+	function completeJob(completeJobRun: JobRun) {
+		const jobRun = workflowRun.jobRunMap.get(completeJobRun.id);
+		if (jobRun === undefined) {
+			throw new Error(`JobRun with id ${completeJobRun.id} not found`);
+		}
+		jobRun.status = "completed";
+		startNextJob(jobRun);
+	}
 	function startStep(startStepRun: StepRun) {
 		const jobRun = workflowRun.jobRunMap.get(startStepRun.jobRunId);
 		if (jobRun === undefined) {
@@ -46,13 +54,20 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 			throw new Error(`StepRun with id ${completeStepRun.id} not found`);
 		}
 		stepRun.status = "completed";
+
+		const allStepCompleted = Array.from(jobRun.stepRunMap.values()).every(
+			(stepRun) => stepRun.status === "completed",
+		);
+		if (allStepCompleted) {
+			completeJob(jobRun);
+		}
 	}
-	function startNextJob(currentJobRunId: JobRunId) {
+	function startNextJob(currentJobRun: JobRun) {
 		let found = false;
 		let nextJob: JobRun | undefined;
 
 		for (const [jobRunId, job] of workflowRun.jobRunMap) {
-			if (jobRunId === currentJobRunId) {
+			if (jobRunId === currentJobRun.id) {
 				found = true;
 				continue;
 			}
@@ -63,7 +78,8 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 		}
 
 		if (nextJob) {
-			for (const [stepRunId, stepRun] of nextJob.stepRunMap) {
+			nextJob.status = "queued";
+			for (const [_, stepRun] of nextJob.stepRunMap) {
 				stepRun.status = "queued";
 			}
 		}
@@ -75,6 +91,7 @@ export function WorkflowRunner(defaultWorkflowRun: WorkflowRun) {
 	return {
 		start,
 		startJob,
+		completeJob,
 		startStep,
 		completeStep,
 		startNextJob,
