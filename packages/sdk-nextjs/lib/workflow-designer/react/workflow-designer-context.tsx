@@ -26,11 +26,11 @@ import type {
 	NodeUIState,
 } from "../../giselle-data/node/types";
 import type { CreateTextNodeParams } from "../../giselle-data/node/variables/text";
-import { usePropertiesPanel, useView } from "../state";
 import {
 	WorkflowDesigner,
 	type WorkflowDesignerOperations,
 } from "../workflow-designer";
+import { usePropertiesPanel, useView } from "./state";
 
 interface CreateWorkflowRunParams {
 	workflowId: WorkflowId;
