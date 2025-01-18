@@ -66,11 +66,13 @@ export function WorkflowDesignerProvider({
 	data,
 	saveWorkflowApi = "/api/giselle/save-workspace",
 	textGenerationApi = "/api/giselle/text-generation",
+	saveWorkflowDelay: defaultSaveWorkflowDelay = 1000,
 }: {
 	children: React.ReactNode;
 	data: Workspace;
 	saveWorkflowApi?: string;
 	textGenerationApi?: string;
+	saveWorkflowDelay?: number;
 }) {
 	const workflowDesignerRef = useRef(
 		WorkflowDesigner({
@@ -97,7 +99,7 @@ export function WorkflowDesignerProvider({
 		setWorkspace(data);
 	}, []);
 	const setAndSaveWorkspace = useCallback(
-		(saveWorkspaceDelay = 500) => {
+		(saveWorkspaceDelay?: number) => {
 			setWorkspaceInternal();
 			if (persistTimeoutRef.current) {
 				clearTimeout(persistTimeoutRef.current);
@@ -106,9 +108,12 @@ export function WorkflowDesignerProvider({
 				saveWorkspace();
 				return;
 			}
-			persistTimeoutRef.current = setTimeout(saveWorkspace, saveWorkspaceDelay);
+			persistTimeoutRef.current = setTimeout(
+				saveWorkspace,
+				saveWorkspaceDelay ?? defaultSaveWorkflowDelay,
+			);
 		},
-		[setWorkspaceInternal, saveWorkspace],
+		[setWorkspaceInternal, saveWorkspace, defaultSaveWorkflowDelay],
 	);
 
 	const addTextGenerationNode = useCallback(
