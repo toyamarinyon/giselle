@@ -1,6 +1,6 @@
 import { WorkspaceId } from "@/lib/giselle-data";
 import { callGetWorkspaceApi } from "@/lib/ui-utils";
-import { WorkflowDesignerProvider } from "@/lib/workflow-designer";
+import { WorkflowDesignerProvider } from "@/lib/workflow-designer/react";
 import type { ReactNode } from "react";
 import "@xyflow/react/dist/style.css";
 import "@/lib/workflow-designer/react/editor/style.css";
