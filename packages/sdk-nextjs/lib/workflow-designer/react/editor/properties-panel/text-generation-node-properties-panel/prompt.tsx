@@ -27,9 +27,9 @@ import {
 } from "../../../ui/select";
 import { Slider } from "../../../ui/slider";
 import { useWorkflowDesigner } from "../../../workflow-designer-context";
-import { PropertiesPanelCollapsible } from "../_/collapsible";
-import { PropertiesPanelContentBox } from "../_/content-box";
-import { NodeDropdown } from "../_/node-dropdown";
+import { PropertiesPanelCollapsible } from "../ui/collapsible";
+import { PropertiesPanelContentBox } from "../ui/content-box";
+import { NodeDropdown } from "../ui/node-dropdown";
 
 export function TabsContentPrompt({
 	node,

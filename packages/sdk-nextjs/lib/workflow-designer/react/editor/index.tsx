@@ -14,7 +14,7 @@ import { useWorkflowDesigner } from "../workflow-designer-context";
 import { type GiselleWorkflowDesignerNode, nodeTypes } from "./node";
 import { PropertiesPanel } from "./properties-panel";
 
-function Editor() {
+function EditorInternal() {
 	const {
 		data,
 		setUiNodeState,
@@ -136,10 +136,10 @@ function Editor() {
 	);
 }
 
-export default function () {
+export function Editor() {
 	return (
 		<ReactFlowProvider>
-			<Editor />
+			<EditorInternal />
 		</ReactFlowProvider>
 	);
 }

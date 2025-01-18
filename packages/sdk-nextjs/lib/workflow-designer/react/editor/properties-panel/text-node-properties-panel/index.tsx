@@ -1,8 +1,8 @@
 import type { TextNodeData } from "@/lib/giselle-data";
 import { useWorkflowDesigner } from "../../../workflow-designer-context";
-import { PropertiesPanelContentBox } from "../_/content-box";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_/tabs";
-import { PropertiesPanelTitle } from "../_/title";
+import { PropertiesPanelContentBox } from "../ui/content-box";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { PropertiesPanelTitle } from "../ui/title";
 
 export function TextNodePropertiesPanel({ node }: { node: TextNodeData }) {
 	const { updateNodeDataContent } = useWorkflowDesigner();
