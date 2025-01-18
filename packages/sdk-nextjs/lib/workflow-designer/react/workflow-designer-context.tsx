@@ -17,20 +17,20 @@ import type {
 	WorkflowRun,
 	WorkflowRunId,
 	Workspace,
-} from "../giselle-data";
-import type { CreateTextGenerationNodeParams } from "../giselle-data/node/actions/text-generation";
+} from "../../giselle-data";
+import type { CreateTextGenerationNodeParams } from "../../giselle-data/node/actions/text-generation";
 import type {
 	ConnectionHandle,
 	ConnectionId,
 	NodeId,
 	NodeUIState,
-} from "../giselle-data/node/types";
-import type { CreateTextNodeParams } from "../giselle-data/node/variables/text";
-import { usePropertiesPanel, useView } from "./state";
+} from "../../giselle-data/node/types";
+import type { CreateTextNodeParams } from "../../giselle-data/node/variables/text";
+import { usePropertiesPanel, useView } from "../state";
 import {
 	WorkflowDesigner,
 	type WorkflowDesignerOperations,
-} from "./workflow-designer";
+} from "../workflow-designer";
 
 interface CreateWorkflowRunParams {
 	workflowId: WorkflowId;

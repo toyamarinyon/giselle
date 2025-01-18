@@ -1,7 +1,7 @@
 import type { TextGenerationNodeData } from "@/lib/giselle-data";
-import { useTextGenerationNode } from "../../../../use-text-generation-node";
-import { useWorkflowDesigner } from "../../../../workflow-designer-context";
+import { useTextGenerationNode } from "../../../../state/use-text-generation-node";
 import { WilliIcon } from "../../../icons/willi";
+import { useWorkflowDesigner } from "../../../workflow-designer-context";
 import { PropertiesPanelContentBox } from "../_/content-box";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../_/tabs";
 import { PropertiesPanelTitle } from "../_/title";

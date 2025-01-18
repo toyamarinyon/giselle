@@ -1,10 +1,10 @@
 import { isTextGenerationNode } from "@/lib/giselle-data/node/actions/text-generation";
 import { isTextNode } from "@/lib/giselle-data/node/variables/text";
-import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import clsx from "clsx/lite";
 import { type ComponentProps, type HTMLAttributes, useMemo } from "react";
 import { PanelOpenIcon } from "../../icons/panel-open";
+import { useWorkflowDesigner } from "../../workflow-designer-context";
 import { Tabs, TabsList } from "./_/tabs";
 import { TextGenerationNodePropertiesPanel } from "./text-generation-node-properties-panel";
 import { TextNodePropertiesPanel } from "./text-node-properties-panel";

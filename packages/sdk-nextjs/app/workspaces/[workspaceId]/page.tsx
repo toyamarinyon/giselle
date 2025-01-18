@@ -1,6 +1,5 @@
 "use client";
-import { useWorkflowDesigner } from "@/lib/workflow-designer";
-import { Designer } from "@/lib/workflow-designer/ui";
+import { Designer, useWorkflowDesigner } from "@/lib/workflow-designer/react";
 import { useWorkflowRunner } from "@/lib/workflow-runner/react";
 import { PlayIcon, WorkflowIcon } from "lucide-react";
 

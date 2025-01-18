@@ -1,5 +1,4 @@
 import { TextGenerationNodeData, TextNodeData } from "@/lib/giselle-data";
-import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import {
 	Handle,
 	type Node,
@@ -9,6 +8,7 @@ import {
 } from "@xyflow/react";
 import clsx from "clsx/lite";
 import { useMemo } from "react";
+import { useWorkflowDesigner } from "../../workflow-designer-context";
 import { NodeHeader } from "./node-header";
 
 type GiselleWorkflowDesignerTextGenerationNode = Node<

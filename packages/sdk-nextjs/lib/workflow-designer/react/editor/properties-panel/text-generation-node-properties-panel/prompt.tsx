@@ -5,7 +5,6 @@ import {
 	createConnectionHandle,
 } from "@/lib/giselle-data";
 import { textGenerationPrompt } from "@/lib/giselle-engine/core/prompts";
-import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import clsx from "clsx/lite";
 import { CheckIcon, TrashIcon, UndoIcon } from "lucide-react";
 import {
@@ -27,6 +26,7 @@ import {
 	SelectValue,
 } from "../../../_/select";
 import { Slider } from "../../../_/slider";
+import { useWorkflowDesigner } from "../../../workflow-designer-context";
 import { PropertiesPanelCollapsible } from "../_/collapsible";
 import { PropertiesPanelContentBox } from "../_/content-box";
 import { NodeDropdown } from "../_/node-dropdown";

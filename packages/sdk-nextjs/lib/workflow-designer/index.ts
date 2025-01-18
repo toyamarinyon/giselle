@@ -1,4 +1,1 @@
-export {
-	WorkflowDesignerProvider,
-	useWorkflowDesigner,
-} from "./workflow-designer-context";
+export { WorkflowDesigner } from "./workflow-designer";

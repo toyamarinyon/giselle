@@ -1,8 +1,8 @@
 import { Data } from "@/lib/giselle-engine/core/handlers/text-generation";
 import { useCompletion } from "ai/react";
 import { type FormEvent, useCallback } from "react";
-import type { TextGenerationNodeData } from "../giselle-data";
-import { useWorkflowDesigner } from "./workflow-designer-context";
+import type { TextGenerationNodeData } from "../../giselle-data";
+import { useWorkflowDesigner } from "../react/workflow-designer-context";
 
 export function useTextGenerationNode(
 	node: TextGenerationNodeData,

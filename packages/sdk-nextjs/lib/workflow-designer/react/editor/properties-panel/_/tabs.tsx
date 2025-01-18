@@ -1,8 +1,8 @@
-import { useWorkflowDesigner } from "@/lib/workflow-designer/workflow-designer-context";
 import { Content, List, Root, Trigger } from "@radix-ui/react-tabs";
 import clsx from "clsx/lite";
 import type { ComponentProps, FC } from "react";
 import { PanelCloseIcon } from "../../../icons/panel-close";
+import { useWorkflowDesigner } from "../../../workflow-designer-context";
 
 export function TabsContent({
 	className,
