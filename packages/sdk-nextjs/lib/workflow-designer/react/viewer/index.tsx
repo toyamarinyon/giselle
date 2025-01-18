@@ -6,10 +6,10 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { CircleAlertIcon, CircleSlashIcon } from "lucide-react";
 import type { DetailedHTMLProps } from "react";
 import bg from "../../images/bg.png";
-import { EmptyState } from "../_/empty-state";
-import { Header } from "../_/header";
-import { Markdown } from "../_/markdown";
 import { ContentTypeIcon, SpinnerIcon, WilliIcon } from "../icons";
+import { EmptyState } from "../ui/empty-state";
+import { Header } from "../ui/header";
+import { Markdown } from "../ui/markdown";
 
 interface StepRunButtonProps
 	extends DetailedHTMLProps<

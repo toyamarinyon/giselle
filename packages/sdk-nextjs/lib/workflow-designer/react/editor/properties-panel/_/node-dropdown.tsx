@@ -7,7 +7,7 @@ import {
 	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "../../../_/dropdown-menu";
+} from "../../../ui/dropdown-menu";
 
 export function NodeDropdown({
 	triggerLabel,

@@ -15,7 +15,7 @@ import {
 	useMemo,
 	useState,
 } from "react";
-import { Block } from "../../../_/block";
+import { Block } from "../../../ui/block";
 import {
 	Select,
 	SelectContent,
@@ -24,8 +24,8 @@ import {
 	SelectLabel,
 	SelectTrigger,
 	SelectValue,
-} from "../../../_/select";
-import { Slider } from "../../../_/slider";
+} from "../../../ui/select";
+import { Slider } from "../../../ui/slider";
 import { useWorkflowDesigner } from "../../../workflow-designer-context";
 import { PropertiesPanelCollapsible } from "../_/collapsible";
 import { PropertiesPanelContentBox } from "../_/content-box";

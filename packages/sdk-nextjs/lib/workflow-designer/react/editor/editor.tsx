@@ -9,7 +9,7 @@ import {
 } from "@xyflow/react";
 import { useEffect } from "react";
 import bg from "../../images/bg.png";
-import { Header } from "../_/header";
+import { Header } from "../ui/header";
 import { useWorkflowDesigner } from "../workflow-designer-context";
 import { type GiselleWorkflowDesignerNode, nodeTypes } from "./node";
 import { PropertiesPanel } from "./properties-panel";
