@@ -3,7 +3,7 @@ import {
 	type TextGenerationNode,
 	isTextGenerationNode,
 } from "@giselle-sdk/data-type";
-import { TextEditor } from "@giselle-sdk/text-editor/react";
+import { TextEditor } from "@giselle-sdk/text-editor/react-internal";
 import clsx from "clsx/lite";
 import { useWorkflowDesigner } from "giselle-sdk/react";
 import { BracesIcon } from "lucide-react";

@@ -10,6 +10,7 @@ import {
 import { Toolbar as ToolbarPrimitive } from "radix-ui";
 import type { ReactNode } from "react";
 import { extensions } from "../extensions";
+import SourceExtension from "./source-extension";
 
 function Toolbar({
 	tools,
@@ -136,7 +137,7 @@ export function TextEditor({
 		<div className="flex flex-col h-full">
 			<EditorProvider
 				slotBefore={<Toolbar tools={tools} />}
-				extensions={extensions}
+				extensions={[...extensions, SourceExtension]}
 				content={
 					value === undefined
 						? undefined
