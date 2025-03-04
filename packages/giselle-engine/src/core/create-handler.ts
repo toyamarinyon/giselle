@@ -2,50 +2,62 @@ import type { z } from "zod";
 import type { GiselleEngineContext } from "./types";
 
 /**
- * Type definition for arguments passed to Giselle engine handlers.
- *
- * @template TInput The expected input type for the handler
- * @template TOutput The expected output type for the handler
+ * Type definition for handler arguments that conditionally includes input
+ * based on whether an input schema is provided
  */
-export type GiselleEngineHandlerArgs<TInput> = {
-	/**
-	 * Input data for the handler, validated against the input schema
-	 */
-	input: TInput;
-
-	/**
-	 * Context information for the generation process
-	 */
-	context: GiselleEngineContext;
-};
+type HandlerArgs<TSchema> = TSchema extends z.AnyZodObject
+	? {
+			input: z.infer<TSchema>;
+			context: GiselleEngineContext;
+		}
+	: {
+			context: GiselleEngineContext;
+		};
 
 /**
- * Creates a typed handler for processing generation requests with input and output validation.
- *
- * @param schemas Object containing Zod schemas for input and output validation
- * @param handler The handler function that processes the request
- * @returns A function that validates input, processes the request, and validates output
+ * Type definition for arguments passed to the created handler function
  */
-export function createHandler<TInput extends z.AnyZodObject, TOutput>(
-	{
-		input,
-	}: {
-		input: TInput;
-	},
-	handler: (args: GiselleEngineHandlerArgs<z.infer<TInput>>) => TOutput,
-) {
-	return async (args: {
-		input: unknown;
-		context: GiselleEngineContext;
-	}): Promise<TOutput> => {
-		// Validate input
-		const validatedInput = input.parse(args.input) as TInput;
+type HandlerInputArgs<TSchema> = TSchema extends z.AnyZodObject
+	? {
+			input: unknown;
+			context: GiselleEngineContext;
+		}
+	: {
+			input?: unknown;
+			context: GiselleEngineContext;
+		};
 
-		// Process request with validated input
-		const result = await handler({
-			input: validatedInput,
+/**
+ * Creates a typed handler for processing generation requests with optional input validation.
+ *
+ * @param options Configuration object for the handler
+ * @returns A function that validates input (if schema provided) and processes the request
+ */
+export function createHandler<
+	TOutput,
+	TSchema extends z.AnyZodObject | undefined = undefined,
+>({
+	input,
+	handler,
+}: {
+	input?: TSchema;
+	handler: (args: HandlerArgs<TSchema>) => TOutput;
+}) {
+	return async (args: HandlerInputArgs<TSchema>): Promise<TOutput> => {
+		if (input !== undefined) {
+			// Validate input against schema
+			const validatedInput = input.parse(args.input);
+
+			// Process request with validated input
+			return await handler({
+				input: validatedInput,
+				context: args.context,
+			} as HandlerArgs<TSchema>);
+		}
+
+		// Process request without input validation
+		return await handler({
 			context: args.context,
-		});
-		return result;
+		} as HandlerArgs<TSchema>);
 	};
 }

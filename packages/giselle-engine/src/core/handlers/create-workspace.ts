@@ -1,17 +1,10 @@
-import { Workspace } from "@giselle-sdk/data-type";
-import { createWorkspace, setWorkspace } from "../helpers";
-import { createWorkspace as createWorkspaceSchema } from "../schema";
-import type { GiselleEngineHandlerArgs } from "./types";
+import { createHandler } from "../create-handler";
+import { createWorkspace } from "../workspaces/create-workspace";
 
-export async function createWorkspaceHandler({
-	context,
-}: GiselleEngineHandlerArgs) {
-	const workspace = await createWorkspace();
-
-	await setWorkspace({
-		storage: context.storage,
-		workspaceId: workspace.id,
-		workspace: Workspace.parse(workspace),
-	});
-	return createWorkspaceSchema.Output.parse({ workspace });
-}
+export const createWorkspaceHandler = createHandler({
+	handler: async ({ context }) => {
+		await createWorkspace({
+			context,
+		});
+	},
+});

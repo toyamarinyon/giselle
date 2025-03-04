@@ -23,21 +23,11 @@ import {
 	setNodeGenerationIndex,
 } from "../helpers";
 
-const input = z.object({
-	generation: QueuedGeneration,
-});
-export type Input = z.infer<typeof input>;
-
-const output = z.object({
-	text: z.string(),
-});
-export type Output = z.infer<typeof output>;
-
-export const generateText = createHandler(
-	{
-		input,
-	},
-	async ({ input, context }) => {
+export const generateText = createHandler({
+	input: z.object({
+		generation: QueuedGeneration,
+	}),
+	handler: async ({ input, context }) => {
 		const runningGeneration = {
 			...input.generation,
 			status: "running",
@@ -201,10 +191,9 @@ export const generateText = createHandler(
 				]);
 			},
 		});
-
 		return streamTextResult.toDataStreamResponse();
 	},
-);
+});
 
 function generationModel(languageModel: LanguageModel) {
 	const llmProvider = languageModel.provider;
