@@ -34,6 +34,8 @@
 
 ## Tasks
 
+- [ ] Support server action
+- [ ] Run detail route
 - [ ] Split create generation and start generation
 - [ ] Rework selected node design
 - [ ] Add setting button to title
