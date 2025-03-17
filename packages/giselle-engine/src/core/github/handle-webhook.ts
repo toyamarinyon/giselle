@@ -124,7 +124,7 @@ export async function handleWebhook(args: HandleGitHubWebhookArgs) {
 								type: "action",
 								content: {
 									type: node.content.type,
-									prompt: `${payloadMap}`,
+									prompt: `${payloadValue}`,
 								},
 							});
 							break;
