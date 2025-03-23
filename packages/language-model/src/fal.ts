@@ -48,29 +48,29 @@ const falFluxPro11: FalLanguageModel = {
 	configurations: defaultConfiguration,
 };
 
-const falRecraft20b: FalLanguageModel = {
-	provider: "fal",
-	id: "fal-ai/recraft-20b",
-	capabilities: Capability.ImageGeneration,
-	tier: "pro",
-	configurations: defaultConfiguration,
-};
+// const falRecraft20b: FalLanguageModel = {
+// 	provider: "fal",
+// 	id: "fal-ai/recraft-20b",
+// 	capabilities: Capability.ImageGeneration,
+// 	tier: "pro",
+// 	configurations: defaultConfiguration,
+// };
 
-const falRecraftv3: FalLanguageModel = {
-	provider: "fal",
-	id: "fal-ai/recraft-v3",
-	capabilities: Capability.ImageGeneration,
-	tier: "pro",
-	configurations: defaultConfiguration,
-};
+// const falRecraftv3: FalLanguageModel = {
+// 	provider: "fal",
+// 	id: "fal-ai/recraft-v3",
+// 	capabilities: Capability.ImageGeneration,
+// 	tier: "pro",
+// 	configurations: defaultConfiguration,
+// };
 
-const falIdeogramV2Turbo: FalLanguageModel = {
-	provider: "fal",
-	id: "fal-ai/ideogram/v2/turbo",
-	capabilities: Capability.ImageGeneration,
-	tier: "pro",
-	configurations: defaultConfiguration,
-};
+// const falIdeogramV2Turbo: FalLanguageModel = {
+// 	provider: "fal",
+// 	id: "fal-ai/ideogram/v2/turbo",
+// 	capabilities: Capability.ImageGeneration,
+// 	tier: "pro",
+// 	configurations: defaultConfiguration,
+// };
 
 const falStableDiffusion35Med: FalLanguageModel = {
 	provider: "fal",
