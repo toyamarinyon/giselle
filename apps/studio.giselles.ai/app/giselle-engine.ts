@@ -21,7 +21,7 @@ const storage = createStorage({
 export const giselleEngine = NextGiselleEngine({
 	basePath: "/api/giselle",
 	storage,
-	llmProviders: ["openai", "anthropic", "google", "perplexity"],
+	llmProviders: ["openai", "anthropic", "google", "perplexity", "fal"],
 	onConsumeAgentTime,
 	telemetry: {
 		isEnabled: true,
