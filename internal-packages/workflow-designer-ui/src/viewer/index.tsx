@@ -7,7 +7,12 @@ import {
 	useRunController,
 	useWorkflowDesigner,
 } from "giselle-sdk/react";
-import { CircleCheckIcon, CircleSlashIcon, XCircleIcon } from "lucide-react";
+import {
+	ChevronDownIcon,
+	CircleCheckIcon,
+	CircleSlashIcon,
+	XCircleIcon,
+} from "lucide-react";
 import { Tabs } from "radix-ui";
 import { useMemo, useState } from "react";
 import { useUsageLimitsReached } from "../hooks/usage-limits";
@@ -90,19 +95,29 @@ export function Viewer() {
 											Stop
 										</Button>
 									) : (
-										<Button
-											type="button"
-											disabled={usageLimitsReached}
-											className="disabled:opacity-50 disabled:cursor-not-allowed"
-											onClick={() => {
-												if (usageLimitsReached) {
-													return;
-												}
-												perform(flowId);
-											}}
-										>
-											Run
-										</Button>
+										<div className="w-full relative">
+											<Button
+												type="button"
+												disabled={usageLimitsReached}
+												className="w-full disabled:opacity-50 disabled:cursor-not-allowed"
+												onClick={() => {
+													if (usageLimitsReached) {
+														return;
+													}
+													perform(flowId);
+												}}
+											>
+												Run
+											</Button>
+											<div className="absolute right-[12px] top-[50%] translate-y-[-50%] h-full flex items-center justify-center">
+												<button
+													type="button"
+													className="hover:bg-black-800/20 rounded-[4px]"
+												>
+													<ChevronDownIcon className="size-[18px]" />
+												</button>
+											</div>
+										</div>
 									))}
 							</div>
 							<div className="flex flex-col gap-[24px]">
