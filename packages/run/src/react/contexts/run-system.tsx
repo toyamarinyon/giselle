@@ -2,6 +2,7 @@ import {
 	type CancelledRun,
 	type CreatedRun,
 	type Generation,
+	type OverrideNode,
 	type Run,
 	RunId,
 	type RunningRun,
@@ -21,6 +22,7 @@ import {
 
 export interface performOptions {
 	onCreateRun?: (run: CreatedRun) => void;
+	overrideNodes?: OverrideNode[];
 }
 export type Perform = (
 	workflowId: WorkflowId,
@@ -102,6 +104,7 @@ export function RunSystemContextProvider({
 				run: createdRun,
 				workspaceId,
 				workflowId,
+				overrideNodes: options?.overrideNodes ?? [],
 			});
 			const runningRun = {
 				...queuedRun,

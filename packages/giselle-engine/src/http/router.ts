@@ -110,12 +110,14 @@ export const createJsonRouters = {
 				workspaceId: WorkspaceId.schema,
 				workflowId: WorkflowId.schema,
 				run: CreatedRun,
+				overrideNodes: z.array(OverrideNode).optional(),
 			}),
 			handler: async ({ input }) => {
 				const run = await giselleEngine.addRun(
 					input.workspaceId,
 					input.workflowId,
 					input.run,
+					input.overrideNodes,
 				);
 				return JsonResponse.json(run);
 			},
