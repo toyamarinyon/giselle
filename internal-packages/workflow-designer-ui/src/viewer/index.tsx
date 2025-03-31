@@ -13,7 +13,7 @@ import {
 	CircleSlashIcon,
 	XCircleIcon,
 } from "lucide-react";
-import { Tabs } from "radix-ui";
+import { Popover, Tabs } from "radix-ui";
 import { useMemo, useState } from "react";
 import { useUsageLimitsReached } from "../hooks/usage-limits";
 import { SpinnerIcon, WilliIcon } from "../icons";
@@ -109,13 +109,84 @@ export function Viewer() {
 											>
 												Run
 											</Button>
-											<div className="absolute right-[12px] top-[50%] translate-y-[-50%] h-full flex items-center justify-center">
-												<button
-													type="button"
-													className="hover:bg-black-800/20 rounded-[4px]"
-												>
-													<ChevronDownIcon className="size-[18px]" />
-												</button>
+											<div className="absolute right-[8px] top-[50%] translate-y-[-50%] h-full flex items-center justify-center">
+												<div className="w-[1px] h-full border-l border-white-800/40 mr-[6px]" />
+												<Popover.Root>
+													<Popover.Trigger asChild>
+														<button
+															type="button"
+															className="hover:bg-black-800/20 rounded-[4px]"
+														>
+															<ChevronDownIcon className="size-[18px]" />
+														</button>
+													</Popover.Trigger>
+													<Popover.Portal>
+														<Popover.Content
+															className="w-[260px] rounded bg-black-900/20 backdrop-blur-[4px] rounded-[8px] px-[8px] py-[8px]"
+															sideOffset={5}
+														>
+															<div className="absolute z-0 rounded-[8px] inset-0 border mask-fill bg-gradient-to-br from-[hsla(232,37%,72%,0.2)] to-[hsla(218,58%,21%,0.9)] bg-origin-border bg-clip-boarder border-transparent" />
+															<div className="flex flex-col gap-2.5 relative text-white-800">
+																<p className="mb-2.5 text-[15px] font-medium leading-[19px] text-mauve12">
+																	Dimensions
+																</p>
+																<fieldset className="flex items-center gap-5">
+																	<label
+																		className="w-[75px] text-[13px] text-violet11"
+																		htmlFor="width"
+																	>
+																		Width
+																	</label>
+																	<input
+																		className="inline-flex h-[25px] w-full flex-1 items-center justify-center rounded px-2.5 text-[13px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8"
+																		id="width"
+																		defaultValue="100%"
+																	/>
+																</fieldset>
+																<fieldset className="flex items-center gap-5">
+																	<label
+																		className="w-[75px] text-[13px] text-violet11"
+																		htmlFor="maxWidth"
+																	>
+																		Max. width
+																	</label>
+																	<input
+																		className="inline-flex h-[25px] w-full flex-1 items-center justify-center rounded px-2.5 text-[13px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8"
+																		id="maxWidth"
+																		defaultValue="300px"
+																	/>
+																</fieldset>
+																<fieldset className="flex items-center gap-5">
+																	<label
+																		className="w-[75px] text-[13px] text-violet11"
+																		htmlFor="height"
+																	>
+																		Height
+																	</label>
+																	<input
+																		className="inline-flex h-[25px] w-full flex-1 items-center justify-center rounded px-2.5 text-[13px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8"
+																		id="height"
+																		defaultValue="25px"
+																	/>
+																</fieldset>
+																<fieldset className="flex items-center gap-5">
+																	<label
+																		className="w-[75px] text-[13px] text-violet11"
+																		htmlFor="maxHeight"
+																	>
+																		Max. height
+																	</label>
+																	<input
+																		className="inline-flex h-[25px] w-full flex-1 items-center justify-center rounded px-2.5 text-[13px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 outline-none focus:shadow-[0_0_0_2px] focus:shadow-violet8"
+																		id="maxHeight"
+																		defaultValue="none"
+																	/>
+																</fieldset>
+															</div>
+															<Popover.Arrow className="fill-white" />
+														</Popover.Content>
+													</Popover.Portal>
+												</Popover.Root>
 											</div>
 										</div>
 									))}
