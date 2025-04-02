@@ -1,29 +1,31 @@
 export default function () {
 	return (
 		<div className="bg-black-900 text-white-800 relative">
-			<div className="fixed w-full top-[20px] z-10">
-				<div className="max-w-[1280px] mx-auto px-[18px] py-[12px] rounded-[12px] bg-white-800/20">
+			<div className="fixed w-full z-10 bg-black-900/10 backdrop-blur">
+				<div className="px-[32px] py-[16px]">
 					<img
 						src="https://giselles.ai/_next/static/media/logo.9244a108.svg"
-						height="30px"
-						className="invert"
+						className="invert h-[30px]"
 						alt="logo"
 					/>
 				</div>
 			</div>
-			<div className="pt-[96px] relative">
+			<div className="pt-[120px] relative">
 				<div className="relative z-1 max-w-[1280px] mx-auto">
 					<div>
-						<p className="font-accent text-[58px] font-[700] text-white-800 tracking-wider">
-							AI power without the complexity
+						<p className="font-accent text-[50px]/[60px] font-[700] text-white-800 tracking-wider">
+							AI power
+							<br />
+							without the complexity
 						</p>
-						<p className="text-white-400 text-[18px]/[22px]">
-							Harness global LLMs, build custom AI solutions in minutes not
+						<p className="text-white-400/80 text-[18px]/[22px] mt-[24px]">
+							Design, Review, Integrate to power up your workflow in minutes.
+							{/* Harness global LLMs, build custom AI solutions in minutes not
 							months,
 							<br />
 							and seamlessly integrate with your existing workflow—the
 							sophisticated <br />
-							AI platform designed for non-technical teams.
+							AI platform designed for non-technical teams. */}
 						</p>
 					</div>
 					<div className="flex gap-[24px] items-center mt-[24px]">
@@ -82,6 +84,58 @@ export default function () {
 								alt="bg"
 							/>
 						</div>
+					</div>
+				</div>
+			</div>
+
+			<div className="pt-[120px] relative">
+				<div className="relative z-1 max-w-[1280px] mx-auto">
+					<div>
+						<p className="font-accent text-[40px]/[50px] font-[700] text-white-800 tracking-wider">
+							Design App <br />
+							Visually.
+						</p>
+						<p className="text-white-400/80 text-[18px]/[22px] mt-[10px]">
+							Transform ideas into reality with intuitive tools that eliminate
+							learning curves.
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div className="pt-[120px] relative">
+				<div className="relative z-1 max-w-[1280px] mx-auto">
+					<div>
+						<p className="font-accent text-[40px]/[50px] font-[700] text-white-800 tracking-wider">
+							Review App,
+							<br />
+							Instantly
+						</p>
+						<p className="text-white-400/80 text-[18px]/[22px] mt-[24px]">
+							Test your apps in real-time and ensure everything works perfectly.
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div className="pt-[120px] relative">
+				<div className="relative z-1 max-w-[1280px] mx-auto">
+					<div>
+						<p className="font-accent text-[40px]/[50px] font-[700] text-white-800 tracking-wider">
+							Integrate With
+							<br />
+							GitHub, Perfectly
+						</p>
+						<p className="text-white-400/80 text-[18px]/[22px] mt-[24px]">
+							Connect directly with your development workflow where you already
+							work.
+							{/* Harness global LLMs, build custom AI solutions in minutes not
+							months,
+							<br />
+							and seamlessly integrate with your existing workflow—the
+							sophisticated <br />
+							AI platform designed for non-technical teams. */}
+						</p>
 					</div>
 				</div>
 			</div>
