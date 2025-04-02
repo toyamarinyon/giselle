@@ -1,0 +1,258 @@
+Header Navigation
+
+Logo: Giselle
+
+Links:
+
+Documentation
+
+Resources
+
+Pricing
+
+Actions:
+
+Login
+
+Sign up (Button)
+
+Hero Section
+
+Headline: Giselle is all you need
+
+Sub-headline: Meet the new way to communicate LLM and integrate our work, life.
+
+Buttons:
+
+Get started
+
+Get a demo
+
+Feature Navigation Bar
+
+Design (Icon)
+
+Test (Icon)
+
+Integrate (Icon)
+
+
+(Inner Frame Header)
+
+Logo: Giselle
+
+(Inner Frame Main Content)
+
+Workflow No-code UI
+
+Powering Experiences Section
+
+Title: Powering experiences
+
+Subtitle: from next-gen startups to enterprises
+
+Logos: Vercel, _zapier, CURSOR, X, perplexity, Laravel, Cerebras, scale, IBM, replit, Fidelity, codeium, glean, algolia
+
+Button: Our customers
+
+Built for Modern Teams Section
+
+Title: Built for modern teams
+
+Subtitle: Crafted with customizability and collaboration in mind. Designed to impress.
+
+Feature Card 1: Beautiful out of the box (with abstract UI visual)
+
+Feature Card 2: Built for collaboration (with abstract collaboration visual: Add new file, Publish, user icons)
+
+Feature Card 3: Designed for conversion (with abstract analytics visual: + 95% views)
+
+Documentation that Converts Users Section
+
+Title: Documentation that converts users
+
+Subtitle: A platform you can trust to delight your target audience.
+
+Left Feature List:
+
+Elegant & versatile
+
+Minimal by design
+
+Highly customizable
+
+(Right Demo Area)
+
+Header: Search bar (Q Search or ask... [ЖК]), Feedback button, Get started button, Settings icon
+
+Title: The Prism Guide to Building Incredible Apps
+
+Text: Welcome to Prism Docs, a comprehensive and ever-expanding resource filled with articles and videos to help you master Prism.
+
+Button: Go to Quickstart >
+
+Card 1: Example Apps - Get inspired by the creativity and ingenuity of our community, and see how Prism can help you transform your ideas.
+
+Card 2: Expert Marketplace - Collaborate with the best in the industry and watch your vision come to life with the power of Prism and Expert Marketplace.
+
+Section Title: Essentials
+
+Subtitle: Our essential building blocks provide you with the tools you need to create powerful, interactive, and user-friendly apps with ease.
+
+Item 1 (Icon + Text): Data sources - Connect to spreadsheets, databases & more.
+
+Item 2 (Icon + Text): Accounts - Manage user authentication & authorization.
+
+Item 3 (Icon + Text): Components - Use pre-built UI & logic for interactive apps.
+
+User Engagement Features Section
+
+Column 1: Help users find answers fast
+
+Subtitle: Everything is optimized for user discovery and engagement.
+
+(Search Demo)
+
+Input: Q How do I get started? | ESC
+
+AI Suggestion: Can you tell me about how to get started? Use our AI to find answers to your questions >
+
+Result 1: Quickstart > Getting Started - Start building modern documentation in under five minutes
+
+Result 2: Development - Start building your content locally
+
+Result 3: Chat Widget > Getting Started - Integrate Chat functionality directly into your product
+
+Column 2: Understand your audience
+
+Subtitle: Optimize based on which pages or search terms are popular.
+
+(Analytics Demo)
+
+Legend: ./docs (224), ./components (121), ./libs (32), ./others (44)
+
+Chart: Bar chart showing views over time (Jul 1 - Jul 15)
+
+Web Editor Section
+
+Title: Web Editor
+
+(Background Image: Stylized landscape with clouds and aurora)
+
+Built for Collaboration Section
+
+Title: Built for collaboration
+
+Subtitle: Empower your team with workflows that meet you where you are, whether you prefer git sync or a WYSIWYG experience.
+
+Feature List:
+
+Codebase-syncing
+
+Real-time collaboration
+
+Preview deployments
+
+(Code Editor Demo)
+
+Filename: Configurations.mdx
+
+Code Snippet: (YAML frontmatter and Markdown showing title, description, icon, GitHub heading, and integration text)
+
+Additional Features Grid
+
+API Playground: Test and explore APIs directly in your docs
+
+Visitor authentication: Secure your docs with customizable access controls
+
+User feedback: Keep docs and code in perfect harmony
+
+Fully customizable: Tailor your docs with custom components and JS + CSS
+
+Elevate Content Section
+
+Title: Elevate content with intelligent features
+
+Subtitle: Create documentation that is smarter, more accessible, and continuously improving.
+
+Feature List:
+
+Edit suggestions: AI analyzes your docs and suggests enhancements for clarity and completeness
+
+Automatic translations: Expand global reach with one-click multi-language support
+
+Writing assistance: Craft clearer, more engaging documentation with real-time suggestions
+
+Integrations: Connect your favorite tools and workflows to streamline documentation
+
+Case Studies Section
+
+Title: How we help next-gen companies succeed
+
+Buttons: Explore case studies, Wall of love
+
+Case Study Previews (Titles):
+
+How Captions scaled global support by putting documentation first
+
+Up-leveling Turso's developer experience with Mintlify
+
+How Anthropic provides a better developer experience with Mintlify
+
+Navigation: Left Arrow, Right Arrow
+
+Final Call-to-Action Section
+
+Title: The documentation you want, available today
+
+Buttons:
+
+Get started
+
+Get a demo
+
+Footer
+
+Logo: Mintify
+
+Column: Documentation
+
+Getting Started
+
+Components
+
+API playground
+
+Pricing
+
+Column: Resources
+
+Customers
+
+Enterprise
+
+Request Preview
+
+Integrations
+
+Guides
+
+Templates
+
+Column: Company
+
+Careers
+
+Blog
+
+Security
+
+Feedback
+
+Column: Legal
+
+Privacy Policy
+
+Terms of Service
+
+Responsible Disclosure
