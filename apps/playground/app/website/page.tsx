@@ -46,7 +46,7 @@ export default function () {
 				<div
 					className="w-full h-[500px] absolute top-[180px] z-0 "
 					style={{
-						backgroundImage: 'url("/download.jpeg")',
+						backgroundImage: 'url("/bg.jpeg")',
 						backgroundSize: "cover",
 					}}
 				/>
@@ -88,55 +88,112 @@ export default function () {
 				</div>
 			</div>
 
-			<div className="pt-[120px] relative">
-				<div className="relative z-1 max-w-[1280px] mx-auto">
-					<div>
+			<div className="pt-[120px] max-w-[1280px] mx-auto">
+				<div className="flex gap-[40px] items-end">
+					<div className="flex-1">
 						<p className="font-accent text-[40px]/[50px] font-[700] text-white-800 tracking-wider">
 							Design App <br />
 							Visually.
 						</p>
 						<p className="text-white-400/80 text-[18px]/[22px] mt-[10px]">
-							Transform ideas into reality with intuitive tools that eliminate
-							learning curves.
+							Transform ideas into reality with intuitive tools
+							<br /> that eliminate learning curves.
 						</p>
 					</div>
+					<div className="flex flex-1 gap-[12px]">
+						<div className="flex-1">
+							<div className="font-bold">Visual Workflow Builder</div>
+							<p className="text-white-400/80 text-[16px]/[20px] mt-[4px]">
+								Create powerful AI solutions
+								<br /> with simple drag-and-drop
+							</p>
+						</div>
+						<div className="flex-1">
+							<div className="font-bold">Prompt Editor</div>
+							<p className="text-white-400/80 text-[16px]/[20px] mt-[4px]">
+								Insert connected node
+								<br /> to prompt directly
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div className="bg-black-800 rounded-[8px] p-[8px] h-[400px] mt-[40px] relative overflow-hidden">
+					<img
+						src="/ui.jpg"
+						className="absolute h-[400px] left-[60px] top-[80px]"
+						alt="ui"
+					/>
+					<img
+						src="/prompt.jpg"
+						className="absolute h-[400px] left-[660px] top-[40px]"
+						alt="prompt ui"
+					/>
 				</div>
 			</div>
 
-			<div className="pt-[120px] relative">
-				<div className="relative z-1 max-w-[1280px] mx-auto">
-					<div>
+			<div className="pt-[120px] max-w-[1280px] mx-auto">
+				<div className="flex gap-[40px] items-end">
+					<div className="flex-1">
 						<p className="font-accent text-[40px]/[50px] font-[700] text-white-800 tracking-wider">
 							Review App,
 							<br />
 							Instantly
 						</p>
 						<p className="text-white-400/80 text-[18px]/[22px] mt-[24px]">
-							Test your apps in real-time and ensure everything works perfectly.
+							Test your apps in real-time
+							<br /> and ensure everything works perfectly.
 						</p>
 					</div>
+					<div className="flex flex-1 gap-[12px]">
+						<div className="flex-1">
+							<div className="font-bold">Visual Workflow Builder</div>
+							<p className="text-white-400/80 text-[16px]/[20px] mt-[4px]">
+								Create powerful AI solutions
+								<br /> with simple drag-and-drop
+							</p>
+						</div>
+						<div className="flex-1">
+							<div className="font-bold">Prompt Editor</div>
+							<p className="text-white-400/80 text-[16px]/[20px] mt-[4px]">
+								Insert connected node
+								<br /> to prompt directly
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div className="bg-black-800 rounded-[8px] p-[8px] h-[400px] mt-[40px] relative overflow-hidden">
+					<img
+						src="/preview.png"
+						className="absolute h-[400px] left-[60px] top-[80px]"
+						alt="ui"
+					/>
+					<img
+						src="/override.jpg"
+						className="absolute h-[400px] left-[660px] top-[40px]"
+						alt="prompt ui"
+					/>
 				</div>
 			</div>
 
-			<div className="pt-[120px] relative">
-				<div className="relative z-1 max-w-[1280px] mx-auto">
-					<div>
-						<p className="font-accent text-[40px]/[50px] font-[700] text-white-800 tracking-wider">
-							Integrate With
-							<br />
-							GitHub, Perfectly
-						</p>
-						<p className="text-white-400/80 text-[18px]/[22px] mt-[24px]">
-							Connect directly with your development workflow where you already
-							work.
-							{/* Harness global LLMs, build custom AI solutions in minutes not
+			<div className="pt-[120px] max-w-[1280px] mx-auto">
+				<div>
+					<p className="font-accent text-[40px]/[50px] font-[700] text-white-800 tracking-wider">
+						Integrate With
+						<br />
+						GitHub, Perfectly
+					</p>
+					<p className="text-white-400/80 text-[18px]/[22px] mt-[24px]">
+						Connect directly with your development workflow where you already
+						work.
+						{/* Harness global LLMs, build custom AI solutions in minutes not
 							months,
 							<br />
 							and seamlessly integrate with your existing workflow—the
 							sophisticated <br />
 							AI platform designed for non-technical teams. */}
-						</p>
-					</div>
+					</p>
 				</div>
 			</div>
 		</div>
