@@ -16,11 +16,10 @@ import {
 } from "@xyflow/react";
 import clsx from "clsx/lite";
 import { useWorkflowDesigner } from "giselle-sdk/react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { NodeIcon } from "../../icons/node";
+import { EditableText } from "../../ui/editable-text";
 import { defaultName } from "../../utils";
-import { EditableText } from "./editable-text";
-import { NodeNameEditable } from "./node-name-editable";
 
 type GiselleWorkflowDesignerTextGenerationNode = XYFlowNode<
 	{ nodeData: TextGenerationNode; preview?: boolean },
@@ -97,6 +96,7 @@ export function NodeComponent({
 	preview?: boolean;
 	connectedOutputIds?: OutputId[];
 }) {
+	const { updateNodeData } = useWorkflowDesigner();
 	return (
 		<div
 			data-type={node.type}
@@ -153,7 +153,18 @@ export function NodeComponent({
 					</div>
 					<div>
 						<EditableText
-							value={defaultName(node)}
+							className="data-[selected=false]:pointer-events-none **:data-input:w-full"
+							text={defaultName(node)}
+							onValueChange={(value) => {
+								if (value === defaultName(node)) {
+									return;
+								}
+								if (value.trim().length === 0) {
+									updateNodeData(node, { name: undefined });
+									return;
+								}
+								updateNodeData(node, { name: value });
+							}}
 							onClickToEditMode={(e) => {
 								if (!selected) {
 									e.preventDefault();
@@ -161,31 +172,8 @@ export function NodeComponent({
 								}
 								e.stopPropagation();
 							}}
+							data-selected={selected}
 						/>
-						{/* {editName ? (
-							<input
-								type="text"
-								// onChange={(e) => setNodeName(e.target.value)}
-								onBlur={() => setEditName(false)}
-								className="text-[14px] text-white-900 outline-none"
-								defaultValue={defaultName(node)}
-							/>
-						) : (
-							<button
-								type="button"
-								onClick={(e) => {
-									if (!selected) {
-										return;
-									}
-									e.preventDefault();
-									e.stopPropagation();
-									setEditName(true);
-								}}
-								className="text-[14px] text-white-900"
-							>
-								{defaultName(node)}
-							</button>
-							)} */}
 						{node.type === "action" && (
 							<div className="text-[10px] text-white-400">
 								{node.content.llm.provider}

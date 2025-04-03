@@ -1,15 +1,23 @@
 "use client";
 
 import clsx from "clsx/lite";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+	type HTMLAttributes,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 
 export function EditableText({
-	value,
+	className,
+	text,
 	onValueChange,
 	onClickToEditMode,
-}: {
-	value?: string;
-	onValueChange?: (value?: string) => void;
+	...props
+}: HTMLAttributes<HTMLDivElement> & {
+	text?: string;
+	onValueChange?: (value: string) => void;
 	onClickToEditMode?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
 	const [edit, setEdit] = useState(false);
@@ -22,34 +30,35 @@ export function EditableText({
 		}
 	}, [edit]);
 
-	const updateValue = useCallback(() => {
-		if (!inputRef.current) {
-			return;
+	useEffect(() => {
+		if (inputRef.current) {
+			inputRef.current.value = text ?? "";
 		}
-		setEdit(false);
-		const currentValue = inputRef.current.value;
+	}, [text]);
 
-		onValueChange?.(currentValue);
-		inputRef.current.value = currentValue;
+	const updateText = useCallback(() => {
+		setEdit(false);
+		const newTextValue = inputRef.current?.value ?? "";
+		onValueChange?.(newTextValue);
 	}, [onValueChange]);
 
 	return (
-		<div>
+		<div className={className} {...props}>
 			<input
 				type="text"
 				className={clsx(
-					"w-[200px] py-[2px] px-[4px] rounded-[4px] hidden data-[editing=true]:block",
+					"py-[2px] px-[4px] rounded-[4px] hidden data-[editing=true]:block",
 					"outline-none ring-[1px] ring-primary-900",
 					"text-white-900 text-[14px]",
 				)}
 				ref={inputRef}
+				data-input
 				data-editing={edit}
-				defaultValue={value}
-				onBlur={() => updateValue()}
+				onBlur={() => updateText()}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") {
 						e.preventDefault();
-						updateValue();
+						updateText();
 					}
 				}}
 			/>
@@ -61,6 +70,7 @@ export function EditableText({
 					"text-white-900 text-[14px]",
 					"cursor-default",
 				)}
+				data-button
 				data-editing={edit}
 				onClick={(e) => {
 					onClickToEditMode?.(e);
@@ -70,7 +80,7 @@ export function EditableText({
 					setEdit(true);
 				}}
 			>
-				{value}
+				{text}
 			</button>
 		</div>
 	);
