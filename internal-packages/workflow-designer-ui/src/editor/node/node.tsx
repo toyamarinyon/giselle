@@ -16,9 +16,11 @@ import {
 } from "@xyflow/react";
 import clsx from "clsx/lite";
 import { useWorkflowDesigner } from "giselle-sdk/react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { NodeIcon } from "../../icons/node";
 import { defaultName } from "../../utils";
+import { EditableText } from "./editable-text";
+import { NodeNameEditable } from "./node-name-editable";
 
 type GiselleWorkflowDesignerTextGenerationNode = XYFlowNode<
 	{ nodeData: TextGenerationNode; preview?: boolean },
@@ -125,13 +127,7 @@ export function NodeComponent({
 				)}
 			/>
 
-			{/* <NodeNameEditable
-				name={data.nodeData.name}
-				onNodeNameChange={(name) => {
-					updateNodeData(data.nodeData, { name });
-				}}
-			/> */}
-			<div className={clsx("px-[16px]")}>
+			<div className={clsx("px-[16px] relative")}>
 				<div className="flex items-center gap-[8px]">
 					<div
 						className={clsx(
@@ -156,9 +152,40 @@ export function NodeComponent({
 						/>
 					</div>
 					<div>
-						<div className="font-rosart text-[14px] text-white-900">
-							{defaultName(node)}
-						</div>
+						<EditableText
+							value={defaultName(node)}
+							onClickToEditMode={(e) => {
+								if (!selected) {
+									e.preventDefault();
+									return;
+								}
+								e.stopPropagation();
+							}}
+						/>
+						{/* {editName ? (
+							<input
+								type="text"
+								// onChange={(e) => setNodeName(e.target.value)}
+								onBlur={() => setEditName(false)}
+								className="text-[14px] text-white-900 outline-none"
+								defaultValue={defaultName(node)}
+							/>
+						) : (
+							<button
+								type="button"
+								onClick={(e) => {
+									if (!selected) {
+										return;
+									}
+									e.preventDefault();
+									e.stopPropagation();
+									setEditName(true);
+								}}
+								className="text-[14px] text-white-900"
+							>
+								{defaultName(node)}
+							</button>
+							)} */}
 						{node.type === "action" && (
 							<div className="text-[10px] text-white-400">
 								{node.content.llm.provider}
