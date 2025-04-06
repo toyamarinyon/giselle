@@ -1,6 +1,17 @@
-import { GitHubIntegration } from "../../integration/github-integration";
+import {
+	getTeamGitHubAppInstallURL,
+	getTeamGitHubInstallationDetails,
+} from "@/services/external/github/team-installation";
+import { fetchCurrentTeam } from "@/services/teams";
+import GitHubIntegration from "./github-integration";
 
 export default async function TeamIntegrationsPage() {
+	const team = await fetchCurrentTeam();
+	const [installationUrl, installations] = await Promise.all([
+		getTeamGitHubAppInstallURL(team.id),
+		getTeamGitHubInstallationDetails(team.id),
+	]);
+
 	return (
 		<div className="flex flex-col gap-[24px]">
 			<h3
@@ -10,7 +21,11 @@ export default async function TeamIntegrationsPage() {
 				Integration
 			</h3>
 			<div className="flex flex-col gap-y-4">
-				<GitHubIntegration />
+				<GitHubIntegration
+					teamId={team.id}
+					installationUrl={installationUrl}
+					installations={installations}
+				/>
 			</div>
 		</div>
 	);
