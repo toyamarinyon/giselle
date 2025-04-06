@@ -12,6 +12,7 @@ import type {
 } from "@giselles-ai/types";
 import { relations } from "drizzle-orm";
 import {
+	bigint,
 	boolean,
 	index,
 	integer,
@@ -244,5 +245,35 @@ export const agentTimeRestrictions = pgTable(
 	},
 	(table) => ({
 		teamDbIdIdx: index().on(table.teamDbId),
+	}),
+);
+
+export const teamGithubIntegrations = pgTable(
+	"team_github_integrations",
+	{
+		dbId: serial("db_id").primaryKey(),
+		teamDbId: integer("team_db_id")
+			.notNull()
+			.references(() => teams.dbId, { onDelete: "cascade" }),
+		installationId: bigint("installation_id", { mode: "number" }).notNull(),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		updatedAt: timestamp("updated_at")
+			.defaultNow()
+			.notNull()
+			.$onUpdate(() => new Date()),
+	},
+	(table) => ({
+		teamDbIdIdx: index().on(table.teamDbId),
+		teamInstallationUnique: unique().on(table.teamDbId, table.installationId),
+	}),
+);
+
+export const teamGithubIntegrationsRelations = relations(
+	teamGithubIntegrations,
+	({ one }) => ({
+		team: one(teams, {
+			fields: [teamGithubIntegrations.teamDbId],
+			references: [teams.dbId],
+		}),
 	}),
 );
