@@ -8,3 +8,11 @@ export {
 	needsAuthorization,
 	type GitHubUserClient,
 } from "./user-client";
+export {
+	getTeamGitHubInstallations,
+	addTeamGitHubInstallation,
+	removeTeamGitHubInstallation,
+	hasTeamGitHubInstallation,
+	getTeamGitHubAppInstallURL,
+	hasAccessToGitHubInstallation,
+} from "./team-integration";

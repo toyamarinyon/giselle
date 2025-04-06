@@ -1,38 +1,88 @@
 import { Button } from "@/components/ui/button";
+import { db, teamGithubIntegrations, teams } from "@/drizzle";
 import { getGitHubIdentityState } from "@/services/accounts";
-import { gitHubAppInstallURL } from "@/services/external/github";
-import { SiGithub } from "@icons-pack/react-simple-icons";
+import { 
+	buildAppInstallationClient,
+	getTeamGitHubAppInstallURL, 
+	getTeamGitHubInstallations 
+} from "@/services/external/github";
+import { fetchCurrentTeam } from "@/services/teams/fetch-current-team";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { InfoIcon, SiGithub } from "@icons-pack/react-simple-icons";
 import type { components } from "@octokit/openapi-types";
+import { eq } from "drizzle-orm";
 import Link from "next/link";
 import { GitHubAppInstallButton } from "../../../../packages/components/github-app-install-button";
 
 export async function GitHubIntegration() {
-	const installUrl = await gitHubAppInstallURL();
-	const identityState = await getGitHubIdentityState();
-	if (
-		identityState.status === "unauthorized" ||
-		identityState.status === "invalid-credential"
-	) {
-		return <GitHubIntegrationPresentation installationUrl={installUrl} />;
+	// Get current team
+	const team = await fetchCurrentTeam();
+	if (!team) {
+		return (
+			<div className="space-y-4">
+				<Alert variant="warning">
+					<InfoIcon className="h-4 w-4" />
+					<AlertTitle>Team required</AlertTitle>
+					<AlertDescription>
+						You need to be part of a team to use GitHub integrations.
+					</AlertDescription>
+				</Alert>
+			</div>
+		);
 	}
 
-	const gitHubUserClient = identityState.gitHubUserClient;
-	const { installations } = await gitHubUserClient.getInstallations();
+	// Get installation URL (team-based)
+	const installUrl = await getTeamGitHubAppInstallURL();
+	
+	// Get team's GitHub installations
+	const installationIds = await getTeamGitHubInstallations(team.dbId);
+	
+	// If no installations, show the basic UI
+	if (installationIds.length === 0) {
+		return (
+			<GitHubIntegrationPresentation 
+				teamName={team.name}
+				installationUrl={installUrl} 
+			/>
+		);
+	}
+	
+	// Get repositories for each installation
 	const installationsWithRepos = await Promise.all(
-		installations.map(async (installation) => {
-			const repos = await gitHubUserClient.getRepositories(installation.id);
-			return {
-				...installation,
-				repositories: repos.repositories,
-			};
-		}),
+		installationIds.map(async (installationId) => {
+			try {
+				const installationClient = await buildAppInstallationClient(installationId);
+				
+				// Get installation details
+				const { data: installation } = await installationClient.request(
+					"GET /app/installations/{installation_id}",
+					{ installation_id: installationId }
+				);
+				
+				// Get repositories for this installation
+				const { data: repos } = await installationClient.request(
+					"GET /installation/repositories",
+					{ per_page: 100 }
+				);
+				
+				return {
+					...installation,
+					repositories: repos.repositories || [],
+				};
+			} catch (error) {
+				console.error(`Error fetching data for installation ${installationId}:`, error);
+				return null;
+			}
+		})
 	);
-	const gitHubUser = identityState.gitHubUser;
+	
+	// Filter out any failed installations
+	const validInstallations = installationsWithRepos.filter(Boolean);
 
 	return (
 		<GitHubIntegrationPresentation
-			account={gitHubUser.login}
-			installations={installationsWithRepos}
+			teamName={team.name}
+			installations={validInstallations}
 			installationUrl={installUrl}
 		/>
 	);
@@ -45,13 +95,13 @@ type InstallationWithRepositories = Installation & {
 };
 
 type GitHubIntegrationPresentationProps = {
-	account?: string;
+	teamName: string;
 	installations?: InstallationWithRepositories[];
 	installationUrl?: string;
 };
 
 function GitHubIntegrationPresentation({
-	account,
+	teamName,
 	installations,
 	installationUrl,
 }: GitHubIntegrationPresentationProps) {
@@ -59,10 +109,21 @@ function GitHubIntegrationPresentation({
 	return (
 		<div className="space-y-8 text-black-30">
 			<Header
-				account={account}
+				teamName={teamName}
 				installed={installed}
 				installationUrl={installationUrl}
 			/>
+			
+			{/* Team-based installation notice */}
+			<Alert>
+				<InfoIcon className="h-4 w-4" />
+				<AlertTitle>Team-based GitHub integration</AlertTitle>
+				<AlertDescription>
+					GitHub App installations are managed at the team level. All members of team "{teamName}" 
+					will have access to the repositories available through these installations.
+				</AlertDescription>
+			</Alert>
+			
 			{installed && (
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 					{installations.map((installation) => (
@@ -75,36 +136,32 @@ function GitHubIntegrationPresentation({
 }
 
 type HeaderProps = {
-	account?: string;
+	teamName: string;
 	installed: boolean;
 	installationUrl?: string;
 };
 
-function Header({ account, installed, installationUrl }: HeaderProps) {
+function Header({ teamName, installed, installationUrl }: HeaderProps) {
 	return (
 		<div className="flex items-center justify-between">
 			<div className="flex items-center space-x-3">
 				<SiGithub className="w-8 h-8" />
 				<div>
 					<h2 className="text-lg">GitHub</h2>
-					{account ? (
-						<div className="text-sm text-muted-foreground">
-							Logged in as (<span className="text-blue-500">@{account}</span>)
-						</div>
-					) : (
-						<div className="text-sm text-muted-foreground">Not connected</div>
-					)}
+					<div className="text-sm text-muted-foreground">
+						Team: <span className="text-blue-500">{teamName}</span>
+					</div>
 				</div>
 			</div>
 			<div>
-				{account && installationUrl ? (
+				{installationUrl ? (
 					<GitHubAppInstallButton
 						installationUrl={installationUrl}
 						installed={installed}
 					/>
 				) : (
-					<Button asChild>
-						<Link href="/settings/account">Connect</Link>
+					<Button disabled>
+						Unable to load installation URL
 					</Button>
 				)}
 			</div>
