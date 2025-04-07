@@ -30,7 +30,11 @@ export function GitHubResourceLoader() {
 			setIsLoading(true);
 			const formData = new FormData(e.currentTarget);
 			const url = formData.get("url") as string;
-			const response = await client.githubUrlToObjectId({ url });
+			const response = await client.githubUrlToObjectId({
+				url,
+				/** @todo implementation */
+				installationId: 11111,
+			});
 
 			setCurrentLoadingUrl(url);
 			setIsLoading(false);
