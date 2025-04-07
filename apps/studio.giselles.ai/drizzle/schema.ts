@@ -254,7 +254,7 @@ export const teamGithubAppInstallations = pgTable(
 		teamDbId: integer("team_db_id")
 			.notNull()
 			.references(() => teams.dbId, { onDelete: "cascade" }),
-		installationId: text("installation_id").notNull(),
+		installationId: integer("installation_id").notNull(),
 		createdAt: timestamp("created_at").defaultNow().notNull(),
 		updatedAt: timestamp("updated_at")
 			.defaultNow()
