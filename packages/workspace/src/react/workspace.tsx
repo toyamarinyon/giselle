@@ -24,7 +24,7 @@ export function WorkspaceProvider({
 }: {
 	children: ReactNode;
 	workspaceId: WorkspaceId;
-	integration?: Integration;
+	integration?: IntegrationContextProps;
 	usageLimits?: UsageLimits;
 	telemetry?: TelemetrySettings;
 }) {
@@ -46,7 +46,7 @@ export function WorkspaceProvider({
 	return (
 		<TelemetryProvider settings={telemetry}>
 			<UsageLimitsProvider limits={usageLimits}>
-				<IntegrationProvider integration={integration}>
+				<IntegrationProvider {...integration}>
 					<WorkflowDesignerProvider data={workspace}>
 						<GenerationRunnerSystemProvider>
 							<RunSystemContextProvider workspaceId={workspaceId}>

@@ -339,6 +339,9 @@ importers:
       '@giselle-sdk/giselle-engine':
         specifier: workspace:*
         version: link:../../packages/giselle-engine
+      '@giselle-sdk/integration':
+        specifier: workspace:*
+        version: link:../../packages/integration
       '@icons-pack/react-simple-icons':
         specifier: 10.0.0
         version: 10.0.0(react@19.1.0)
@@ -934,6 +937,9 @@ importers:
 
   packages/integration:
     dependencies:
+      '@giselle-sdk/github-client':
+        specifier: workspace:^
+        version: link:../github-client
       '@octokit/openapi-types':
         specifier: 'catalog:'
         version: 22.2.0

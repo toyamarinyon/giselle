@@ -16,6 +16,7 @@ import {
 import { z } from "zod";
 import type { GiselleEngine } from "../core";
 import type { TelemetrySettings } from "../core/generations";
+import { getInstallationRepositories } from "../core/github";
 import { JsonResponse } from "../utils";
 import { createHandler, withUsageLimitErrorHandler } from "./create-handler";
 
@@ -145,9 +146,13 @@ export const createJsonRouters = {
 		createHandler({
 			input: z.object({
 				url: z.string().url(),
+				installationId: z.number(),
 			}),
 			handler: async ({ input }) => {
-				const objectId = await giselleEngine.githubUrlToObjectId(input.url);
+				const objectId = await giselleEngine.githubUrlToObjectId(
+					input.url,
+					input.installationId,
+				);
 				return JsonResponse.json({ objectId });
 			},
 		}),
@@ -218,6 +223,18 @@ export const createJsonRouters = {
 			handler: async () => {
 				const workspace = await giselleEngine.createSampleWorkspace();
 				return JsonResponse.json(workspace);
+			},
+		}),
+	getInstallationRepositories: (giselleEngine: GiselleEngine) =>
+		createHandler({
+			input: z.object({
+				installationIds: z.number().array(),
+			}),
+			handler: async ({ input }) => {
+				const repositories = await giselleEngine.getInstallationRepositories(
+					input.installationIds,
+				);
+				return JsonResponse.json(repositories);
 			},
 		}),
 } as const;

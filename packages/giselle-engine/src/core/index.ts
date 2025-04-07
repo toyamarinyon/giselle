@@ -27,6 +27,7 @@ import {
 } from "./generations";
 import {
 	type HandleGitHubWebhookOptions,
+	getInstallationRepositories,
 	getWorkspaceGitHubIntegrationSetting,
 	handleWebhook,
 	upsertGithubIntegrationSetting,
@@ -118,10 +119,11 @@ export function GiselleEngine(config: GiselleEngineConfig) {
 			return await removeFile({ context, fileId, workspaceId });
 		},
 
-		githubUrlToObjectId: async (url: string) => {
+		githubUrlToObjectId: async (url: string, installationId: number) => {
 			return await urlToObjectID({
 				url,
 				context,
+				installationId,
 			});
 		},
 		upsertGithubIntegrationSetting: async (
@@ -181,6 +183,12 @@ export function GiselleEngine(config: GiselleEngineConfig) {
 		},
 		createSampleWorkspace: async () => {
 			return await createSampleWorkspace({ context });
+		},
+		getInstallationRepositories: async (installationIds: number[]) => {
+			return await getInstallationRepositories({
+				context,
+				installationIds,
+			});
 		},
 	};
 }

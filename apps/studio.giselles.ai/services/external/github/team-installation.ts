@@ -82,7 +82,7 @@ export async function getTeamGitHubAppInstallURL(
  */
 export async function saveTeamGitHubAppInstallation(
 	teamId: TeamId,
-	installationId: string,
+	installationId: number,
 ): Promise<typeof teamGithubAppInstallations.$inferSelect> {
 	try {
 		// First, get the team's database ID
@@ -140,7 +140,7 @@ export async function saveTeamGitHubAppInstallation(
  */
 export async function removeTeamGitHubAppInstallation(
 	teamId: TeamId,
-	installationId: string,
+	installationId: number,
 ) {
 	const teamResult = await db
 		.select({ dbId: teams.dbId })
