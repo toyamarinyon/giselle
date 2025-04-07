@@ -1,6 +1,6 @@
 import { createAppAuth } from "@octokit/auth-app";
 import { Octokit } from "@octokit/core";
-import type { GitHubInstallationAppAuth } from "./types";
+import type { GitHubAppAuth, GitHubInstallationAppAuth } from "./types";
 
 /**
  * Repository information from GitHub
@@ -34,11 +34,7 @@ export interface InstallationWithRepositories {
 export async function getInstallation(auth: GitHubInstallationAppAuth) {
 	const client = new Octokit({
 		authStrategy: createAppAuth,
-		auth: {
-			appId: auth.appId,
-			privateKey: auth.privateKey,
-			installationId: auth.installationId,
-		},
+		auth,
 	});
 
 	// Get installation details
@@ -59,4 +55,21 @@ export async function getInstallation(auth: GitHubInstallationAppAuth) {
 		...installationRes.data,
 		repositories: reposRes.data.repositories,
 	} as InstallationWithRepositories;
+}
+
+export async function getInstallationUrl(auth: GitHubAppAuth) {
+	const client = new Octokit({
+		authStrategy: createAppAuth,
+		auth,
+	});
+	const res = await client.request("GET /app");
+	if (res.status !== 200 || !res.data) {
+		throw new Error("Failed to get app information");
+	}
+
+	const url = new URL(
+		`/apps/${res.data.slug}/installations/select_target`,
+		"https://github.com",
+	);
+	return url.toString();
 }

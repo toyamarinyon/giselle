@@ -237,6 +237,18 @@ export const createJsonRouters = {
 				return JsonResponse.json(repositories);
 			},
 		}),
+	installationUrl: (giselleEngine: GiselleEngine) =>
+		createHandler({
+			input: z.object({
+				state: z.string().optional(),
+			}),
+			handler: async ({ input }) => {
+				const url = await giselleEngine.installationUrl({
+					state: input.state,
+				});
+				return JsonResponse.json(url);
+			},
+		}),
 } as const;
 
 export const jsonRouterPaths = Object.keys(

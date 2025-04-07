@@ -45,6 +45,7 @@ export default async function Layout({
 			workspaceId={workspaceId}
 			integration={{
 				value: integrationValue,
+				installationState: currentTeam.id,
 				refresh: async () => {
 					"use server";
 					return await currentTeamIntegrations(currentTeam.id);

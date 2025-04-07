@@ -63,7 +63,7 @@ export async function getTeamGitHubAppInstallURL(
 		}
 
 		const url = new URL(
-			`/apps/${res.data.slug}/installations/new`,
+			`/apps/${res.data.slug}/installations/select_target`,
 			"https://github.com",
 		);
 		url.searchParams.append("state", teamId);

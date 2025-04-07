@@ -48,6 +48,17 @@ export async function graphql(authConfig: GitHubAuthConfig) {
 			});
 			token = installationAcessTokenAuthentication.token;
 			break;
+		} // @todo check works
+		case "github-app": {
+			const auth = createAppAuth({
+				appId: authConfig.appId,
+				privateKey: authConfig.privateKey,
+			});
+			const installationAcessTokenAuthentication = await auth({
+				type: "app",
+			});
+			token = installationAcessTokenAuthentication.token;
+			break;
 		}
 		case "github-app-user":
 		case "github-token": {
@@ -80,6 +91,15 @@ export function octokit(authConfig: GitHubAuthConfig) {
 					appId: authConfig.appId,
 					privateKey: authConfig.privateKey,
 					installationId: authConfig.installationId,
+				},
+			});
+		}
+		case "github-app": {
+			return new Octokit({
+				authStrategy: createAppAuth,
+				auth: {
+					appId: authConfig.appId,
+					privateKey: authConfig.privateKey,
 				},
 			});
 		}

@@ -30,6 +30,7 @@ import {
 	getInstallationRepositories,
 	getWorkspaceGitHubIntegrationSetting,
 	handleWebhook,
+	installationUrl,
 	upsertGithubIntegrationSetting,
 	urlToObjectID,
 } from "./github";
@@ -188,6 +189,16 @@ export function GiselleEngine(config: GiselleEngineConfig) {
 			return await getInstallationRepositories({
 				context,
 				installationIds,
+			});
+		},
+		installationUrl: async ({
+			state,
+		}: {
+			state?: string;
+		}) => {
+			return await installationUrl({
+				context,
+				state,
 			});
 		},
 	};

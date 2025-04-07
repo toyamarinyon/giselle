@@ -11,6 +11,7 @@ import type { InstallationWithRepositories } from "@giselle-sdk/integration";
 import { useIntegration } from "@giselle-sdk/integration/react";
 import { useGiselleEngine, useWorkflowDesigner } from "giselle-sdk/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { EmptyState } from "../../ui/empty-state";
 import {
 	Label,
 	Select,
@@ -21,6 +22,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "../ui";
+import { GitHubAppInstallButton } from "./installation-button";
 import { PayloadMapForm } from "./payload-map-form";
 import { useGitHubIntegrationSetting } from "./use-github-integration-setting";
 
@@ -101,6 +103,14 @@ export function GitHubIntegrationSettingForm() {
 	if (githubIntegration === undefined) {
 		/** @todo ui for app/playground */
 		return <div>No settings</div>;
+	}
+
+	if (installations.length === 0) {
+		return (
+			<EmptyState title="Add github account">
+				<GitHubAppInstallButton>Install</GitHubAppInstallButton>
+			</EmptyState>
+		);
 	}
 
 	return <Installed installations={installations} />;

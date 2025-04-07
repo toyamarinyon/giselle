@@ -31,7 +31,10 @@ export default async function GitHubAppInstallationCallback({
 			throw new Error("Invalid state parameter");
 		}
 
-		await saveTeamGitHubAppInstallation(teamId as TeamId, installationId);
+		await saveTeamGitHubAppInstallation(
+			teamId as TeamId,
+			Number.parseInt(installationId),
+		);
 		return <SuccessPage />;
 	} catch (err) {
 		const errorMessage =

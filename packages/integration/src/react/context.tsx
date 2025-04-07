@@ -10,6 +10,7 @@ import type { Integration } from "../schema";
 interface IntegrationContextValue {
 	value: Integration[];
 	refresh: () => Promise<void>;
+	installationState?: string;
 }
 export const IntegrationContext = createContext<
 	IntegrationContextValue | undefined
@@ -18,6 +19,7 @@ export const IntegrationContext = createContext<
 export interface IntegrationContextProps {
 	value?: Integration[];
 	refresh?: () => Promise<Integration[]>;
+	installationState?: string;
 }
 
 export function IntegrationProvider({
@@ -34,6 +36,7 @@ export function IntegrationProvider({
 			value={{
 				value,
 				refresh,
+				installationState: props.installationState,
 			}}
 		>
 			{children}
