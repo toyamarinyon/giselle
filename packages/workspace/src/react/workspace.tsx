@@ -3,10 +3,10 @@
 import type { Workspace, WorkspaceId } from "@giselle-sdk/data-type";
 import {
 	GenerationRunnerSystemProvider,
+	RunSystemContextProvider,
 	useGiselleEngine,
 } from "@giselle-sdk/giselle-engine/react";
-import { RunSystemContextProvider } from "@giselle-sdk/giselle-engine/react";
-import type { Integration } from "@giselle-sdk/integration";
+import type { IntegrationContextProps } from "@giselle-sdk/integration/react";
 import { IntegrationProvider } from "@giselle-sdk/integration/react";
 import type { TelemetrySettings } from "@giselle-sdk/telemetry";
 import { TelemetryProvider } from "@giselle-sdk/telemetry/react";
