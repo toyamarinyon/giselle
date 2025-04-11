@@ -71,7 +71,14 @@ export function GenerationView({
 					{message.parts?.map((part) => {
 						switch (part.type) {
 							case "reasoning":
-								return <p key={part.reasoning}>{part.reasoning}</p>;
+								return (
+									<div
+										key={part.reasoning}
+										className="markdown-renderer italic text-[14px] text-black-400 p-[4px] mb-[8px] mt-[6px]"
+									>
+										<MemoizedMarkdown content={part.reasoning} />
+									</div>
+								);
 
 							case "text":
 								return (

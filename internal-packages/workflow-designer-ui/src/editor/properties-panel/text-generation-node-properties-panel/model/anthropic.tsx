@@ -10,6 +10,7 @@ import {
 	SelectValue,
 } from "../../../../ui/select";
 import { Slider } from "../../../../ui/slider";
+import { Switch } from "../../../../ui/switch";
 import { languageModelAvailable } from "./utils";
 
 export function AnthropicModelPanel({
@@ -86,6 +87,23 @@ export function AnthropicModelPanel({
 									configurations: {
 										...anthropicLanguageModel.configurations,
 										topP: value,
+									},
+								}),
+							);
+						}}
+					/>
+
+					<Switch
+						label="Reasoning"
+						name="reasoning"
+						checked={anthropicLanguageModel.configurations.reasoning}
+						onCheckedChange={(checked) => {
+							onModelChange(
+								AnthropicLanguageModelData.parse({
+									...anthropicLanguageModel,
+									configurations: {
+										...anthropicLanguageModel.configurations,
+										reasoning: checked,
 									},
 								}),
 							);

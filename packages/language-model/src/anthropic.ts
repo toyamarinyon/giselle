@@ -4,6 +4,7 @@ import { Capability, LanguageModelBase, Tier } from "./base";
 const AnthropicLanguageModelConfigurations = z.object({
 	temperature: z.number(),
 	topP: z.number(),
+	reasoning: z.boolean().default(false),
 });
 type AnthropicLanguageModelConfigurations = z.infer<
 	typeof AnthropicLanguageModelConfigurations
@@ -12,6 +13,7 @@ type AnthropicLanguageModelConfigurations = z.infer<
 const defaultConfigurations: AnthropicLanguageModelConfigurations = {
 	temperature: 0.7,
 	topP: 1.0,
+	reasoning: false,
 };
 
 const AnthropicLanguageModel = LanguageModelBase.extend({

@@ -65,7 +65,9 @@ export const createJsonRouters = {
 						input.generation,
 						input.telemetry,
 					);
-					return stream.toDataStreamResponse();
+					return stream.toDataStreamResponse({
+						sendReasoning: true,
+					});
 				},
 			}),
 		),

@@ -1,5 +1,5 @@
 import { URL } from "node:url";
-import { anthropic } from "@ai-sdk/anthropic";
+import { type AnthropicProviderOptions, anthropic } from "@ai-sdk/anthropic";
 import { google } from "@ai-sdk/google";
 import { openai } from "@ai-sdk/openai";
 import { perplexity } from "@ai-sdk/perplexity";
@@ -200,6 +200,7 @@ export async function generateText(args: {
 
 	const streamTextResult = streamText({
 		model: generationModel(actionNode.content.llm),
+		providerOptions: providerOptions(actionNode.content.llm),
 		messages,
 		maxSteps: 5, // enable multi-step calls
 		experimental_continueSteps: true,
@@ -376,4 +377,17 @@ function isVertexAiHost(urlString: string): boolean {
 	// } catch (e) {
 	// 	return false;
 	// }
+}
+
+function providerOptions(languageModel: TextGenerationLanguageModelData) {
+	if (
+		languageModel.provider === "anthropic" &&
+		languageModel.configurations.reasoning
+	) {
+		return {
+			anthropic: {
+				thinking: { type: "enabled", budgetTokens: 12000 },
+			} satisfies AnthropicProviderOptions,
+		};
+	}
 }
