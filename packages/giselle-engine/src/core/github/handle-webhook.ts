@@ -138,7 +138,7 @@ async function processIntegration(
 	});
 	for (const payloadMap of setting.payloadMaps) {
 		const node = workspace.nodes.find((node) => node.id === payloadMap.nodeId);
-		if (node === undefined) {
+		if (node === undefined || node.type === "flow") {
 			continue;
 		}
 		const payloadValue = await getPayloadValue(

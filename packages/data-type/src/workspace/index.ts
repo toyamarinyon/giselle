@@ -1,6 +1,7 @@
 import { createIdGenerator } from "@giselle-sdk/utils";
 import { z } from "zod";
 import { Connection } from "../connection";
+import { Flow } from "../flow";
 import { Node, NodeId, NodeUIState } from "../node";
 import { OpenAIVecrtorStore } from "../openai";
 import { Workflow } from "../workflow";
@@ -37,6 +38,7 @@ export const Workspace = z.object({
 	ui: UIState,
 	editingWorkflows: z.array(Workflow),
 	providerOptions: z.optional(WorkspaceProviderOptions),
+	flows: z.array(Flow).default([]),
 });
 export type Workspace = z.infer<typeof Workspace>;
 
@@ -55,5 +57,6 @@ export function generateInitialWorkspace() {
 			},
 		},
 		editingWorkflows: [],
+		flows: [],
 	} satisfies Workspace;
 }

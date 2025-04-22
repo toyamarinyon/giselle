@@ -1,6 +1,6 @@
 "use client";
 
-import { InputId, OutputId } from "@giselle-sdk/data-type";
+import { InputId, type NodeId, OutputId } from "@giselle-sdk/data-type";
 import {
 	type Connection,
 	type Edge,
@@ -60,23 +60,56 @@ function NodeCanvas() {
 	const { selectedTool, reset } = useToolbar();
 	const toast = useToasts();
 	useEffect(() => {
-		reactFlowInstance.setNodes(
-			Object.entries(data.ui.nodeState)
+		reactFlowInstance.setNodes([
+			...Object.entries(data.ui.nodeState)
 				.map(([nodeId, nodeState]) => {
-					const nodeData = data.nodes.find((node) => node.id === nodeId);
-					if (nodeData === undefined || nodeState === undefined) {
+					const flow = data.flows.find((flow) => flow.nodeId === nodeId);
+					if (flow === undefined || nodeState === undefined) {
 						return null;
 					}
+					return {
+						id: flow.nodeId,
+						type: "flow",
+						name: flow.name,
+						position: { x: nodeState.position.x, y: nodeState.position.y },
+						selected: nodeState.selected,
+						data: {
+							nodeData: {
+								id: flow.nodeId,
+								type: "flow",
+								content: flow,
+								inputs: [],
+								outputs: [],
+							},
+						},
+					} as GiselleWorkflowDesignerNode;
+				})
+				.filter((result) => result !== null),
+			...Object.entries(data.ui.nodeState)
+				.map(([nodeId, nodeState]) => {
+					const nodeData = data.nodes.find((node) => node.id === nodeId);
+					if (
+						nodeData === undefined ||
+						nodeState === undefined ||
+						nodeData.type === "flow"
+					) {
+						return null;
+					}
+					const flow = data.flows.find((flow) =>
+						flow.childNodeIds.includes(nodeId as NodeId),
+					);
 					return {
 						id: nodeId,
 						type: nodeData.content.type,
 						position: { x: nodeState.position.x, y: nodeState.position.y },
 						selected: nodeState.selected,
 						data: { nodeData: nodeData },
+						parentId: flow?.nodeId,
+						expandParent: flow !== undefined,
 					} as GiselleWorkflowDesignerNode;
 				})
 				.filter((result) => result !== null),
-		);
+		]);
 		updateNodeInternals(Object.keys(data.ui.nodeState));
 	}, [data, reactFlowInstance.setNodes, updateNodeInternals]);
 	useEffect(() => {
@@ -104,7 +137,12 @@ function NodeCanvas() {
 				const inputNode = data.nodes.find(
 					(node) => node.id === connection.target,
 				);
-				if (!outputNode || !inputNode) {
+				if (
+					!outputNode ||
+					!inputNode ||
+					outputNode.type === "flow" ||
+					inputNode.type === "flow"
+				) {
 					throw new Error("Node not found");
 				}
 
@@ -229,7 +267,10 @@ function NodeCanvas() {
 								const connectedNode = data.nodes.find(
 									(node) => node.id === connection.inputNode.id,
 								);
-								if (connectedNode === undefined) {
+								if (
+									connectedNode === undefined ||
+									connectedNode.type === "flow"
+								) {
 									continue;
 								}
 								switch (connectedNode.content.type) {
@@ -256,6 +297,13 @@ function NodeCanvas() {
 						setUiNodeState(node.id, { selected: false });
 					}
 				}
+				for (const flow of data.flows) {
+					if (flow.nodeId === nodeClicked.id) {
+						setUiNodeState(flow.nodeId, { selected: true });
+					} else {
+						setUiNodeState(flow.nodeId, { selected: false });
+					}
+				}
 			}}
 			onNodeDoubleClick={(_event, nodeDoubleClicked) => {
 				const viewport = reactFlowInstance.getViewport();
@@ -280,6 +328,9 @@ function NodeCanvas() {
 			onPaneClick={(event) => {
 				for (const node of data.nodes) {
 					setUiNodeState(node.id, { selected: false });
+				}
+				for (const flow of data.flows) {
+					setUiNodeState(flow.nodeId, { selected: false });
 				}
 				const position = reactFlowInstance.screenToFlowPosition({
 					x: event.clientX,
@@ -315,7 +366,11 @@ export function Editor({
 		() =>
 			Object.entries(data.ui.nodeState)
 				.filter(([_, nodeState]) => nodeState?.selected)
-				.map(([nodeId]) => data.nodes.find((node) => node.id === nodeId))
+				.map(
+					([nodeId]) =>
+						data.nodes.find((node) => node.id === nodeId) ||
+						data.flows.find((flow) => flow.nodeId === nodeId),
+				)
 				.filter((node) => node !== undefined),
 		[data],
 	);

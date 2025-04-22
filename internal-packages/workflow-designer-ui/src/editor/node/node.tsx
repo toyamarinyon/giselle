@@ -1,5 +1,6 @@
 import {
 	FileNode,
+	FlowNode,
 	GitHubNode,
 	ImageGenerationNode,
 	type Node,
@@ -13,10 +14,13 @@ import {
 	type NodeTypes,
 	Position,
 	type Node as XYFlowNode,
+	useNodesInitialized,
+	useReactFlow,
+	useStoreApi,
 } from "@xyflow/react";
 import clsx from "clsx/lite";
 import { useWorkflowDesigner } from "giselle-sdk/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { NodeIcon } from "../../icons/node";
 import { EditableText } from "../../ui/editable-text";
 import { defaultName } from "../../utils";
@@ -41,12 +45,21 @@ type GiselleWorkflowGitHubNode = XYFlowNode<
 	{ nodeData: GitHubNode; preview?: boolean },
 	FileNode["content"]["type"]
 >;
+type GiselleWorkflowFlowNode = XYFlowNode<
+	{
+		nodeData: FlowNode;
+		preview?: boolean;
+	},
+	FlowNode["type"]
+>;
+
 export type GiselleWorkflowDesignerNode =
 	| GiselleWorkflowDesignerTextGenerationNode
 	| GiselleWorkflowDesignerImageGenerationNode
 	| GiselleWorkflowDesignerTextNode
 	| GiselleWorkflowDesignerFileNode
-	| GiselleWorkflowGitHubNode;
+	| GiselleWorkflowGitHubNode
+	| GiselleWorkflowFlowNode;
 
 export const nodeTypes: NodeTypes = {
 	[TextGenerationNode.shape.content.shape.type.value]: CustomXyFlowNode,
@@ -54,6 +67,7 @@ export const nodeTypes: NodeTypes = {
 	[TextNode.shape.content.shape.type.value]: CustomXyFlowNode,
 	[FileNode.shape.content.shape.type.value]: CustomXyFlowNode,
 	[GitHubNode.shape.content.shape.type.value]: CustomXyFlowNode,
+	[FlowNode.shape.type.value]: CustomXyFlowNode,
 };
 
 export function CustomXyFlowNode({
@@ -61,13 +75,6 @@ export function CustomXyFlowNode({
 	selected,
 }: NodeProps<GiselleWorkflowDesignerNode>) {
 	const { data: workspace, updateNodeData } = useWorkflowDesigner();
-	const hasTarget = useMemo(
-		() =>
-			workspace.connections.some(
-				(connection) => connection.outputNode.id === data.nodeData.id,
-			),
-		[workspace, data.nodeData.id],
-	);
 	const connectedOutputIds = useMemo(
 		() =>
 			workspace.connections
@@ -75,6 +82,10 @@ export function CustomXyFlowNode({
 				.map((connection) => connection.outputId),
 		[workspace, data.nodeData.id],
 	);
+
+	if (data.nodeData.type === "flow") {
+		return <GroupComponent node={data.nodeData} />;
+	}
 
 	return (
 		<NodeComponent
@@ -85,13 +96,21 @@ export function CustomXyFlowNode({
 	);
 }
 
+function GroupComponent({ node }: { node: FlowNode }) {
+	return (
+		<div className="relative w-full h-full">
+			<div className="absolute bg-white-900/5 text-white-900 border border-white-800 top-[-12px] bottom-[-12px] left-[-12px] right-[-12px]" />
+		</div>
+	);
+}
+
 export function NodeComponent({
 	node,
 	selected,
 	connectedOutputIds,
 	preview = false,
 }: {
-	node: Node;
+	node: Exclude<Node, FlowNode>;
 	selected?: boolean;
 	preview?: boolean;
 	connectedOutputIds?: OutputId[];

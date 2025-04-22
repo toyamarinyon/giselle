@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ActionNode, ActionNodeReference, OverrideActionNode } from "./actions";
+import { FlowNode } from "./flow";
 import {
 	OverrideVariableNode,
 	VariableNode,
@@ -7,9 +8,14 @@ import {
 } from "./variables";
 export * from "./actions";
 export * from "./variables";
+export * from "./flow";
 export * from "./base";
 
-export const Node = z.discriminatedUnion("type", [ActionNode, VariableNode]);
+export const Node = z.discriminatedUnion("type", [
+	ActionNode,
+	VariableNode,
+	FlowNode,
+]);
 export type Node = z.infer<typeof Node>;
 
 export const OverrideNode = z.discriminatedUnion("type", [

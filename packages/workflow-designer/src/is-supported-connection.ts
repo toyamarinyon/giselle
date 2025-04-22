@@ -1,12 +1,12 @@
-import type { Node } from "@giselle-sdk/data-type";
+import type { FlowNode, Node } from "@giselle-sdk/data-type";
 
 export type ConnectionValidationResult =
 	| { canConnect: true }
 	| { canConnect: false; message: string };
 
 export function isSupportedConnection(
-	outputNode: Node,
-	inputNode: Node,
+	outputNode: Exclude<Node, FlowNode>,
+	inputNode: Exclude<Node, FlowNode>,
 ): ConnectionValidationResult {
 	if (outputNode.id === inputNode.id) {
 		return {
