@@ -14,6 +14,8 @@ function defaultName(node: GiselleNode) {
 					return node.name ?? node.content.llm.id;
 				case "trigger":
 					return node.name ?? node.content.provider.type;
+				case "action":
+					return node.name ?? node.content.provider.type;
 				default: {
 					const _exhaustiveCheck: never = node.content;
 					throw new Error(`Unhandled action content type: ${_exhaustiveCheck}`);

@@ -150,6 +150,8 @@ export function overrideGenerationTemplate(
 				}
 				case "trigger":
 					break;
+				case "action":
+					break;
 				default: {
 					const _exhaustiveCheck: never = overridedTemplate.actionNode.content;
 					throw new Error(`Unhandled action node type: ${_exhaustiveCheck}`);
@@ -263,6 +265,8 @@ export function overrideGenerationTemplate(
 					};
 					break;
 				case "trigger":
+					break;
+				case "action":
 					break;
 				default: {
 					const _exhaustiveCheck: never = sourceNode.content;

@@ -184,7 +184,8 @@ async function processIntegration(
 				throw new Error("GitHub nodes are not supported");
 			case "trigger":
 				break;
-
+			case "action":
+				break;
 			default: {
 				const _exhaustiveCheck: never = node.content;
 				throw new Error(`Unhandled node type: ${_exhaustiveCheck}`);

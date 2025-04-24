@@ -25,6 +25,11 @@ export function isSupportedConnection(
 			canConnect: true,
 		};
 	}
+	if (inputNode.content.type === "action") {
+		return {
+			canConnect: true,
+		};
+	}
 
 	if (outputNode.content.type === "imageGeneration") {
 		return {

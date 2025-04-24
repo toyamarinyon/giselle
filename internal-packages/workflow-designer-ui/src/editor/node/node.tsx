@@ -1,4 +1,5 @@
 import {
+	ActionNode,
 	FileNode,
 	GitHubNode,
 	ImageGenerationNode,
@@ -46,13 +47,18 @@ type GiselleWorkflowTriggerNode = XYFlowNode<
 	{ nodeData: TriggerNode; preview?: boolean },
 	TriggerNode["content"]["type"]
 >;
+type GiselleWorkflowActionNode = XYFlowNode<
+	{ nodeData: TriggerNode; preview?: boolean },
+	ActionNode["content"]["type"]
+>;
 export type GiselleWorkflowDesignerNode =
 	| GiselleWorkflowDesignerTextGenerationNode
 	| GiselleWorkflowDesignerImageGenerationNode
 	| GiselleWorkflowDesignerTextNode
 	| GiselleWorkflowDesignerFileNode
 	| GiselleWorkflowGitHubNode
-	| GiselleWorkflowTriggerNode;
+	| GiselleWorkflowTriggerNode
+	| GiselleWorkflowActionNode;
 
 export const nodeTypes: NodeTypes = {
 	[TextGenerationNode.shape.content.shape.type.value]: CustomXyFlowNode,
@@ -61,6 +67,7 @@ export const nodeTypes: NodeTypes = {
 	[FileNode.shape.content.shape.type.value]: CustomXyFlowNode,
 	[GitHubNode.shape.content.shape.type.value]: CustomXyFlowNode,
 	[TriggerNode.shape.content.shape.type.value]: CustomXyFlowNode,
+	[ActionNode.shape.content.shape.type.value]: CustomXyFlowNode,
 };
 
 export function CustomXyFlowNode({
