@@ -15,24 +15,24 @@ export * from "./image-generation";
 export * from "./text-generation";
 export * from "./trigger";
 
-const ActionNodeContent = z.discriminatedUnion("type", [
+const OperationNodeContent = z.discriminatedUnion("type", [
 	TextGenerationContent,
 	ImageGenerationContent,
 	TriggerContent,
 ]);
 
-export const ActionNode = NodeBase.extend({
-	type: z.literal("action"),
-	content: ActionNodeContent,
+export const OperationNode = NodeBase.extend({
+	type: z.literal("operation"),
+	content: OperationNodeContent,
 });
-export type ActionNode = z.infer<typeof ActionNode>;
+export type OperationNode = z.infer<typeof OperationNode>;
 
-export function isActionNode(node: NodeBase): node is ActionNode {
-	return node.type === "action";
+export function isOperationNode(node: NodeBase): node is OperationNode {
+	return node.type === "operation";
 }
 
-export const TextGenerationNode = ActionNode.extend({
-	type: z.literal("action"),
+export const TextGenerationNode = OperationNode.extend({
+	type: z.literal("operation"),
 	content: TextGenerationContent,
 });
 type TextGenerationNode = z.infer<typeof TextGenerationNode>;
@@ -44,7 +44,7 @@ export function isTextGenerationNode(
 	return result.success;
 }
 
-export const ImageGenerationNode = ActionNode.extend({
+export const ImageGenerationNode = OperationNode.extend({
 	content: ImageGenerationContent,
 });
 type ImageGenerationNode = z.infer<typeof ImageGenerationNode>;
@@ -56,28 +56,28 @@ export function isImageGenerationNode(
 	return result.success;
 }
 
-export const TriggerNode = ActionNode.extend({
+export const TriggerNode = OperationNode.extend({
 	content: TriggerContent,
 });
 export type TriggerNode = z.infer<typeof TriggerNode>;
 
-const OverrideActionNodeContent = z.discriminatedUnion("type", [
+const OverrideOperationNodeContent = z.discriminatedUnion("type", [
 	OverrideTextGenerationContent,
 	OverrideImageGenerationContent,
 ]);
-export const OverrideActionNode = OverrideNodeBase.extend({
-	type: ActionNode.shape.type,
-	content: OverrideActionNodeContent,
+export const OverrideOperationNode = OverrideNodeBase.extend({
+	type: OperationNode.shape.type,
+	content: OverrideOperationNodeContent,
 });
-export type OverrideActionNode = z.infer<typeof OverrideActionNode>;
+export type OverrideOperationNode = z.infer<typeof OverrideOperationNode>;
 
-const ActionNodeContentReference = z.discriminatedUnion("type", [
+const OperationNodeContentReference = z.discriminatedUnion("type", [
 	TextGenerationContentReference,
 	ImageGenerationContentReference,
 	TriggerContentReference,
 ]);
-export const ActionNodeReference = NodeReferenceBase.extend({
-	type: ActionNode.shape.type,
-	content: ActionNodeContentReference,
+export const OperationNodeReference = NodeReferenceBase.extend({
+	type: OperationNode.shape.type,
+	content: OperationNodeContentReference,
 });
-export type ActionNodeReference = z.infer<typeof ActionNodeReference>;
+export type OperationNodeReference = z.infer<typeof OperationNodeReference>;
