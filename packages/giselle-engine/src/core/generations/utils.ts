@@ -707,10 +707,13 @@ export async function checkUsageLimits(args: {
 	}
 	const usageLimits = await fetchUsageLimitsFn(workspaceId);
 
-	const operationNode = generation.context.operationNode;
-	const languageModel = languageModels.find(
-		(model) => model.id === operationNode.content.llm.id,
-	);
+	const generationContext = GenerationContext.parse(generation.context);
+	const operationNode = generationContext.operationNode;
+	if (operationNode.content.type === "trigger") {
+		return { type: "ok" };
+	}
+	const llm = operationNode.content.llm;
+	const languageModel = languageModels.find((model) => model.id === llm.id);
 	if (languageModel === undefined) {
 		return {
 			type: "error",

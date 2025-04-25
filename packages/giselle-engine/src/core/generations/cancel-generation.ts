@@ -1,4 +1,8 @@
-import type { CancelledGeneration, GenerationId } from "@giselle-sdk/data-type";
+import {
+	type CancelledGeneration,
+	GenerationContext,
+	type GenerationId,
+} from "@giselle-sdk/data-type";
 import type { GiselleEngineContext } from "../types";
 import { getGeneration, setGeneration, setNodeGenerationIndex } from "./utils";
 
@@ -13,6 +17,7 @@ export async function cancelGeneration(args: {
 	if (generation === undefined) {
 		throw new Error(`Generation ${args.generationId} not found`);
 	}
+	const generationContext = GenerationContext.parse(generation.context);
 	const cancelledGeneration: CancelledGeneration = {
 		...generation,
 		status: "cancelled",
@@ -25,11 +30,11 @@ export async function cancelGeneration(args: {
 		}),
 		setNodeGenerationIndex({
 			storage: args.context.storage,
-			nodeId: generation.context.operationNode.id,
+			nodeId: generationContext.operationNode.id,
 			origin: generation.context.origin,
 			nodeGenerationIndex: {
 				id: generation.id,
-				nodeId: generation.context.operationNode.id,
+				nodeId: generationContext.operationNode.id,
 				status: "cancelled",
 				createdAt: generation.createdAt,
 				queuedAt: Date.now(),

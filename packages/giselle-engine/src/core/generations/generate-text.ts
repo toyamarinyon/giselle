@@ -86,11 +86,11 @@ export async function generateText(args: {
 		}),
 		setNodeGenerationIndex({
 			storage: args.context.storage,
-			nodeId: runningGeneration.context.operationNode.id,
+			nodeId: generationContext.operationNode.id,
 			origin: runningGeneration.context.origin,
 			nodeGenerationIndex: {
 				id: runningGeneration.id,
-				nodeId: runningGeneration.context.operationNode.id,
+				nodeId: generationContext.operationNode.id,
 				status: "running",
 				createdAt: runningGeneration.createdAt,
 				queuedAt: runningGeneration.queuedAt,
@@ -127,11 +127,11 @@ export async function generateText(args: {
 			}),
 			setNodeGenerationIndex({
 				storage: args.context.storage,
-				nodeId: runningGeneration.context.operationNode.id,
+				nodeId: generationContext.operationNode.id,
 				origin: runningGeneration.context.origin,
 				nodeGenerationIndex: {
 					id: failedGeneration.id,
-					nodeId: failedGeneration.context.operationNode.id,
+					nodeId: generationContext.operationNode.id,
 					status: "failed",
 					createdAt: failedGeneration.createdAt,
 					queuedAt: failedGeneration.queuedAt,
@@ -356,11 +356,11 @@ export async function generateText(args: {
 					}),
 					setNodeGenerationIndex({
 						storage: args.context.storage,
-						nodeId: runningGeneration.context.operationNode.id,
+						nodeId: generationContext.operationNode.id,
 						origin: runningGeneration.context.origin,
 						nodeGenerationIndex: {
 							id: failedGeneration.id,
-							nodeId: failedGeneration.context.operationNode.id,
+							nodeId: generationContext.operationNode.id,
 							status: "failed",
 							createdAt: failedGeneration.createdAt,
 							queuedAt: failedGeneration.queuedAt,
@@ -455,11 +455,11 @@ export async function generateText(args: {
 				}),
 				setNodeGenerationIndex({
 					storage: args.context.storage,
-					nodeId: runningGeneration.context.operationNode.id,
+					nodeId: generationContext.operationNode.id,
 					origin: runningGeneration.context.origin,
 					nodeGenerationIndex: {
 						id: completedGeneration.id,
-						nodeId: completedGeneration.context.operationNode.id,
+						nodeId: generationContext.operationNode.id,
 						status: "completed",
 						createdAt: completedGeneration.createdAt,
 						queuedAt: completedGeneration.queuedAt,

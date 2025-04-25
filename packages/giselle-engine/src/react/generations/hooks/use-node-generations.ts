@@ -1,5 +1,6 @@
 import {
 	type Generation,
+	GenerationContext,
 	GenerationOrigin,
 	type NodeId,
 } from "@giselle-sdk/data-type";
@@ -33,12 +34,17 @@ export function useNodeGenerations({
 	const generations = useMemo(
 		() =>
 			allGenerations
-				.filter(
-					(generation) =>
-						generation.context.operationNode.id === nodeId &&
+				.filter((generation) => {
+					const parse = GenerationContext.safeParse(generation.context);
+					if (!parse.success) {
+						return false;
+					}
+					return (
+						parse.data.operationNode.id === nodeId &&
 						generation.context.origin.type === originType &&
-						generation.context.origin.id === originId,
-				)
+						generation.context.origin.id === originId
+					);
+				})
 				.sort(
 					(a, b) =>
 						new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
