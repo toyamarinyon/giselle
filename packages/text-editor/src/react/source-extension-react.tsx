@@ -7,7 +7,7 @@ import { SourceExtension } from "../extensions/source-extension";
 
 function defaultName(node: GiselleNode) {
 	switch (node.type) {
-		case "action":
+		case "operation":
 			switch (node.content.type) {
 				case "textGeneration":
 				case "imageGeneration":

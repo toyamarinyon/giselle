@@ -55,7 +55,7 @@ export function ImageGenerationNodePropertiesPanel({
 				type: "workspace",
 				id: data.id,
 			},
-			actionNode: node,
+			operationNode: node,
 			sourceNodes: connectedSources.map(
 				(connectedSource) => connectedSource.node,
 			),

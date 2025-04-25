@@ -60,8 +60,8 @@ export async function generateImage(args: {
 	providerOptions?: ProviderOptions;
 	telemetry?: TelemetrySettings;
 }) {
-	const actionNode = args.generation.context.actionNode;
-	if (!isImageGenerationNode(actionNode)) {
+	const operationNode = args.generation.context.operationNode;
+	if (!isImageGenerationNode(operationNode)) {
 		throw new Error("Invalid generation type");
 	}
 	const langfuse = new Langfuse();
@@ -88,11 +88,11 @@ export async function generateImage(args: {
 		}),
 		setNodeGenerationIndex({
 			storage: args.context.storage,
-			nodeId: runningGeneration.context.actionNode.id,
+			nodeId: runningGeneration.context.operationNode.id,
 			origin: runningGeneration.context.origin,
 			nodeGenerationIndex: {
 				id: runningGeneration.id,
-				nodeId: runningGeneration.context.actionNode.id,
+				nodeId: runningGeneration.context.operationNode.id,
 				status: "running",
 				createdAt: runningGeneration.createdAt,
 				queuedAt: runningGeneration.queuedAt,
@@ -129,11 +129,11 @@ export async function generateImage(args: {
 			}),
 			setNodeGenerationIndex({
 				storage: args.context.storage,
-				nodeId: runningGeneration.context.actionNode.id,
+				nodeId: runningGeneration.context.operationNode.id,
 				origin: runningGeneration.context.origin,
 				nodeGenerationIndex: {
 					id: failedGeneration.id,
-					nodeId: failedGeneration.context.actionNode.id,
+					nodeId: failedGeneration.context.operationNode.id,
 					status: "failed",
 					createdAt: failedGeneration.createdAt,
 					queuedAt: failedGeneration.queuedAt,
@@ -214,7 +214,7 @@ export async function generateImage(args: {
 		}
 	}
 	const messages = await buildMessageObject(
-		actionNode,
+		operationNode,
 		runningGeneration.context.sourceNodes,
 		fileResolver,
 		generationContentResolver,
@@ -307,8 +307,8 @@ async function generateImageWithFal({
 	});
 	const generation = trace.generation({
 		name: "fal-ai/client.subscribe",
-		model: actionNode.content.llm.id,
-		modelParameters: actionNode.content.llm.configurations,
+		model: operationNode.content.llm.id,
+		modelParameters: operationNode.content.llm.configurations,
 		input: { messages },
 		usage: {
 			input: 0,
@@ -334,19 +334,19 @@ async function generateImageWithFal({
 			prompt,
 			image_size: {
 				width: Number.parseInt(
-					actionNode.content.llm.configurations.size.split("x")[0],
+					operationNode.content.llm.configurations.size.split("x")[0],
 				),
 				height: Number.parseInt(
-					actionNode.content.llm.configurations.size.split("x")[1],
+					operationNode.content.llm.configurations.size.split("x")[1],
 				),
 			},
-			num_images: actionNode.content.llm.configurations.n,
+			num_images: operationNode.content.llm.configurations.n,
 		},
 	})) as unknown as FalImageResult;
 
 	const generationOutputs: GenerationOutput[] = [];
 
-	const generatedImageOutput = generationContext.actionNode.outputs.find(
+	const generatedImageOutput = generationContext.operationNode.outputs.find(
 		(output) => output.accessor === "generated-image",
 	);
 	if (generatedImageOutput !== undefined) {

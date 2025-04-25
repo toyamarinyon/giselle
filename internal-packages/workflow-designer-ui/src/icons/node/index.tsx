@@ -24,7 +24,7 @@ export function NodeIcon({
 	...props
 }: { node: Node } & SVGProps<SVGSVGElement>) {
 	switch (node.type) {
-		case "action": {
+		case "operation": {
 			switch (node.content.type) {
 				case "textGeneration":
 					switch (node.content.llm.provider) {

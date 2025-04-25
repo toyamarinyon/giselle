@@ -28,7 +28,7 @@ export function GenerationRunner({
 		return null;
 	}
 	const generationContext = GenerationContext.parse(generation.context);
-	switch (generationContext.actionNode.content.type) {
+	switch (generationContext.operationNode.content.type) {
 		case "textGeneration":
 			return <TextGenerationRunner generation={generation} />;
 		case "imageGeneration":
@@ -36,7 +36,7 @@ export function GenerationRunner({
 		case "trigger":
 			return null;
 		default: {
-			const _exhaustiveCheck: never = generationContext.actionNode.content;
+			const _exhaustiveCheck: never = generationContext.operationNode.content;
 			return _exhaustiveCheck;
 		}
 	}
@@ -51,10 +51,10 @@ function TextGenerationRunner({
 		return null;
 	}
 	const generationContext = GenerationContext.parse(generation.context);
-	if (generationContext.actionNode.content.type !== "textGeneration") {
+	if (generationContext.operationNode.content.type !== "textGeneration") {
 		throw new Error("Invalid generation type");
 	}
-	const content = generationContext.actionNode.content;
+	const content = generationContext.operationNode.content;
 	switch (content.llm.provider) {
 		case "openai":
 		case "anthropic":

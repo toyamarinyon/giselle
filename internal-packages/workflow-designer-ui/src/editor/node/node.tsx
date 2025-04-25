@@ -196,7 +196,7 @@ export function NodeComponent({
 								e.stopPropagation();
 							}}
 						/>
-						{node.type === "action" &&
+						{node.type === "operation" &&
 							(node.content.type === "imageGeneration" ||
 								node.content.type === "textGeneration") && (
 								<div className="text-[10px] text-white-400 pl-[4px]">
@@ -233,7 +233,7 @@ export function NodeComponent({
 								</div>
 							</div>
 						))}
-						{node.type === "action" && node.content.type !== "trigger" && (
+						{node.type === "operation" && node.content.type !== "trigger" && (
 							<div className="relative flex items-center h-[28px]" key="blank">
 								<Handle
 									type="target"

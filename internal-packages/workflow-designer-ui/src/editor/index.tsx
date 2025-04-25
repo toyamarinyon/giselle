@@ -155,7 +155,7 @@ function NodeCanvas() {
 			const targetNode = data.nodes.find(
 				(node) => node.id === connection.inputNode.id,
 			);
-			if (targetNode && targetNode.type === "action") {
+			if (targetNode && targetNode.type === "operation") {
 				const updatedInputs = targetNode.inputs.filter(
 					(input) => input.id !== connection.inputId,
 				);

@@ -206,7 +206,7 @@ export function triggerNode(triggerId: string) {
 
 	return {
 		id: NodeId.generate(),
-		type: "action",
+		type: "operation",
 		name: trigger.label,
 		content: {
 			type: "trigger",
@@ -261,7 +261,7 @@ export function textGenerationNode(llm: TextGenerationLanguageModelData) {
 
 	return {
 		id: NodeId.generate(),
-		type: "action",
+		type: "operation",
 		content: {
 			type: "textGeneration",
 			llm,
@@ -274,7 +274,7 @@ export function textGenerationNode(llm: TextGenerationLanguageModelData) {
 export function imageGenerationNode(llm: ImageGenerationLanguageModelData) {
 	return {
 		id: NodeId.generate(),
-		type: "action",
+		type: "operation",
 		content: {
 			type: "imageGeneration",
 			llm,

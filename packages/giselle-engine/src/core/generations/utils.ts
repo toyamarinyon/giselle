@@ -1,6 +1,5 @@
 import { parseAndMod } from "@giselle-sdk/data-mod";
 import {
-	type ActionNode,
 	type CompletedGeneration,
 	type FileContent,
 	type FileData,
@@ -13,6 +12,7 @@ import {
 	type Node,
 	NodeGenerationIndex,
 	NodeId,
+	type OperationNode,
 	OutputId,
 	type RunId,
 	type TextGenerationNode,
@@ -37,7 +37,7 @@ export interface FileIndex {
 }
 
 export async function buildMessageObject(
-	node: ActionNode,
+	node: OperationNode,
 	contextNodes: Node[],
 	fileResolver: (file: FileData) => Promise<DataContent>,
 	textGenerationResolver: (
@@ -707,9 +707,9 @@ export async function checkUsageLimits(args: {
 	}
 	const usageLimits = await fetchUsageLimitsFn(workspaceId);
 
-	const actionNode = generation.context.actionNode;
+	const operationNode = generation.context.operationNode;
 	const languageModel = languageModels.find(
-		(model) => model.id === actionNode.content.llm.id,
+		(model) => model.id === operationNode.content.llm.id,
 	);
 	if (languageModel === undefined) {
 		return {

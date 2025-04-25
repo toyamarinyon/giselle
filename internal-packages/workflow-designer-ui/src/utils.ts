@@ -2,7 +2,7 @@ import type { Node } from "@giselle-sdk/data-type";
 
 export function defaultName(node: Node) {
 	switch (node.type) {
-		case "action":
+		case "operation":
 			switch (node.content.type) {
 				case "textGeneration":
 				case "imageGeneration":
