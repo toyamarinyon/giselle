@@ -767,6 +767,9 @@ importers:
       '@giselle-sdk/data-type':
         specifier: workspace:^
         version: link:../data-type
+      vitest:
+        specifier: 'catalog:'
+        version: 3.0.5(@types/debug@4.1.12)(@types/node@22.14.0)(jiti@2.4.2)(jsdom@26.0.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.29.1)(terser@5.38.0)(yaml@2.7.0)
       zod:
         specifier: 'catalog:'
         version: 3.24.1
