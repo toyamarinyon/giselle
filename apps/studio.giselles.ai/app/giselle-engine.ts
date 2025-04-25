@@ -3,7 +3,7 @@ import { fetchUsageLimits } from "@/packages/lib/fetch-usage-limits";
 import { onConsumeAgentTime } from "@/packages/lib/on-consume-agent-time";
 import supabaseStorageDriver from "@/supabase-storage-driver";
 import { WorkspaceId } from "@giselle-sdk/data-type";
-import { NextGiselleEngine } from "@giselle-sdk/giselle-engine/next";
+import { NextGiselleEngine } from "@giselle-sdk/giselle-engine/next-internal";
 import { supabaseVaultDriver } from "@giselle-sdk/supabase-driver";
 import { createStorage } from "unstorage";
 

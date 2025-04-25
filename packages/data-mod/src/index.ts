@@ -23,14 +23,6 @@ export function parseAndMod<T extends ZodSchema>(
 		return parseResult.data;
 	}
 
-	console.group("error");
-	console.log("current error ---------- start");
-	console.log(parseResult.error.toString());
-	console.log("current error ---------- end");
-	console.log("prev error ------------- start");
-	console.log(prevError?.toString());
-	console.log("prev error ------------- end");
-	console.groupEnd();
 	if (prevError?.toString() === parseResult.error.toString()) {
 		console.log(JSON.stringify(data));
 		throw parseResult.error;

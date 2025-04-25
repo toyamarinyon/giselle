@@ -43,8 +43,6 @@ function transformNodeTypes(obj: unknown): unknown {
 		const transformedActionNode = transformNodeTypes(result.actionNode);
 		// Then assign it to operationNode
 		result.operationNode = transformedActionNode;
-		// Delete actionNode instead of setting to undefined to ensure it's properly removed
-		delete result.actionNode;
 	}
 
 	// If this has an actions array, rename to operations
@@ -52,8 +50,6 @@ function transformNodeTypes(obj: unknown): unknown {
 		result.operations = result.actions.map((action) =>
 			transformNodeTypes(action),
 		);
-		// Delete actions instead of setting to undefined
-		delete result.actions;
 	}
 
 	return result;
@@ -93,9 +89,6 @@ export function renameActionToOperation(data: unknown, issue: ZodIssue) {
 					);
 					// Remove the old field properly with delete
 					const templateInNewData = getValueAtPath(newData, templatePath);
-					if (templateInNewData && typeof templateInNewData === "object") {
-						delete templateInNewData.actionNode;
-					}
 					return newData;
 				}
 
@@ -163,9 +156,6 @@ export function renameActionToOperation(data: unknown, issue: ZodIssue) {
 				);
 				// Remove the old field using delete instead of undefined
 				const contextInNewData = getValueAtPath(newData, generationContextPath);
-				if (contextInNewData && typeof contextInNewData === "object") {
-					delete contextInNewData.actionNode;
-				}
 				return newData;
 			}
 		}
@@ -182,11 +172,6 @@ export function renameActionToOperation(data: unknown, issue: ZodIssue) {
 			if (Array.isArray(job.actions)) {
 				// Copy the actions array to operations
 				setValueAtPath(newData, [...jobPath, "operations"], job.actions);
-				// Delete the old actions array properly
-				const jobInNewData = getValueAtPath(newData, jobPath);
-				if (jobInNewData && typeof jobInNewData === "object") {
-					delete jobInNewData.actions;
-				}
 				return newData;
 			}
 		}
