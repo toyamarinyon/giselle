@@ -5,7 +5,7 @@ import {
 	type CreatedGeneration,
 	type FailedGeneration,
 	type Generation,
-	type GenerationContext,
+	GenerationContext,
 	GenerationId,
 	type GenerationOrigin,
 	type NodeId,
@@ -104,10 +104,11 @@ export function GenerationRunnerSystemProvider({
 			if (generation.status === "created") {
 				continue;
 			}
-			const generations = tmp.get(generation.context.operationNode.id) || [];
+			const generationContext = GenerationContext.parse(generation.context);
+			const generations = tmp.get(generationContext.operationNode.id) || [];
 			generations.push(generation);
 			tmp.set(
-				generation.context.operationNode.id,
+				generationContext.operationNode.id,
 				generations.sort((a, b) => a.createdAt - b.createdAt),
 			);
 		}
