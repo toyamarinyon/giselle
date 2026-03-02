@@ -261,19 +261,19 @@ export type ObjectAppTask = {
 	status: string;
 };
 
-export type FinalAppTask = PassthroughAppTask | ObjectAppTask;
-
-export type FinalAppTaskResult = {
-	task: FinalAppTask;
-};
-
-export type AppTask = TaskWithStatus | FinalAppTask;
+export type AppTask = PassthroughAppTask | ObjectAppTask;
 
 export type AppTaskResult = {
 	task: AppTask;
 };
 
-function parseTaskResponseJson(json: unknown): AppTaskResult {
+export type AppTaskOrStatus = TaskWithStatus | AppTask;
+
+export type AppTaskResultOrStatus = {
+	task: AppTaskOrStatus;
+};
+
+function parseTaskResponseJson(json: unknown): AppTaskResultOrStatus {
 	if (typeof json !== "object" || json === null) {
 		throw new Error("Invalid response JSON");
 	}
@@ -336,7 +336,7 @@ function parseTaskResponseJson(json: unknown): AppTaskResult {
 export default class Giselle {
 	readonly apps: {
 		run: (args: AppRunArgs) => Promise<AppRunResult>;
-		runAndWait: (args: AppRunAndWaitArgs) => Promise<FinalAppTaskResult>;
+		runAndWait: (args: AppRunAndWaitArgs) => Promise<AppTaskResult>;
 		list: () => Promise<AppListResult>;
 	};
 	readonly files: {
@@ -526,7 +526,7 @@ export default class Giselle {
 		appId: string;
 		taskId: string;
 		includeGenerations: boolean;
-	}): Promise<AppTaskResult> {
+	}): Promise<AppTaskResultOrStatus> {
 		if (!this.#apiKey) {
 			throw new ConfigurationError("`apiKey` is required");
 		}
@@ -577,7 +577,7 @@ export default class Giselle {
 		}
 	}
 
-	async #runAppAndWait(args: AppRunAndWaitArgs): Promise<FinalAppTaskResult> {
+	async #runAppAndWait(args: AppRunAndWaitArgs): Promise<AppTaskResult> {
 		const { taskId } = await this.#runApp(args);
 
 		const pollIntervalMs = args.pollIntervalMs ?? defaultPollIntervalMs;
@@ -614,6 +614,6 @@ export default class Giselle {
 			appId: args.appId,
 			taskId,
 			includeGenerations: true,
-		})) as FinalAppTaskResult;
+		})) as AppTaskResult;
 	}
 }
