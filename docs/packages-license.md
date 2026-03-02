@@ -2,9 +2,9 @@
 
 
 ## Summary
-* 965 MIT
+* 967 MIT
 * 193 Apache 2.0
-* 44 ISC
+* 45 ISC
 * 27 New BSD
 * 16 Simplified BSD
 * 9 BlueOak-1.0.0
@@ -1173,7 +1173,7 @@ MIT-0 permitted
 
 
 <a name="@esbuild/linux-x64"></a>
-### @esbuild/linux-x64 v0.18.20
+### @esbuild/linux-x64 v0.25.6
 #### 
 
 ##### Paths
@@ -1239,7 +1239,7 @@ MIT-0 permitted
 
 
 <a name="@giselles-ai/sandbox-agent"></a>
-### @giselles-ai/sandbox-agent v0.1.11
+### @giselles-ai/sandbox-agent v0.1.12
 #### 
 
 ##### Paths
@@ -6446,7 +6446,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="confbox"></a>
-### confbox v0.2.2
+### confbox v0.1.8
 #### 
 
 ##### Paths
@@ -7205,7 +7205,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="esbuild"></a>
-### esbuild v0.18.20
+### esbuild v0.25.6
 #### 
 
 ##### Paths
@@ -7679,6 +7679,17 @@ BlueOak-1.0.0 permitted
 
 <a name="find-up"></a>
 ### find-up v4.1.0
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
+
+
+
+<a name="fix-dts-default-cjs-exports"></a>
+### fix-dts-default-cjs-exports v1.0.1
 #### 
 
 ##### Paths
@@ -8844,7 +8855,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="js-yaml"></a>
-### js-yaml v3.14.1
+### js-yaml v3.14.2
 #### 
 
 ##### Paths
@@ -9153,17 +9164,6 @@ BlueOak-1.0.0 permitted
 
 <a name="lodash.isarguments"></a>
 ### lodash.isarguments v3.1.0
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
-<a name="lodash.sortby"></a>
-### lodash.sortby v4.7.0
 #### 
 
 ##### Paths
@@ -9966,13 +9966,24 @@ BlueOak-1.0.0 permitted
 
 
 <a name="minimatch"></a>
-### minimatch v10.2.1
+### minimatch v10.2.4
 #### 
 
 ##### Paths
 * /home/runner/work/giselle/giselle
 
 BlueOak-1.0.0 permitted
+
+
+
+<a name="minimatch"></a>
+### minimatch v9.0.8
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://en.wikipedia.org/wiki/ISC_license">ISC</a> permitted
 
 
 
@@ -10000,6 +10011,17 @@ BlueOak-1.0.0 permitted
 
 <a name="minizlib"></a>
 ### minizlib v3.1.0
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
+
+
+
+<a name="mlly"></a>
+### mlly v1.8.0
 #### 
 
 ##### Paths
@@ -10879,7 +10901,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="pkg-types"></a>
-### pkg-types v2.3.0
+### pkg-types v1.3.1
 #### 
 
 ##### Paths
@@ -12874,7 +12896,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="tinyglobby"></a>
-### tinyglobby v0.2.14
+### tinyglobby v0.2.15
 #### 
 
 ##### Paths
@@ -13105,7 +13127,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="tsup"></a>
-### tsup v8.3.5
+### tsup v8.5.1
 #### 
 
 ##### Paths
@@ -13194,6 +13216,17 @@ BlueOak-1.0.0 permitted
 
 <a name="uc.micro"></a>
 ### uc.micro v2.1.0
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
+
+
+
+<a name="ufo"></a>
+### ufo v1.6.3
 #### 
 
 ##### Paths
