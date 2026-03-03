@@ -76,14 +76,31 @@ function coerceToSubSchema(
 	if (value === undefined) return undefined;
 
 	switch (targetSchema.type) {
-		case "object":
-			return value !== null &&
-				typeof value === "object" &&
-				!Array.isArray(value)
-				? value
+		case "object": {
+			if (value === null || typeof value !== "object" || Array.isArray(value)) {
+				return undefined;
+			}
+			const input = value as Record<string, unknown>;
+			const result: Record<string, unknown> = {};
+			for (const [key, childSchema] of Object.entries(
+				targetSchema.properties,
+			)) {
+				const child = coerceToSubSchema(input[key], childSchema);
+				if (child !== undefined) {
+					result[key] = child;
+				}
+			}
+			return Object.keys(result).length > 0 ? result : undefined;
+		}
+		case "array": {
+			if (!Array.isArray(value)) return undefined;
+			const coercedItems = value.map((item) =>
+				coerceToSubSchema(item, targetSchema.items),
+			);
+			return coercedItems.every((item) => item !== undefined)
+				? coercedItems
 				: undefined;
-		case "array":
-			return Array.isArray(value) ? value : undefined;
+		}
 		case "number": {
 			if (typeof value === "number") {
 				return Number.isNaN(value) ? undefined : value;
@@ -102,6 +119,7 @@ function coerceToSubSchema(
 			return undefined;
 		case "string":
 			if (typeof value === "string") return value;
+			if (typeof value === "number") return String(value);
 			return undefined;
 	}
 }
