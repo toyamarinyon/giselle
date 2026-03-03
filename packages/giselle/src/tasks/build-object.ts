@@ -173,6 +173,10 @@ function resolveValue(params: {
 		case "boolean":
 		case "string":
 			return coerceToSubSchema(rawText, targetSchema);
+		default: {
+			const _exhaustiveCheck: never = targetSchema;
+			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
+		}
 	}
 }
 
@@ -208,7 +212,7 @@ function buildValueFromSubSchema(params: {
 				});
 			}
 
-			const result: Record<string, unknown> = {};
+			const result = Object.create(null) as Record<string, unknown>;
 			for (const [key, childSchema] of Object.entries(subSchema.properties)) {
 				const childValue = buildValueFromSubSchema({
 					subSchema: childSchema,
@@ -257,7 +261,7 @@ export function buildObject(
 	endNodeOutput: Extract<EndOutput, { format: "object" }>,
 	generationsByNodeId: Record<NodeId, CompletedGeneration>,
 ): Record<string, unknown> {
-	const result: Record<string, unknown> = {};
+	const result = Object.create(null) as Record<string, unknown>;
 	for (const [key, subSchema] of Object.entries(
 		endNodeOutput.schema.properties,
 	)) {
