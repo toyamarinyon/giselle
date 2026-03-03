@@ -323,19 +323,6 @@ export async function getTaskData(taskId: TaskId): Promise<UITask> {
 		(item) => item.finished,
 	).length;
 
-	const outputs = finalStepItems
-		.map((item) => {
-			const generation =
-				item.status === "completed"
-					? item.generation
-					: generationsByStepId.get(item.id);
-			if (generation === undefined) {
-				return null;
-			}
-			return { title: item.title, generation };
-		})
-		.filter((outputOrNull) => outputOrNull !== null);
-
 	let finalStep: UITask["finalStep"];
 	switch (task.endNodeOutput.format) {
 		case "object": {
@@ -356,6 +343,19 @@ export async function getTaskData(taskId: TaskId): Promise<UITask> {
 			break;
 		}
 		case "passthrough": {
+			const outputs = finalStepItems
+				.map((item) => {
+					const generation =
+						item.status === "completed"
+							? item.generation
+							: generationsByStepId.get(item.id);
+					if (generation === undefined) {
+						return null;
+					}
+					return { title: item.title, generation };
+				})
+				.filter((outputOrNull) => outputOrNull !== null);
+
 			finalStep = {
 				format: "passthrough",
 				totalStepItemsCount,
