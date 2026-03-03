@@ -27,7 +27,7 @@ export function FinalStepOutput({
 }: {
 	finalStep: UITask["finalStep"];
 }) {
-	switch (finalStep.format) {
+	switch (finalStep.outputType) {
 		case "object":
 			return (
 				<div className="mt-8">

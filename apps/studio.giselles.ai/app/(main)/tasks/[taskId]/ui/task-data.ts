@@ -71,7 +71,7 @@ interface FinalStepBase {
 }
 
 interface PassthroughFinalStep extends FinalStepBase {
-	format: "passthrough";
+	outputType: "passthrough";
 	outputs: {
 		title: string;
 		generation: Generation;
@@ -79,7 +79,7 @@ interface PassthroughFinalStep extends FinalStepBase {
 }
 
 interface ObjectFinalStep extends FinalStepBase {
-	format: "object";
+	outputType: "object";
 	output: Record<string, unknown>;
 }
 
@@ -335,7 +335,7 @@ export async function getTaskData(taskId: TaskId): Promise<UITask> {
 			}
 
 			finalStep = {
-				format: "object",
+				outputType: "object",
 				totalStepItemsCount,
 				finishedStepItemsCount,
 				output: buildObject(task.endNodeOutput, generationsByNodeId),
@@ -357,7 +357,7 @@ export async function getTaskData(taskId: TaskId): Promise<UITask> {
 				.filter((outputOrNull) => outputOrNull !== null);
 
 			finalStep = {
-				format: "passthrough",
+				outputType: "passthrough",
 				totalStepItemsCount,
 				finishedStepItemsCount,
 				outputs,
