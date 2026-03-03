@@ -366,7 +366,7 @@ export async function getTaskData(taskId: TaskId): Promise<UITask> {
 		}
 		default: {
 			const _exhaustiveCheck: never = task.endNodeOutput;
-			throw new Error(`Unhandled format: ${_exhaustiveCheck}`);
+			throw new Error(`Unhandled endNodeOutput.format: ${_exhaustiveCheck}`);
 		}
 	}
 

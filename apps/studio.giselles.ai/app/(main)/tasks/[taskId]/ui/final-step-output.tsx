@@ -110,7 +110,7 @@ export function FinalStepOutput({
 		}
 		default: {
 			const _exhaustiveCheck: never = finalStep;
-			throw new Error(`Unhandled format: ${_exhaustiveCheck}`);
+			throw new Error(`Unhandled outputType: ${_exhaustiveCheck}`);
 		}
 	}
 }
