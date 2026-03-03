@@ -81,7 +81,7 @@ function coerceToSubSchema(
 				return undefined;
 			}
 			const input = value as Record<string, unknown>;
-			const result: Record<string, unknown> = {};
+			const result = Object.create(null) as Record<string, unknown>;
 			for (const [key, childSchema] of Object.entries(
 				targetSchema.properties,
 			)) {
@@ -94,12 +94,15 @@ function coerceToSubSchema(
 		}
 		case "array": {
 			if (!Array.isArray(value)) return undefined;
-			const coercedItems = value.map((item) =>
-				coerceToSubSchema(item, targetSchema.items),
-			);
-			return coercedItems.every((item) => item !== undefined)
-				? coercedItems
-				: undefined;
+			const result: unknown[] = [];
+			for (const item of value) {
+				const coerced = coerceToSubSchema(item, targetSchema.items);
+				if (coerced === undefined) {
+					return undefined;
+				}
+				result.push(coerced);
+			}
+			return result;
 		}
 		case "number": {
 			if (typeof value === "number") {
@@ -121,6 +124,10 @@ function coerceToSubSchema(
 			if (typeof value === "string") return value;
 			if (typeof value === "number") return String(value);
 			return undefined;
+		default: {
+			const _exhaustiveCheck: never = targetSchema;
+			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
+		}
 	}
 }
 

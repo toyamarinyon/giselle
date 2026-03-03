@@ -433,11 +433,13 @@ describe("buildObject", () => {
 			expect(typeof result.isActive).toBe("boolean");
 		});
 
-		it("coerces number and boolean values from raw text", () => {
+		it("coerces string-to-number, string-to-boolean, and number-to-string values", () => {
 			const numberNodeId = NodeId.generate();
 			const booleanNodeId = NodeId.generate();
+			const stringNodeId = NodeId.generate();
 			const numberOutputId = OutputId.generate();
 			const booleanOutputId = OutputId.generate();
+			const stringOutputId = OutputId.generate();
 
 			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
 				format: "object",
@@ -447,9 +449,10 @@ describe("buildObject", () => {
 					properties: {
 						count: { type: "number" },
 						isActive: { type: "boolean" },
+						productId: { type: "string" },
 					},
 					additionalProperties: false,
-					required: ["count", "isActive"],
+					required: ["count", "isActive", "productId"],
 				},
 				mappings: [
 					{
@@ -466,6 +469,14 @@ describe("buildObject", () => {
 							nodeId: booleanNodeId,
 							outputId: booleanOutputId,
 							path: [],
+						},
+					},
+					{
+						path: ["productId"],
+						source: {
+							nodeId: stringNodeId,
+							outputId: stringOutputId,
+							path: ["productId"],
 						},
 					},
 				],
@@ -491,12 +502,27 @@ describe("buildObject", () => {
 						},
 					],
 				}),
+				[stringNodeId]: createCompletedGeneration({
+					nodeId: stringNodeId,
+					outputs: [
+						{
+							type: "generated-text",
+							outputId: stringOutputId,
+							content: JSON.stringify({ productId: 12345 }),
+						},
+					],
+				}),
 			};
 
 			const result = buildObject(endNodeOutput, generationsByNodeId);
-			expect(result).toEqual({ count: 42, isActive: true });
+			expect(result).toEqual({
+				count: 42,
+				isActive: true,
+				productId: "12345",
+			});
 			expect(typeof result.count).toBe("number");
 			expect(typeof result.isActive).toBe("boolean");
+			expect(typeof result.productId).toBe("string");
 		});
 
 		it("recursively coerces array of objects in whole-array mapping", () => {
