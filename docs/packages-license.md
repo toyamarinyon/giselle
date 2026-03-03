@@ -2,7 +2,7 @@
 
 
 ## Summary
-* 967 MIT
+* 966 MIT
 * 193 Apache 2.0
 * 45 ISC
 * 27 New BSD
@@ -11428,17 +11428,6 @@ BlueOak-1.0.0 permitted
 
 
 
-<a name="randombytes"></a>
-### randombytes v2.1.0
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
 <a name="range-parser"></a>
 ### range-parser v1.2.1
 #### 
@@ -12045,7 +12034,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="serialize-javascript"></a>
-### serialize-javascript v6.0.2
+### serialize-javascript v7.0.3
 #### 
 
 ##### Paths
