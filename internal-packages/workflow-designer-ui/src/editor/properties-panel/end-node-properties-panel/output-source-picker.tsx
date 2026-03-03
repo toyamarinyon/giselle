@@ -113,17 +113,6 @@ function collectSubSchemaItems(
 				depth + 1,
 			);
 		}
-		if (subSchema.type === "array" && subSchema.items.type === "object") {
-			collectSubSchemaItems(
-				candidates,
-				subSchema.items.properties,
-				node,
-				outputId,
-				nodeName,
-				path,
-				depth + 1,
-			);
-		}
 	}
 }
 
