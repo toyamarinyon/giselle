@@ -28,7 +28,7 @@
 ## State
 
 - Branch `feat/task-structured-output-display` is created from `main`.
-- `task-data.ts`, `final-step-output.tsx` updated; `output-actions.tsx` unchanged from main.
+- `task-data.ts`, `final-step-output.tsx`, `output-actions.tsx` updated.
 - `ObjectOutputView` added in `internal-packages/workflow-designer-ui/src/ui/`.
 
 ## Done
