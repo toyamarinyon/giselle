@@ -102,7 +102,7 @@ function coerceToSubSchema(
 				}
 				result.push(coerced);
 			}
-			return result.length > 0 ? result : undefined;
+			return result;
 		}
 		case "number": {
 			if (typeof value === "number") {
