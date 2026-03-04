@@ -76,14 +76,34 @@ function coerceToSubSchema(
 	if (value === undefined) return undefined;
 
 	switch (targetSchema.type) {
-		case "object":
-			return value !== null &&
-				typeof value === "object" &&
-				!Array.isArray(value)
-				? value
-				: undefined;
-		case "array":
-			return Array.isArray(value) ? value : undefined;
+		case "object": {
+			if (value === null || typeof value !== "object" || Array.isArray(value)) {
+				return undefined;
+			}
+			const input = value as Record<string, unknown>;
+			const result = Object.create(null) as Record<string, unknown>;
+			for (const [key, childSchema] of Object.entries(
+				targetSchema.properties,
+			)) {
+				const child = coerceToSubSchema(input[key], childSchema);
+				if (child !== undefined) {
+					result[key] = child;
+				}
+			}
+			return Object.keys(result).length > 0 ? result : undefined;
+		}
+		case "array": {
+			if (!Array.isArray(value)) return undefined;
+			const result: unknown[] = [];
+			for (const item of value) {
+				const coerced = coerceToSubSchema(item, targetSchema.items);
+				if (coerced === undefined) {
+					return undefined;
+				}
+				result.push(coerced);
+			}
+			return result;
+		}
 		case "number": {
 			if (typeof value === "number") {
 				return Number.isNaN(value) ? undefined : value;
@@ -102,7 +122,12 @@ function coerceToSubSchema(
 			return undefined;
 		case "string":
 			if (typeof value === "string") return value;
+			if (typeof value === "number") return String(value);
 			return undefined;
+		default: {
+			const _exhaustiveCheck: never = targetSchema;
+			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
+		}
 	}
 }
 
@@ -148,6 +173,10 @@ function resolveValue(params: {
 		case "boolean":
 		case "string":
 			return coerceToSubSchema(rawText, targetSchema);
+		default: {
+			const _exhaustiveCheck: never = targetSchema;
+			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
+		}
 	}
 }
 
@@ -183,7 +212,7 @@ function buildValueFromSubSchema(params: {
 				});
 			}
 
-			const result: Record<string, unknown> = {};
+			const result = Object.create(null) as Record<string, unknown>;
 			for (const [key, childSchema] of Object.entries(subSchema.properties)) {
 				const childValue = buildValueFromSubSchema({
 					subSchema: childSchema,
@@ -232,7 +261,7 @@ export function buildObject(
 	endNodeOutput: Extract<EndOutput, { format: "object" }>,
 	generationsByNodeId: Record<NodeId, CompletedGeneration>,
 ): Record<string, unknown> {
-	const result: Record<string, unknown> = {};
+	const result = Object.create(null) as Record<string, unknown>;
 	for (const [key, subSchema] of Object.entries(
 		endNodeOutput.schema.properties,
 	)) {
