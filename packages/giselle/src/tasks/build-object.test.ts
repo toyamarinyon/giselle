@@ -433,6 +433,86 @@ describe("buildObject", () => {
 			expect(typeof result.isActive).toBe("boolean");
 		});
 
+		it("maps a string property with enum constraint", () => {
+			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+				format: "object",
+				schema: {
+					title: "TestSchema",
+					type: "object",
+					properties: {
+						color: { type: "string", enum: ["red", "green", "blue"] },
+					},
+					additionalProperties: false,
+					required: ["color"],
+				},
+				mappings: [
+					{
+						path: ["color"],
+						source: {
+							nodeId: defaultNodeId,
+							outputId: defaultOutputId,
+							path: [],
+						},
+					},
+				],
+			};
+			const generationsByNodeId = {
+				[defaultNodeId]: createCompletedGeneration({
+					outputs: [
+						{
+							type: "generated-text",
+							outputId: defaultOutputId,
+							content: "green",
+						},
+					],
+				}),
+			};
+
+			expect(buildObject(endNodeOutput, generationsByNodeId)).toEqual({
+				color: "green",
+			});
+		});
+
+		it("maps a string enum property extracted through source.path", () => {
+			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+				format: "object",
+				schema: {
+					title: "TestSchema",
+					type: "object",
+					properties: {
+						status: { type: "string", enum: ["active", "inactive"] },
+					},
+					additionalProperties: false,
+					required: ["status"],
+				},
+				mappings: [
+					{
+						path: ["status"],
+						source: {
+							nodeId: defaultNodeId,
+							outputId: defaultOutputId,
+							path: ["status"],
+						},
+					},
+				],
+			};
+			const generationsByNodeId = {
+				[defaultNodeId]: createCompletedGeneration({
+					outputs: [
+						{
+							type: "generated-text",
+							outputId: defaultOutputId,
+							content: JSON.stringify({ status: "active" }),
+						},
+					],
+				}),
+			};
+
+			expect(buildObject(endNodeOutput, generationsByNodeId)).toEqual({
+				status: "active",
+			});
+		});
+
 		it("coerces number and boolean values from raw text", () => {
 			const numberNodeId = NodeId.generate();
 			const booleanNodeId = NodeId.generate();
