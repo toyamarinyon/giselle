@@ -44,6 +44,9 @@ export function createInternalGiselleClient(): GiselleClient {
 		getFileText: internalApi.getFileText,
 		addWebPage: internalApi.addWebPage,
 
+		// structured-output
+		generateObject: internalApi.generateObject,
+
 		// secrets
 		addSecret: internalApi.addSecret,
 		deleteSecret: internalApi.deleteSecret,
