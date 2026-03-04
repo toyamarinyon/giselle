@@ -59,13 +59,17 @@ export function SchemaGeneratePopover({
 				>
 					<p className="text-[13px] text-text mb-[8px]">
 						Describe the desired output structure and we'll create a matching
-						schema for you.
+						schema for you. This will replace your current input.
 					</p>
 					<textarea
 						value={prompt}
 						onChange={(event) => setPrompt(event.target.value)}
 						onKeyDown={(e) => {
-							if (e.key === "Enter" && e.metaKey && !isDisabled) {
+							if (
+								e.key === "Enter" &&
+								(e.metaKey || e.ctrlKey) &&
+								!isDisabled
+							) {
 								e.preventDefault();
 								e.stopPropagation();
 								handleGenerate();

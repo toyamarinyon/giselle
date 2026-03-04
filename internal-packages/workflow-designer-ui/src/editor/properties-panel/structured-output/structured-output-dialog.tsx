@@ -215,6 +215,7 @@ export function StructuredOutputDialog({
 							form="structured-output-form"
 							variant="solid"
 							size="large"
+							disabled={isGenerating}
 						>
 							Update
 						</Button>
