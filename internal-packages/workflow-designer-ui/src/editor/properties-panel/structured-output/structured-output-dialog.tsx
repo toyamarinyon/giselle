@@ -5,17 +5,18 @@ import {
 	DialogClose,
 	DialogContent,
 	DialogDescription,
-	DialogFooter,
 	DialogTitle,
 	DialogTrigger,
 } from "@giselle-internal/ui/dialog";
 import { Input } from "@giselle-internal/ui/input";
 import type { Schema } from "@giselles-ai/protocol";
+import { useGiselle } from "@giselles-ai/react";
 import { Plus } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { convertFormFieldsToSchema } from "./convert-form-fields-to-schema";
 import { convertSchemaToFormFields } from "./convert-schema-to-form-fields";
 import { FormFieldRow } from "./form-field-row";
+import { SchemaGeneratePopover } from "./schema-generate-popover";
 import { createEmptyFormField, type FormField } from "./types";
 import {
 	hasDuplicateNames,
@@ -38,6 +39,8 @@ export function StructuredOutputDialog({
 	const [title, setTitle] = useState("");
 	const [fields, setFields] = useState<FormField[]>([]);
 	const [errorMessage, setErrorMessage] = useState("");
+	const [isGenerating, startGenerating] = useTransition();
+	const giselle = useGiselle();
 
 	const handleOpen = useCallback(
 		(open: boolean) => {
@@ -50,6 +53,27 @@ export function StructuredOutputDialog({
 			setIsOpen(open);
 		},
 		[schema],
+	);
+
+	const handleGenerate = useCallback(
+		(prompt: string) => {
+			setErrorMessage("");
+			startGenerating(async () => {
+				try {
+					const result = await giselle.generateObject({ prompt });
+					const parsed = convertSchemaToFormFields(result.schema);
+					startGenerating(() => {
+						setTitle(parsed.title);
+						setFields(parsed.fields);
+					});
+				} catch {
+					startGenerating(() => {
+						setErrorMessage("Failed to generate schema. Please try again.");
+					});
+				}
+			});
+		},
+		[giselle],
 	);
 
 	const handleSubmit = useCallback(
@@ -174,21 +198,28 @@ export function StructuredOutputDialog({
 					</form>
 				</DialogBody>
 
-				<DialogFooter>
-					<DialogClose asChild>
-						<Button variant="filled" size="large">
-							Cancel
+				<div className="flex items-center justify-between mt-[32px]">
+					<SchemaGeneratePopover
+						isGenerating={isGenerating}
+						onGenerate={handleGenerate}
+					/>
+
+					<div className="flex gap-x-3">
+						<DialogClose asChild>
+							<Button variant="filled" size="large">
+								Cancel
+							</Button>
+						</DialogClose>
+						<Button
+							type="submit"
+							form="structured-output-form"
+							variant="solid"
+							size="large"
+						>
+							Update
 						</Button>
-					</DialogClose>
-					<Button
-						type="submit"
-						form="structured-output-form"
-						variant="solid"
-						size="large"
-					>
-						Update
-					</Button>
-				</DialogFooter>
+					</div>
+				</div>
 			</DialogContent>
 		</Dialog>
 	);

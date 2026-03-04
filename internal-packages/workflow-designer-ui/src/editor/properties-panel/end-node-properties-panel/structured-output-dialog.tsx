@@ -5,7 +5,6 @@ import {
 	DialogClose,
 	DialogContent,
 	DialogDescription,
-	DialogFooter,
 	DialogTitle,
 	DialogTrigger,
 } from "@giselle-internal/ui/dialog";
@@ -16,14 +15,16 @@ import type {
 	Schema,
 	SubSchema,
 } from "@giselles-ai/protocol";
+import { useGiselle } from "@giselles-ai/react";
 import { Plus } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { convertFormFieldsToSchema } from "../structured-output/convert-form-fields-to-schema";
 import {
 	convertSchemaToFormFields,
 	convertSubSchemaToFormField,
 } from "../structured-output/convert-schema-to-form-fields";
 import { FormFieldRow } from "../structured-output/form-field-row";
+import { SchemaGeneratePopover } from "../structured-output/schema-generate-popover";
 import {
 	changeFieldType,
 	createEmptyFormField,
@@ -253,6 +254,8 @@ export function StructuredOutputDialog({
 		Map<string, PropertyMapping["source"]>
 	>(new Map());
 	const [errorMessage, setErrorMessage] = useState("");
+	const [isGenerating, startGenerating] = useTransition();
+	const giselle = useGiselle();
 
 	const handleOpen = useCallback(
 		(open: boolean) => {
@@ -268,6 +271,28 @@ export function StructuredOutputDialog({
 			setIsOpen(open);
 		},
 		[schema, mappings],
+	);
+
+	const handleGenerate = useCallback(
+		(prompt: string) => {
+			setErrorMessage("");
+			startGenerating(async () => {
+				try {
+					const result = await giselle.generateObject({ prompt });
+					const parsed = convertSchemaToFormFields(result.schema);
+					startGenerating(() => {
+						setTitle(parsed.title);
+						setFields(parsed.fields);
+						setFieldSourceMapping(new Map());
+					});
+				} catch {
+					startGenerating(() => {
+						setErrorMessage("Failed to generate schema. Please try again.");
+					});
+				}
+			});
+		},
+		[giselle],
 	);
 
 	const handleSubmit = useCallback(
@@ -424,13 +449,13 @@ export function StructuredOutputDialog({
 								htmlFor="end-structured-output-title"
 								className="block text-[14px] text-white/60 mb-[6px]"
 							>
-								Name
+								Title
 							</label>
 							<Input
 								id="end-structured-output-title"
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
-								placeholder="Schema name"
+								placeholder="Schema title"
 								className="w-full"
 								required
 							/>
@@ -479,21 +504,28 @@ export function StructuredOutputDialog({
 					</form>
 				</DialogBody>
 
-				<DialogFooter>
-					<DialogClose asChild>
-						<Button variant="filled" size="large">
-							Cancel
+				<div className="flex items-center justify-between mt-[32px]">
+					<SchemaGeneratePopover
+						isGenerating={isGenerating}
+						onGenerate={handleGenerate}
+					/>
+
+					<div className="flex gap-x-3">
+						<DialogClose asChild>
+							<Button variant="filled" size="large">
+								Cancel
+							</Button>
+						</DialogClose>
+						<Button
+							type="submit"
+							form="end-node-structured-output-form"
+							variant="solid"
+							size="large"
+						>
+							Update
 						</Button>
-					</DialogClose>
-					<Button
-						type="submit"
-						form="end-node-structured-output-form"
-						variant="solid"
-						size="large"
-					>
-						Update
-					</Button>
-				</DialogFooter>
+					</div>
+				</div>
 			</DialogContent>
 		</Dialog>
 	);
