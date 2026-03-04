@@ -46,6 +46,9 @@ export interface GiselleClient {
 		generationId: GenerationId;
 	}): ReturnType<Giselle["cancelGeneration"]>;
 	setGeneration(input: { generation: Generation }): Promise<void>;
+	generateObject(
+		input: Parameters<Giselle["generateObject"]>[0],
+	): ReturnType<Giselle["generateObject"]>;
 	generateImage(input: { generation: QueuedGeneration }): Promise<void>;
 	startContentGeneration(
 		input: Parameters<Giselle["startContentGeneration"]>[0],
