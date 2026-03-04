@@ -442,7 +442,9 @@ export function AppEntryInputDialog({
 function generateExampleValue(subSchema: SubSchema): unknown {
 	switch (subSchema.type) {
 		case "string":
-			return "string";
+			return subSchema.enum && subSchema.enum.length > 0
+				? subSchema.enum[0]
+				: "string";
 		case "number":
 			return 0;
 		case "boolean":

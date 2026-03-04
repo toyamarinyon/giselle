@@ -83,17 +83,29 @@ function applySourceSchemaToField(
 	sourcePath: string[],
 ): FormField {
 	const updated = changeFieldType(field, fieldType);
-	if (updated.type !== "object" && updated.type !== "array") return updated;
+	if (
+		updated.type !== "object" &&
+		updated.type !== "array" &&
+		updated.type !== "enum"
+	)
+		return updated;
 
 	const schema = getNodeSchema(sourceNode);
 	if (!schema) return updated;
 	const subSchema = getSubSchemaAtPath(schema, sourcePath);
 	if (!subSchema) return updated;
 
+	if (
+		updated.type === "enum" &&
+		subSchema.type === "string" &&
+		subSchema.enum
+	) {
+		return { ...updated, enumValues: subSchema.enum };
+	}
 	if (updated.type === "object") {
 		return { ...updated, children: createChildrenFromSubSchema(subSchema) };
 	}
-	if (subSchema.type === "array") {
+	if (updated.type === "array" && subSchema.type === "array") {
 		return {
 			...updated,
 			items: convertSubSchemaToFormField("items", subSchema.items),

@@ -89,7 +89,10 @@ function collectSubSchemaItems(
 ) {
 	for (const [key, subSchema] of Object.entries(properties)) {
 		const path = [...parentPath, key];
-		const fieldType = subSchema.type;
+		const fieldType: FieldType =
+			subSchema.type === "string" && subSchema.enum && subSchema.enum.length > 0
+				? "enum"
+				: subSchema.type;
 		candidates.push({
 			id: generateCandidateId(),
 			label: key,
