@@ -433,7 +433,6 @@ describe("buildObject", () => {
 			expect(typeof result.isActive).toBe("boolean");
 		});
 
-<<<<<<< HEAD
 		it("maps a string property with enum constraint", () => {
 			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
 				format: "object",
@@ -514,10 +513,7 @@ describe("buildObject", () => {
 			});
 		});
 
-		it("coerces number and boolean values from raw text", () => {
-=======
 		it("coerces string-to-number, string-to-boolean, and number-to-string values", () => {
->>>>>>> ff270011deb7854fd1ec99668776b22080dc2dc5
 			const numberNodeId = NodeId.generate();
 			const booleanNodeId = NodeId.generate();
 			const stringNodeId = NodeId.generate();
