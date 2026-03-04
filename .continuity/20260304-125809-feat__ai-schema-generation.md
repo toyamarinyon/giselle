@@ -13,7 +13,7 @@
 ## Constraints/Assumptions
 
 - Keep changes feature-flagged by `structuredOutputFlag`.
-- Use AI SDK v5 `generateObject` via `@ai-sdk/gateway` with the existing JSON schema shape.
+- Use AI SDK v5 `generateText` with `experimental_output` via `@ai-sdk/gateway` with the existing JSON schema shape.
 - Follow existing architecture and naming conventions without broad refactors.
 
 ## Key decisions
@@ -44,7 +44,7 @@
 - Updated end-node structured output dialog with identical Generate/Popover UX:
   - `internal-packages/workflow-designer-ui/src/editor/properties-panel/end-node-properties-panel/structured-output-dialog.tsx`
 - Moved `generate-object/index.ts` → `structured-output/generate-object.ts` to align with protocol naming.
-- Renamed "Title" label to "Name" in the simple structured output dialog for consistency with end-node dialog.
+- Renamed "Name" label to "Title" in the end-node structured output dialog for consistency with the simple structured output dialog.
 - Extracted shared `SchemaGeneratePopover` component from duplicated Popover code in both dialogs:
   - New file: `structured-output/schema-generate-popover.tsx` — encapsulates prompt state, popover open state, and all Popover UI.
   - Both dialogs now pass only `isGenerating` and `onGenerate` callback.
