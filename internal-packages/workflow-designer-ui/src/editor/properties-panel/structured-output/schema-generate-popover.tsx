@@ -57,7 +57,10 @@ export function SchemaGeneratePopover({
 					onWheel={(e) => e.stopPropagation()}
 					className="z-50 w-[480px] rounded-[8px] border border-border bg-black-900 p-[16px] shadow-xl"
 				>
-					<p id="schema-prompt-description" className="text-[13px] text-text mb-[8px]">
+					<p
+						id="schema-prompt-description"
+						className="text-[13px] text-text mb-[8px]"
+					>
 						Describe the desired output structure and we'll create a matching
 						schema for you. This will replace your current input.
 					</p>
