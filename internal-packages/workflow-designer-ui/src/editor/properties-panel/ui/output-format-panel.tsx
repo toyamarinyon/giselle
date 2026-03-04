@@ -31,7 +31,7 @@ export function OutputFormatPanel({
 	const isSchemaConfigured = Object.keys(schemaObject.properties).length > 0;
 
 	return (
-		<div className="flex flex-col items-end gap-[16px]">
+		<>
 			<Select
 				options={outputFormatOptions}
 				placeholder="Select format"
@@ -44,10 +44,9 @@ export function OutputFormatPanel({
 						onOutputChange({ format: "text" });
 					}
 				}}
-				widthClassName="w-[100px]"
 			/>
 			{hasOutputSchema && (
-				<div>
+				<div className="mt-[8px] flex justify-end">
 					<StructuredOutputDialog
 						schema={schemaObject}
 						onUpdate={(schema) => onOutputChange({ format: "object", schema })}
@@ -69,6 +68,6 @@ export function OutputFormatPanel({
 					/>
 				</div>
 			)}
-		</div>
+		</>
 	);
 }

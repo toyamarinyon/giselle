@@ -7,6 +7,9 @@ import {
 	createUploadedFileData,
 	createUploadingFileData,
 	type GenerationContextInput,
+	isEndNode,
+	type Schema,
+	type SubSchema,
 	type UploadedFileData,
 } from "@giselles-ai/protocol";
 import { useFeatureFlag, useGiselle } from "@giselles-ai/react";
@@ -22,6 +25,7 @@ import { Dialog } from "radix-ui";
 import { type FormEventHandler, useCallback, useMemo, useState } from "react";
 import { Streamdown } from "streamdown";
 import useSWR from "swr";
+import { useAppDesignerStore } from "../../app-designer";
 import {
 	Tabs,
 	TabsContent,
@@ -54,9 +58,25 @@ export function AppEntryInputDialog({
 	>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
+	const nodes = useAppDesignerStore((s) => s.nodes);
+
+	const endNodeOutputSchema = useMemo(() => {
+		const app = data?.app;
+		if (app?.state !== "connected") return undefined;
+		const endNode = nodes.filter(isEndNode).find((n) => n.id === app.endNodeId);
+		if (!endNode) return undefined;
+		if (endNode.content.output.format !== "object") return undefined;
+		return endNode.content.output.schema;
+	}, [data?.app, nodes]);
+
 	const apiSampleCode = useMemo(
-		() => (data?.app && sdkAvailability ? generateApiSampleCode(data.app) : ""),
-		[data?.app, sdkAvailability],
+		() =>
+			!data?.app || !sdkAvailability
+				? ""
+				: endNodeOutputSchema !== undefined
+					? generateApiSampleCodeWithResponse(data.app, endNodeOutputSchema)
+					: generateApiSampleCode(data.app),
+		[data?.app, sdkAvailability, endNodeOutputSchema],
 	);
 
 	const handleSubmit = useCallback<FormEventHandler<HTMLFormElement>>(
@@ -417,6 +437,63 @@ export function AppEntryInputDialog({
 			</Tabs>
 		</div>
 	);
+}
+
+function generateExampleValue(subSchema: SubSchema): unknown {
+	switch (subSchema.type) {
+		case "string":
+			return subSchema.enum && subSchema.enum.length > 0
+				? subSchema.enum[0]
+				: "string";
+		case "number":
+			return 0;
+		case "boolean":
+			return true;
+		case "object": {
+			const obj: Record<string, unknown> = {};
+			for (const [key, childSchema] of Object.entries(subSchema.properties)) {
+				obj[key] = generateExampleValue(childSchema);
+			}
+			return obj;
+		}
+		case "array":
+			return [generateExampleValue(subSchema.items)];
+		default: {
+			const _exhaustiveCheck: never = subSchema;
+			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
+		}
+	}
+}
+
+function generateExampleResponse(schema: Schema): Record<string, unknown> {
+	const result: Record<string, unknown> = {};
+	for (const [key, subSchema] of Object.entries(schema.properties)) {
+		result[key] = generateExampleValue(subSchema);
+	}
+	return result;
+}
+
+function generateApiSampleCodeWithResponse(app: App, schema: Schema): string {
+	return `\`\`\`typescript
+import Giselle from "@giselles-ai/sdk";
+
+const client = new Giselle({
+  apiKey: process.env.GISELLE_API_KEY,
+});
+
+const { task } = await client.apps.runAndWait({
+  appId: "${app.id}",
+  input: { text: "your input here" },
+});
+
+console.log(task);
+\`\`\`
+
+**Response**
+
+\`\`\`json
+${JSON.stringify(generateExampleResponse(schema), null, 2)}
+\`\`\``;
 }
 
 function generateApiSampleCode(app: App): string {
