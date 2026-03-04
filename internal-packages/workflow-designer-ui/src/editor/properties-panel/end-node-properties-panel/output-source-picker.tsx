@@ -7,7 +7,7 @@ import type {
 	SubSchema,
 } from "@giselles-ai/protocol";
 import { isImageGenerationNode, isOperationNode } from "@giselles-ai/protocol";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 import { Popover as PopoverPrimitive } from "radix-ui";
 import { useMemo, useState } from "react";
 import { typeConfig } from "../structured-output/field-type-config";
@@ -116,17 +116,6 @@ function collectSubSchemaItems(
 				depth + 1,
 			);
 		}
-		if (subSchema.type === "array" && subSchema.items.type === "object") {
-			collectSubSchemaItems(
-				candidates,
-				subSchema.items.properties,
-				node,
-				outputId,
-				nodeName,
-				path,
-				depth + 1,
-			);
-		}
 	}
 }
 
@@ -211,14 +200,12 @@ interface OutputSourcePickerProps {
 	nodes: NodeLike[];
 	value: PropertyMapping["source"] | undefined;
 	onSelect: (ref: PropertyMapping["source"], fieldType: FieldType) => void;
-	onClear: () => void;
 }
 
 export function OutputSourcePicker({
 	nodes,
 	value,
 	onSelect,
-	onClear,
 }: OutputSourcePickerProps) {
 	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState("");
@@ -244,31 +231,19 @@ export function OutputSourcePicker({
 	}, [value, flatCandidates]);
 
 	const trigger = selectedCandidate ? (
-		<div className="flex-1 min-w-0 flex items-center gap-[4px]">
-			<button
-				type="button"
-				className="flex items-center gap-[8px] rounded-[6px] border border-border-muted bg-transparent px-[8px] py-[4px] min-w-0 flex-1 cursor-pointer hover:bg-white/5 transition-colors"
+		<button
+			type="button"
+			className="flex items-center gap-[8px] rounded-[6px] border border-border-muted bg-transparent px-[8px] py-[4px] min-w-0 w-full cursor-pointer hover:bg-white/5 transition-colors"
+		>
+			<span
+				className={`shrink-0 ${typeConfig[selectedCandidate.fieldType].colorClass}`}
 			>
-				<span
-					className={`shrink-0 ${typeConfig[selectedCandidate.fieldType].colorClass}`}
-				>
-					{typeConfig[selectedCandidate.fieldType].icon}
-				</span>
-				<span className="text-[12px] text-text truncate">
-					{selectedCandidate.label}
-				</span>
-			</button>
-			<button
-				type="button"
-				onClick={(e) => {
-					e.stopPropagation();
-					onClear();
-				}}
-				className="shrink-0 p-[2px] text-white/30 hover:text-white/60 transition-colors cursor-pointer"
-			>
-				<X className="size-[12px]" />
-			</button>
-		</div>
+				{typeConfig[selectedCandidate.fieldType].icon}
+			</span>
+			<span className="text-[12px] text-text truncate">
+				{selectedCandidate.label}
+			</span>
+		</button>
 	) : (
 		<button
 			type="button"

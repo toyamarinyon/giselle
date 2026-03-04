@@ -433,6 +433,7 @@ describe("buildObject", () => {
 			expect(typeof result.isActive).toBe("boolean");
 		});
 
+<<<<<<< HEAD
 		it("maps a string property with enum constraint", () => {
 			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
 				format: "object",
@@ -514,10 +515,15 @@ describe("buildObject", () => {
 		});
 
 		it("coerces number and boolean values from raw text", () => {
+=======
+		it("coerces string-to-number, string-to-boolean, and number-to-string values", () => {
+>>>>>>> ff270011deb7854fd1ec99668776b22080dc2dc5
 			const numberNodeId = NodeId.generate();
 			const booleanNodeId = NodeId.generate();
+			const stringNodeId = NodeId.generate();
 			const numberOutputId = OutputId.generate();
 			const booleanOutputId = OutputId.generate();
+			const stringOutputId = OutputId.generate();
 
 			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
 				format: "object",
@@ -527,9 +533,10 @@ describe("buildObject", () => {
 					properties: {
 						count: { type: "number" },
 						isActive: { type: "boolean" },
+						productId: { type: "string" },
 					},
 					additionalProperties: false,
-					required: ["count", "isActive"],
+					required: ["count", "isActive", "productId"],
 				},
 				mappings: [
 					{
@@ -546,6 +553,14 @@ describe("buildObject", () => {
 							nodeId: booleanNodeId,
 							outputId: booleanOutputId,
 							path: [],
+						},
+					},
+					{
+						path: ["productId"],
+						source: {
+							nodeId: stringNodeId,
+							outputId: stringOutputId,
+							path: ["productId"],
 						},
 					},
 				],
@@ -571,12 +586,85 @@ describe("buildObject", () => {
 						},
 					],
 				}),
+				[stringNodeId]: createCompletedGeneration({
+					nodeId: stringNodeId,
+					outputs: [
+						{
+							type: "generated-text",
+							outputId: stringOutputId,
+							content: JSON.stringify({ productId: 12345 }),
+						},
+					],
+				}),
 			};
 
 			const result = buildObject(endNodeOutput, generationsByNodeId);
-			expect(result).toEqual({ count: 42, isActive: true });
+			expect(result).toEqual({
+				count: 42,
+				isActive: true,
+				productId: "12345",
+			});
 			expect(typeof result.count).toBe("number");
 			expect(typeof result.isActive).toBe("boolean");
+			expect(typeof result.productId).toBe("string");
+		});
+
+		it("recursively coerces array of objects in whole-array mapping", () => {
+			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+				format: "object",
+				schema: {
+					title: "TestSchema",
+					type: "object",
+					properties: {
+						users: {
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									name: { type: "string" },
+									score: { type: "number" },
+									active: { type: "boolean" },
+								},
+								required: ["name", "score", "active"],
+								additionalProperties: false,
+							},
+						},
+					},
+					additionalProperties: false,
+					required: ["users"],
+				},
+				mappings: [
+					{
+						path: ["users"],
+						source: {
+							nodeId: defaultNodeId,
+							outputId: defaultOutputId,
+							path: [],
+						},
+					},
+				],
+			};
+			const generationsByNodeId = {
+				[defaultNodeId]: createCompletedGeneration({
+					outputs: [
+						{
+							type: "generated-text",
+							outputId: defaultOutputId,
+							content: JSON.stringify([
+								{ name: "Alice", score: "95", active: "true" },
+								{ name: "Bob", score: "87", active: "false" },
+							]),
+						},
+					],
+				}),
+			};
+
+			expect(buildObject(endNodeOutput, generationsByNodeId)).toEqual({
+				users: [
+					{ name: "Alice", score: 95, active: true },
+					{ name: "Bob", score: 87, active: false },
+				],
+			});
 		});
 	});
 
@@ -730,6 +818,186 @@ describe("buildObject", () => {
 			};
 
 			expect(buildObject(endNodeOutput, {})).toEqual({});
+		});
+
+		it("rejects whole-object mapping when nested property types do not match schema", () => {
+			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+				format: "object",
+				schema: {
+					title: "TestSchema",
+					type: "object",
+					properties: {
+						user: {
+							type: "object",
+							properties: {
+								name: { type: "string" },
+								age: { type: "number" },
+							},
+							required: ["name", "age"],
+							additionalProperties: false,
+						},
+					},
+					additionalProperties: false,
+					required: ["user"],
+				},
+				mappings: [
+					{
+						path: ["user"],
+						source: {
+							nodeId: defaultNodeId,
+							outputId: defaultOutputId,
+							path: [],
+						},
+					},
+				],
+			};
+			const generationsByNodeId = {
+				[defaultNodeId]: createCompletedGeneration({
+					outputs: [
+						{
+							type: "generated-text",
+							outputId: defaultOutputId,
+							content: JSON.stringify({ name: true, age: "not-a-number" }),
+						},
+					],
+				}),
+			};
+
+			expect(buildObject(endNodeOutput, generationsByNodeId)).toEqual({});
+		});
+
+		it("coerces whole-object mapping and keeps only schema-conforming properties", () => {
+			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+				format: "object",
+				schema: {
+					title: "TestSchema",
+					type: "object",
+					properties: {
+						user: {
+							type: "object",
+							properties: {
+								name: { type: "string" },
+								age: { type: "number" },
+							},
+							required: ["name", "age"],
+							additionalProperties: false,
+						},
+					},
+					additionalProperties: false,
+					required: ["user"],
+				},
+				mappings: [
+					{
+						path: ["user"],
+						source: {
+							nodeId: defaultNodeId,
+							outputId: defaultOutputId,
+							path: [],
+						},
+					},
+				],
+			};
+			const generationsByNodeId = {
+				[defaultNodeId]: createCompletedGeneration({
+					outputs: [
+						{
+							type: "generated-text",
+							outputId: defaultOutputId,
+							content: JSON.stringify({
+								name: "Alice",
+								age: "not-a-number",
+								extra: "ignored",
+							}),
+						},
+					],
+				}),
+			};
+
+			expect(buildObject(endNodeOutput, generationsByNodeId)).toEqual({
+				user: { name: "Alice" },
+			});
+		});
+
+		it("rejects whole-array mapping when item types do not match schema", () => {
+			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+				format: "object",
+				schema: {
+					title: "TestSchema",
+					type: "object",
+					properties: {
+						tags: {
+							type: "array",
+							items: { type: "string" },
+						},
+					},
+					additionalProperties: false,
+					required: ["tags"],
+				},
+				mappings: [
+					{
+						path: ["tags"],
+						source: {
+							nodeId: defaultNodeId,
+							outputId: defaultOutputId,
+							path: [],
+						},
+					},
+				],
+			};
+			const generationsByNodeId = {
+				[defaultNodeId]: createCompletedGeneration({
+					outputs: [
+						{
+							type: "generated-text",
+							outputId: defaultOutputId,
+							content: JSON.stringify([true, false, true]),
+						},
+					],
+				}),
+			};
+
+			expect(buildObject(endNodeOutput, generationsByNodeId)).toEqual({});
+		});
+
+		it("rejects whole-array mapping when some items do not match schema", () => {
+			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+				format: "object",
+				schema: {
+					title: "TestSchema",
+					type: "object",
+					properties: {
+						tags: {
+							type: "array",
+							items: { type: "string" },
+						},
+					},
+					additionalProperties: false,
+					required: ["tags"],
+				},
+				mappings: [
+					{
+						path: ["tags"],
+						source: {
+							nodeId: defaultNodeId,
+							outputId: defaultOutputId,
+							path: [],
+						},
+					},
+				],
+			};
+			const generationsByNodeId = {
+				[defaultNodeId]: createCompletedGeneration({
+					outputs: [
+						{
+							type: "generated-text",
+							outputId: defaultOutputId,
+							content: JSON.stringify(["valid", true, "also-valid"]),
+						},
+					],
+				}),
+			};
+
+			expect(buildObject(endNodeOutput, generationsByNodeId)).toEqual({});
 		});
 
 		it("omits object field when raw text parses to a primitive", () => {
@@ -893,7 +1161,7 @@ describe("buildObject", () => {
 						{
 							type: "generated-text",
 							outputId: stringOutputId,
-							content: JSON.stringify({ name: 42 }),
+							content: JSON.stringify({ name: true }),
 						},
 					],
 				}),
