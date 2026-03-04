@@ -373,14 +373,6 @@ export function StructuredOutputDialog({
 		[nodes],
 	);
 
-	const handleSourceClear = useCallback((fieldId: string) => {
-		setFieldSourceMapping((prev) => {
-			const next = new Map(prev);
-			next.delete(fieldId);
-			return next;
-		});
-	}, []);
-
 	const isTypeLocked = useCallback(
 		(fieldId: string) => fieldSourceMapping.has(fieldId),
 		[fieldSourceMapping],
@@ -394,10 +386,9 @@ export function StructuredOutputDialog({
 				onSelect={(ref, fieldType) =>
 					handleSourceSelect(field.id, ref, fieldType)
 				}
-				onClear={() => handleSourceClear(field.id)}
 			/>
 		),
-		[nodes, fieldSourceMapping, handleSourceSelect, handleSourceClear],
+		[nodes, fieldSourceMapping, handleSourceSelect],
 	);
 
 	return (
