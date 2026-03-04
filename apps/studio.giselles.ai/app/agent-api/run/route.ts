@@ -20,6 +20,7 @@ const requestSchema = z.object({
 	document: z.string().optional(),
 	session_id: z.string().min(1).optional(),
 	sandbox_id: z.string().min(1).optional(),
+	snapshot_id: z.string().min(1).optional(),
 	agent_type: z.enum(["gemini", "codex"]),
 });
 
@@ -154,7 +155,8 @@ export async function POST(request: NextRequest) {
 	const agentType = parsed.data.agent_type;
 
 	const commonEnv = {
-		SANDBOX_SNAPSHOT_ID: process.env.SANDBOX_SNAPSHOT_ID ?? "",
+		SANDBOX_SNAPSHOT_ID:
+			parsed.data.snapshot_id ?? process.env.SANDBOX_SNAPSHOT_ID ?? "",
 		...(oidcToken ? { VERCEL_OIDC_TOKEN: oidcToken } : {}),
 		...(process.env.VERCEL_PROTECTION_BYPASS
 			? { VERCEL_PROTECTION_BYPASS: process.env.VERCEL_PROTECTION_BYPASS }
@@ -190,6 +192,7 @@ export async function POST(request: NextRequest) {
 						message,
 						session_id: parsed.data.session_id,
 						sandbox_id: parsed.data.sandbox_id,
+						snapshot_id: parsed.data.snapshot_id,
 						...browserInput,
 					},
 				})
@@ -209,6 +212,7 @@ export async function POST(request: NextRequest) {
 						message,
 						session_id: parsed.data.session_id,
 						sandbox_id: parsed.data.sandbox_id,
+						snapshot_id: parsed.data.snapshot_id,
 						...browserInput,
 					},
 				});
