@@ -25,6 +25,7 @@ coverage
 .next/
 out/
 build
+!apps/**/agent-api/build/
 dist
 *.tsbuildinfo
 
