@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@giselle-internal/ui/button";
+import { Select } from "@giselle-internal/ui/select";
 import {
 	type App,
 	type AppEntryNode,
@@ -33,6 +34,8 @@ import {
 	TabsTrigger,
 } from "../../editor/properties-panel/text-generation-node-properties-panel/tools/ui/tabs";
 
+type SchemaLibrary = "zod" | "valibot" | "arktype";
+
 export function AppEntryInputDialog({
 	onClose,
 	onSubmit,
@@ -57,6 +60,7 @@ export function AppEntryInputDialog({
 		Record<string, string>
 	>({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [schemaLibrary, setSchemaLibrary] = useState<SchemaLibrary>("zod");
 
 	const nodes = useAppDesignerStore((s) => s.nodes);
 
@@ -74,9 +78,13 @@ export function AppEntryInputDialog({
 			!data?.app || !sdkAvailability
 				? ""
 				: endNodeOutputSchema !== undefined
-					? generateApiSampleCodeWithResponse(data.app, endNodeOutputSchema)
+					? generateApiSampleCodeWithResponse(
+							data.app,
+							endNodeOutputSchema,
+							schemaLibrary,
+						)
 					: generateApiSampleCode(data.app),
-		[data?.app, sdkAvailability, endNodeOutputSchema],
+		[data?.app, sdkAvailability, endNodeOutputSchema, schemaLibrary],
 	);
 
 	const handleSubmit = useCallback<FormEventHandler<HTMLFormElement>>(
@@ -428,7 +436,34 @@ export function AppEntryInputDialog({
 								</p>
 							</div>
 
-							<Streamdown className="markdown-renderer">
+							{endNodeOutputSchema !== undefined && (
+								<div className="flex items-center gap-[8px] justify-end">
+									<label
+										htmlFor="schema-library-select"
+										className="text-[12px] text-text-muted font-sans font-semibold"
+									>
+										Validation Library
+									</label>
+									<Select
+										id="schema-library-select"
+										options={[
+											{ value: "zod", label: "Zod" },
+											{ value: "valibot", label: "Valibot" },
+											{ value: "arktype", label: "ArkType" },
+										]}
+										value={schemaLibrary}
+										onValueChange={(v) => setSchemaLibrary(v as SchemaLibrary)}
+										placeholder="Validation Library"
+										widthClassName="w-[100px]"
+										triggerClassName="h-auto py-[4px] text-[12px]"
+									/>
+								</div>
+							)}
+							<Streamdown
+								key={schemaLibrary}
+								mode="static"
+								className="markdown-renderer"
+							>
 								{apiSampleCode}
 							</Streamdown>
 						</div>
@@ -473,9 +508,144 @@ function generateExampleResponse(schema: Schema): Record<string, unknown> {
 	return result;
 }
 
-function generateApiSampleCodeWithResponse(app: App, schema: Schema): string {
+function generateZodCode(subSchema: SubSchema, indent: number): string {
+	const pad = "  ".repeat(indent);
+	switch (subSchema.type) {
+		case "string":
+			if (subSchema.enum && subSchema.enum.length > 0) {
+				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
+				return `z.enum([${values}])`;
+			}
+			return "z.string()";
+		case "number":
+			return "z.number()";
+		case "boolean":
+			return "z.boolean()";
+		case "object": {
+			const entries = Object.entries(subSchema.properties);
+			if (entries.length === 0) {
+				return "z.object({})";
+			}
+			const fields = entries
+				.map(
+					([key, value]) =>
+						`${pad}  ${key}: ${generateZodCode(value, indent + 1)},`,
+				)
+				.join("\n");
+			return `z.object({\n${fields}\n${pad}})`;
+		}
+		case "array":
+			return `z.array(${generateZodCode(subSchema.items, indent)})`;
+		default: {
+			const _exhaustiveCheck: never = subSchema;
+			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
+		}
+	}
+}
+
+function generateValibotCode(subSchema: SubSchema, indent: number): string {
+	const pad = "  ".repeat(indent);
+	switch (subSchema.type) {
+		case "string":
+			if (subSchema.enum && subSchema.enum.length > 0) {
+				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
+				return `v.picklist([${values}])`;
+			}
+			return "v.string()";
+		case "number":
+			return "v.number()";
+		case "boolean":
+			return "v.boolean()";
+		case "object": {
+			const entries = Object.entries(subSchema.properties);
+			if (entries.length === 0) {
+				return "v.object({})";
+			}
+			const fields = entries
+				.map(
+					([key, value]) =>
+						`${pad}  ${key}: ${generateValibotCode(value, indent + 1)},`,
+				)
+				.join("\n");
+			return `v.object({\n${fields}\n${pad}})`;
+		}
+		case "array":
+			return `v.array(${generateValibotCode(subSchema.items, indent)})`;
+		default: {
+			const _exhaustiveCheck: never = subSchema;
+			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
+		}
+	}
+}
+
+function generateArkTypeCode(subSchema: SubSchema, indent: number): string {
+	const pad = "  ".repeat(indent);
+	switch (subSchema.type) {
+		case "string":
+			if (subSchema.enum && subSchema.enum.length > 0) {
+				const values = subSchema.enum.map((v) => `"'${v}'"`).join(" | ");
+				return values;
+			}
+			return '"string"';
+		case "number":
+			return '"number"';
+		case "boolean":
+			return '"boolean"';
+		case "object": {
+			const entries = Object.entries(subSchema.properties);
+			if (entries.length === 0) {
+				return "type({})";
+			}
+			const fields = entries
+				.map(
+					([key, value]) =>
+						`${pad}  ${key}: ${generateArkTypeCode(value, indent + 1)},`,
+				)
+				.join("\n");
+			return `type({\n${fields}\n${pad}})`;
+		}
+		case "array":
+			return `${generateArkTypeCode(subSchema.items, indent)}.array()`;
+		default: {
+			const _exhaustiveCheck: never = subSchema;
+			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
+		}
+	}
+}
+
+function generateSchemaCode(schema: Schema, library: SchemaLibrary): string {
+	const rootSubSchema: SubSchema = {
+		type: "object",
+		properties: schema.properties,
+		required: schema.required,
+		additionalProperties: false,
+	};
+	switch (library) {
+		case "zod":
+			return generateZodCode(rootSubSchema, 0);
+		case "valibot":
+			return generateValibotCode(rootSubSchema, 0);
+		case "arktype":
+			return generateArkTypeCode(rootSubSchema, 0);
+	}
+}
+
+function generateApiSampleCodeWithResponse(
+	app: App,
+	schema: Schema,
+	library: SchemaLibrary,
+): string {
+	const schemaCode = generateSchemaCode(schema, library);
+	const importLine = {
+		zod: 'import { z } from "zod";',
+		valibot: 'import * as v from "valibot";',
+		arktype: 'import { type } from "arktype";',
+	}[library];
 	return `\`\`\`typescript
 import Giselle from "@giselles-ai/sdk";
+${importLine}
+
+const schema = ${schemaCode};
 
 const client = new Giselle({
   apiKey: process.env.GISELLE_API_KEY,
@@ -484,9 +654,12 @@ const client = new Giselle({
 const { task } = await client.apps.runAndWait({
   appId: "${app.id}",
   input: { text: "your input here" },
+  schema,
 });
 
-console.log(task);
+if (task.outputType === "object") {
+  console.log(task.output);
+}
 \`\`\`
 
 **Response**
