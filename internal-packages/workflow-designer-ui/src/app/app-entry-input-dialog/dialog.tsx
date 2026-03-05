@@ -3,14 +3,11 @@
 import { Button } from "@giselle-internal/ui/button";
 import { Select } from "@giselle-internal/ui/select";
 import {
-	type App,
 	type AppEntryNode,
 	createUploadedFileData,
 	createUploadingFileData,
 	type GenerationContextInput,
 	isEndNode,
-	type Schema,
-	type SubSchema,
 	type UploadedFileData,
 } from "@giselles-ai/protocol";
 import { useFeatureFlag, useGiselle } from "@giselles-ai/react";
@@ -33,8 +30,11 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "../../editor/properties-panel/text-generation-node-properties-panel/tools/ui/tabs";
-
-type SchemaLibrary = "zod" | "valibot" | "arktype";
+import {
+	generateApiSampleCode,
+	generateApiSampleCodeWithResponse,
+	type SchemaLibrary,
+} from "./generate-sample-code";
 
 export function AppEntryInputDialog({
 	onClose,
@@ -450,11 +450,14 @@ export function AppEntryInputDialog({
 											{ value: "zod", label: "Zod" },
 											{ value: "valibot", label: "Valibot" },
 											{ value: "arktype", label: "ArkType" },
+											{ value: "joi", label: "Joi" },
+											{ value: "yup", label: "Yup" },
+											{ value: "effect", label: "Effect Schema" },
 										]}
 										value={schemaLibrary}
 										onValueChange={(v) => setSchemaLibrary(v as SchemaLibrary)}
 										placeholder="Validation Library"
-										widthClassName="w-[100px]"
+										widthClassName="w-[150px]"
 										triggerClassName="h-auto py-[4px] text-[12px]"
 									/>
 								</div>
@@ -472,216 +475,4 @@ export function AppEntryInputDialog({
 			</Tabs>
 		</div>
 	);
-}
-
-function generateExampleValue(subSchema: SubSchema): unknown {
-	switch (subSchema.type) {
-		case "string":
-			return subSchema.enum && subSchema.enum.length > 0
-				? subSchema.enum[0]
-				: "string";
-		case "number":
-			return 0;
-		case "boolean":
-			return true;
-		case "object": {
-			const obj: Record<string, unknown> = {};
-			for (const [key, childSchema] of Object.entries(subSchema.properties)) {
-				obj[key] = generateExampleValue(childSchema);
-			}
-			return obj;
-		}
-		case "array":
-			return [generateExampleValue(subSchema.items)];
-		default: {
-			const _exhaustiveCheck: never = subSchema;
-			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
-		}
-	}
-}
-
-function generateExampleResponse(schema: Schema): Record<string, unknown> {
-	const result: Record<string, unknown> = {};
-	for (const [key, subSchema] of Object.entries(schema.properties)) {
-		result[key] = generateExampleValue(subSchema);
-	}
-	return result;
-}
-
-function generateZodCode(subSchema: SubSchema, indent: number): string {
-	const pad = "  ".repeat(indent);
-	switch (subSchema.type) {
-		case "string":
-			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
-				return `z.enum([${values}])`;
-			}
-			return "z.string()";
-		case "number":
-			return "z.number()";
-		case "boolean":
-			return "z.boolean()";
-		case "object": {
-			const entries = Object.entries(subSchema.properties);
-			if (entries.length === 0) {
-				return "z.object({})";
-			}
-			const fields = entries
-				.map(
-					([key, value]) =>
-						`${pad}  ${key}: ${generateZodCode(value, indent + 1)},`,
-				)
-				.join("\n");
-			return `z.object({\n${fields}\n${pad}})`;
-		}
-		case "array":
-			return `z.array(${generateZodCode(subSchema.items, indent)})`;
-		default: {
-			const _exhaustiveCheck: never = subSchema;
-			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
-		}
-	}
-}
-
-function generateValibotCode(subSchema: SubSchema, indent: number): string {
-	const pad = "  ".repeat(indent);
-	switch (subSchema.type) {
-		case "string":
-			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
-				return `v.picklist([${values}])`;
-			}
-			return "v.string()";
-		case "number":
-			return "v.number()";
-		case "boolean":
-			return "v.boolean()";
-		case "object": {
-			const entries = Object.entries(subSchema.properties);
-			if (entries.length === 0) {
-				return "v.object({})";
-			}
-			const fields = entries
-				.map(
-					([key, value]) =>
-						`${pad}  ${key}: ${generateValibotCode(value, indent + 1)},`,
-				)
-				.join("\n");
-			return `v.object({\n${fields}\n${pad}})`;
-		}
-		case "array":
-			return `v.array(${generateValibotCode(subSchema.items, indent)})`;
-		default: {
-			const _exhaustiveCheck: never = subSchema;
-			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
-		}
-	}
-}
-
-function generateArkTypeCode(subSchema: SubSchema, indent: number): string {
-	const pad = "  ".repeat(indent);
-	switch (subSchema.type) {
-		case "string":
-			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"'${v}'"`).join(" | ");
-				return values;
-			}
-			return '"string"';
-		case "number":
-			return '"number"';
-		case "boolean":
-			return '"boolean"';
-		case "object": {
-			const entries = Object.entries(subSchema.properties);
-			if (entries.length === 0) {
-				return "type({})";
-			}
-			const fields = entries
-				.map(
-					([key, value]) =>
-						`${pad}  ${key}: ${generateArkTypeCode(value, indent + 1)},`,
-				)
-				.join("\n");
-			return `type({\n${fields}\n${pad}})`;
-		}
-		case "array":
-			return `${generateArkTypeCode(subSchema.items, indent)}.array()`;
-		default: {
-			const _exhaustiveCheck: never = subSchema;
-			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
-		}
-	}
-}
-
-function generateSchemaCode(schema: Schema, library: SchemaLibrary): string {
-	const rootSubSchema: SubSchema = {
-		type: "object",
-		properties: schema.properties,
-		required: schema.required,
-		additionalProperties: false,
-	};
-	switch (library) {
-		case "zod":
-			return generateZodCode(rootSubSchema, 0);
-		case "valibot":
-			return generateValibotCode(rootSubSchema, 0);
-		case "arktype":
-			return generateArkTypeCode(rootSubSchema, 0);
-	}
-}
-
-function generateApiSampleCodeWithResponse(
-	app: App,
-	schema: Schema,
-	library: SchemaLibrary,
-): string {
-	const schemaCode = generateSchemaCode(schema, library);
-	const importLine = {
-		zod: 'import { z } from "zod";',
-		valibot: 'import * as v from "valibot";',
-		arktype: 'import { type } from "arktype";',
-	}[library];
-	return `\`\`\`typescript
-import Giselle from "@giselles-ai/sdk";
-${importLine}
-
-const schema = ${schemaCode};
-
-const client = new Giselle({
-  apiKey: process.env.GISELLE_API_KEY,
-});
-
-const { task } = await client.apps.runAndWait({
-  appId: "${app.id}",
-  input: { text: "your input here" },
-  schema,
-});
-
-if (task.outputType === "object") {
-  console.log(task.output);
-}
-\`\`\`
-
-**Response**
-
-\`\`\`json
-${JSON.stringify(generateExampleResponse(schema), null, 2)}
-\`\`\``;
-}
-
-function generateApiSampleCode(app: App): string {
-	return `\`\`\`typescript
-import Giselle from "@giselles-ai/sdk";
-
-const client = new Giselle({
-  apiKey: process.env.GISELLE_API_KEY,
-});
-
-const { taskId } = await client.apps.run({
-  appId: "${app.id}",
-  input: { text: "your input here" },
-});
-
-console.log(taskId);
-\`\`\``;
 }
