@@ -1,7 +1,9 @@
 import { App as AppSchema, type App as AppType } from "@giselles-ai/protocol";
+import type { StandardSchemaV1 } from "@standard-schema/spec";
 import {
 	ApiError,
 	ConfigurationError,
+	SchemaValidationError,
 	TimeoutError,
 	UnsupportedFeatureError,
 } from "./errors";
@@ -44,7 +46,7 @@ export type AppRunResult = {
 	taskId: string;
 };
 
-export type AppRunAndWaitArgs = AppRunArgs & {
+export type AppRunAndWaitArgs<T = Record<string, unknown>> = AppRunArgs & {
 	/**
 	 * Poll interval for status checks.
 	 */
@@ -53,6 +55,15 @@ export type AppRunAndWaitArgs = AppRunArgs & {
 	 * Overall timeout for waiting task completion.
 	 */
 	timeoutMs?: number;
+	/**
+	 * When provided, validates the task output against this schema
+	 * and types the result accordingly.
+	 * Accepts any Standard Schema v1 compatible schema (Zod v4, Valibot, ArkType, etc.).
+	 *
+	 * Requires the End Node to have Structured Output configured in the workflow.
+	 * Only applied when the task's outputType is "object".
+	 */
+	schema?: StandardSchemaV1<unknown, T>;
 };
 
 export type UploadedFileData = {
@@ -251,20 +262,22 @@ export type PassthroughAppTask = {
 	status: string;
 };
 
-export type ObjectAppTask = {
+export type ObjectAppTask<T = Record<string, unknown>> = {
 	id: string;
 	workspaceId: string;
 	name: string;
 	steps: AppTaskStep[];
-	output: Record<string, unknown>;
+	output: T;
 	outputType: "object";
 	status: string;
 };
 
-export type AppTask = PassthroughAppTask | ObjectAppTask;
+export type AppTask<T = Record<string, unknown>> =
+	| PassthroughAppTask
+	| ObjectAppTask<T>;
 
-export type AppTaskResult = {
-	task: AppTask;
+export type AppTaskResult<T = Record<string, unknown>> = {
+	task: AppTask<T>;
 };
 
 export type AppTaskOrStatus = TaskWithStatus | AppTask;
@@ -336,7 +349,10 @@ function parseTaskResponseJson(json: unknown): AppTaskResultOrStatus {
 export default class Giselle {
 	readonly apps: {
 		run: (args: AppRunArgs) => Promise<AppRunResult>;
-		runAndWait: (args: AppRunAndWaitArgs) => Promise<AppTaskResult>;
+		runAndWait: {
+			<T>(args: AppRunAndWaitArgs<T>): Promise<AppTaskResult<T>>;
+			(args: AppRunAndWaitArgs): Promise<AppTaskResult>;
+		};
 		list: () => Promise<AppListResult>;
 	};
 	readonly files: {
@@ -354,7 +370,7 @@ export default class Giselle {
 
 		this.apps = {
 			run: (args) => this.#runApp(args),
-			runAndWait: (args) => this.#runAppAndWait(args),
+			runAndWait: (args: AppRunAndWaitArgs) => this.#runAppAndWait(args),
 			list: () => this.#listApps(),
 		};
 		this.files = {
@@ -610,10 +626,30 @@ export default class Giselle {
 		}
 
 		// Fetch full results at the end.
-		return (await this.#getTask({
+		const result = (await this.#getTask({
 			appId: args.appId,
 			taskId,
 			includeGenerations: true,
 		})) as AppTaskResult;
+
+		if (args.schema && result.task.outputType === "object") {
+			const validated = await args.schema["~standard"].validate(
+				result.task.output,
+			);
+
+			if ("value" in validated) {
+				return {
+					task: {
+						...result.task,
+						output: validated.value,
+					},
+				};
+			}
+
+			const messages = validated.issues.map((i) => i.message).join(", ");
+			throw new SchemaValidationError(`Schema validation failed: ${messages}`);
+		}
+
+		return result;
 	}
 }
