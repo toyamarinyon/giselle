@@ -3,7 +3,7 @@
 
 ## Summary
 * 966 MIT
-* 193 Apache 2.0
+* 194 Apache 2.0
 * 45 ISC
 * 27 New BSD
 * 16 Simplified BSD
@@ -1224,6 +1224,17 @@ MIT-0 permitted
 * /home/runner/work/giselle/giselle
 
 <a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
+
+
+
+<a name="@giselles-ai/agent-builder"></a>
+### @giselles-ai/agent-builder v0.1.0
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> permitted
 
 
 

@@ -307,6 +307,9 @@ importers:
       '@giselle-internal/workflow-designer-ui':
         specifier: workspace:*
         version: link:../../internal-packages/workflow-designer-ui
+      '@giselles-ai/agent-builder':
+        specifier: 0.1.0
+        version: 0.1.0(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
       '@giselles-ai/browser-tool':
         specifier: 0.1.9
         version: 0.1.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -2564,6 +2567,14 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@giselles-ai/agent-builder@0.1.0':
+    resolution: {integrity: sha512-9Rf+UIfkjOjcpHAVqsIGoUs7QDq+chiucUP0fAGkOVY/dr6DVIdFRDBTKydThEjBegmnCxHw/bG2teLvXQVrCw==}
+    peerDependencies:
+      next: '>=15.0.0'
+    peerDependenciesMeta:
+      next:
+        optional: true
 
   '@giselles-ai/browser-tool@0.1.9':
     resolution: {integrity: sha512-9Yqz0qqf2mFPC79ylARstFSvg9Ug/6XKzLYV/GcUhwDIh2FJBSct0e9/XIz5Nv3uOc/oTkHhqpMd10OnwA5MgA==}
@@ -10396,6 +10407,15 @@ snapshots:
       react-dom: 19.2.1(react@19.2.1)
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@giselles-ai/agent-builder@0.1.0(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))':
+    dependencies:
+      '@vercel/sandbox': 1.6.0
+    optionalDependencies:
+      next: 16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - react-native-b4a
 
   '@giselles-ai/browser-tool@0.1.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
