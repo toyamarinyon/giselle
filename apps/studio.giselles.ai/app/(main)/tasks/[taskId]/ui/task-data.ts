@@ -1,9 +1,13 @@
+import { buildObject } from "@giselles-ai/giselle";
 import {
 	type AppId,
+	type CompletedGeneration,
 	type Generation,
 	type GenerationContextInput,
 	type GenerationStatus,
+	isCompletedGeneration,
 	isOperationNode,
+	type NodeId,
 	type OperationNode,
 	type SequenceId,
 	type StepId,
@@ -61,6 +65,24 @@ export interface UIStep {
 	items: UIStepItem[];
 }
 
+interface FinalStepBase {
+	totalStepItemsCount: number;
+	finishedStepItemsCount: number;
+}
+
+interface PassthroughFinalStep extends FinalStepBase {
+	outputType: "passthrough";
+	outputs: {
+		title: string;
+		generation: Generation;
+	}[];
+}
+
+interface ObjectFinalStep extends FinalStepBase {
+	outputType: "object";
+	output: Record<string, unknown>;
+}
+
 export interface UITask {
 	status: Task["status"];
 	title: string;
@@ -73,14 +95,7 @@ export interface UITask {
 		completedStepsCount: number;
 		steps: UIStep[];
 	};
-	finalStep: {
-		totalStepItemsCount: number;
-		finishedStepItemsCount: number;
-		outputs: {
-			title: string;
-			generation: Generation;
-		}[];
-	};
+	finalStep: PassthroughFinalStep | ObjectFinalStep;
 }
 
 function pickPreferredInput(
@@ -308,18 +323,52 @@ export async function getTaskData(taskId: TaskId): Promise<UITask> {
 		(item) => item.finished,
 	).length;
 
-	const outputs = finalStepItems
-		.map((item) => {
-			const generation =
-				item.status === "completed"
-					? item.generation
-					: generationsByStepId.get(item.id);
-			if (generation === undefined) {
-				return null;
+	let finalStep: UITask["finalStep"];
+	switch (task.endNodeOutput.format) {
+		case "object": {
+			const generationsByNodeId: Record<NodeId, CompletedGeneration> = {};
+			for (const generation of generationsByStepId.values()) {
+				if (!isCompletedGeneration(generation)) {
+					continue;
+				}
+				generationsByNodeId[generation.context.operationNode.id] = generation;
 			}
-			return { title: item.title, generation };
-		})
-		.filter((outputOrNull) => outputOrNull !== null);
+
+			finalStep = {
+				outputType: "object",
+				totalStepItemsCount,
+				finishedStepItemsCount,
+				output: buildObject(task.endNodeOutput, generationsByNodeId),
+			};
+			break;
+		}
+		case "passthrough": {
+			const outputs = finalStepItems
+				.map((item) => {
+					const generation =
+						item.status === "completed"
+							? item.generation
+							: generationsByStepId.get(item.id);
+					if (generation === undefined) {
+						return null;
+					}
+					return { title: item.title, generation };
+				})
+				.filter((outputOrNull) => outputOrNull !== null);
+
+			finalStep = {
+				outputType: "passthrough",
+				totalStepItemsCount,
+				finishedStepItemsCount,
+				outputs,
+			};
+			break;
+		}
+		default: {
+			const _exhaustiveCheck: never = task.endNodeOutput;
+			throw new Error(`Unhandled endNodeOutput.format: ${_exhaustiveCheck}`);
+		}
+	}
 
 	const [workspace, app, input] = await Promise.all([
 		giselle.getWorkspace(task.workspaceId),
@@ -339,10 +388,6 @@ export async function getTaskData(taskId: TaskId): Promise<UITask> {
 			completedStepsCount,
 			steps,
 		},
-		finalStep: {
-			totalStepItemsCount,
-			finishedStepItemsCount,
-			outputs,
-		},
+		finalStep,
 	};
 }

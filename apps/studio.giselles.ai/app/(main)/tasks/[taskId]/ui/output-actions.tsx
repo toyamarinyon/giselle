@@ -54,6 +54,14 @@ export function OutputActions({ generation }: { generation: Generation }) {
 			<button
 				type="button"
 				className="p-2 hover:bg-white/10 rounded-lg transition-colors group"
+				title="Download content"
+				onClick={handleDownload}
+			>
+				<Download className="size-4 text-text-muted group-hover:text-text transition-colors" />
+			</button>
+			<button
+				type="button"
+				className="p-2 hover:bg-white/10 rounded-lg transition-colors group"
 				title={copyFeedback ? "Copied!" : "Copy content"}
 				onClick={handleCopyToClipboard}
 			>
@@ -62,14 +70,6 @@ export function OutputActions({ generation }: { generation: Generation }) {
 				) : (
 					<Copy className="size-4 text-text-muted group-hover:text-text transition-colors" />
 				)}
-			</button>
-			<button
-				type="button"
-				className="p-2 hover:bg-white/10 rounded-lg transition-colors group"
-				title="Download content"
-				onClick={handleDownload}
-			>
-				<Download className="size-4 text-text-muted group-hover:text-text transition-colors" />
 			</button>
 		</div>
 	);
