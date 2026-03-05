@@ -241,22 +241,39 @@ export type AppTaskOutput = {
 	outputs: unknown[];
 };
 
-export type AppTask =
-	| TaskWithStatus
-	| {
-			id: string;
-			workspaceId: string;
-			name: string;
-			steps: AppTaskStep[];
-			outputs: AppTaskOutput[];
-			status: string;
-	  };
+export type PassthroughAppTask = {
+	id: string;
+	workspaceId: string;
+	name: string;
+	steps: AppTaskStep[];
+	outputs: AppTaskOutput[];
+	outputType: "passthrough";
+	status: string;
+};
+
+export type ObjectAppTask = {
+	id: string;
+	workspaceId: string;
+	name: string;
+	steps: AppTaskStep[];
+	output: Record<string, unknown>;
+	outputType: "object";
+	status: string;
+};
+
+export type AppTask = PassthroughAppTask | ObjectAppTask;
 
 export type AppTaskResult = {
 	task: AppTask;
 };
 
-function parseTaskResponseJson(json: unknown): AppTaskResult {
+export type AppTaskOrStatus = TaskWithStatus | AppTask;
+
+export type AppTaskResultOrStatus = {
+	task: AppTaskOrStatus;
+};
+
+function parseTaskResponseJson(json: unknown): AppTaskResultOrStatus {
 	if (typeof json !== "object" || json === null) {
 		throw new Error("Invalid response JSON");
 	}
@@ -266,10 +283,7 @@ function parseTaskResponseJson(json: unknown): AppTaskResult {
 	}
 
 	const steps = (task as { steps?: unknown }).steps;
-	const outputs = (task as { outputs?: unknown }).outputs;
-
-	const hasFinalResultShape = Array.isArray(steps) && Array.isArray(outputs);
-	if (!hasFinalResultShape) {
+	if (!Array.isArray(steps)) {
 		const status = (task as { status?: unknown }).status;
 		if (typeof status !== "string" || status.length === 0) {
 			throw new Error("Invalid response JSON");
@@ -295,16 +309,28 @@ function parseTaskResponseJson(json: unknown): AppTaskResult {
 		throw new Error("Invalid response JSON");
 	}
 
-	return {
-		task: task as {
-			id: string;
-			workspaceId: string;
-			name: string;
-			steps: AppTaskStep[];
-			outputs: AppTaskOutput[];
-			status: string;
-		},
-	};
+	const outputType = (task as { outputType?: unknown }).outputType;
+	if (outputType === "object") {
+		const output = (task as { output?: unknown }).output;
+		if (
+			typeof output !== "object" ||
+			output === null ||
+			Array.isArray(output)
+		) {
+			throw new Error("Invalid response JSON");
+		}
+		return { task: task as ObjectAppTask };
+	}
+
+	if (outputType === "passthrough") {
+		const outputs = (task as { outputs?: unknown }).outputs;
+		if (!Array.isArray(outputs)) {
+			throw new Error("Invalid response JSON");
+		}
+		return { task: task as PassthroughAppTask };
+	}
+
+	throw new Error("Invalid response JSON");
 }
 
 export default class Giselle {
@@ -500,7 +526,7 @@ export default class Giselle {
 		appId: string;
 		taskId: string;
 		includeGenerations: boolean;
-	}): Promise<AppTaskResult> {
+	}): Promise<AppTaskResultOrStatus> {
 		if (!this.#apiKey) {
 			throw new ConfigurationError("`apiKey` is required");
 		}
@@ -584,10 +610,10 @@ export default class Giselle {
 		}
 
 		// Fetch full results at the end.
-		return await this.#getTask({
+		return (await this.#getTask({
 			appId: args.appId,
 			taskId,
 			includeGenerations: true,
-		});
+		})) as AppTaskResult;
 	}
 }
