@@ -58,7 +58,7 @@ export type AppRunAndWaitArgs<T = Record<string, unknown>> = AppRunArgs & {
 	/**
 	 * When provided, validates the task output against this schema
 	 * and types the result accordingly.
-	 * Accepts any Standard Schema v1 compatible schema (Zod v4, Valibot, ArkType, etc.).
+	 * Accepts any Standard Schema v1 compatible schema (Zod, Valibot, ArkType, etc.).
 	 *
 	 * Requires the End Node to have Structured Output configured in the workflow.
 	 * Only applied when the task's outputType is "object".
@@ -632,22 +632,30 @@ export default class Giselle {
 			includeGenerations: true,
 		})) as AppTaskResult;
 
-		if (args.schema && result.task.outputType === "object") {
+		if (
+			args.schema &&
+			result.task.status === "completed" &&
+			result.task.outputType === "object"
+		) {
 			const validated = await args.schema["~standard"].validate(
 				result.task.output,
 			);
 
-			if ("value" in validated) {
-				return {
-					task: {
-						...result.task,
-						output: validated.value,
-					},
-				};
+			if (validated.issues) {
+				const messages = validated.issues
+					.map((i: { message: string }) => i.message)
+					.join(", ");
+				throw new SchemaValidationError(
+					`Schema validation failed: ${messages}`,
+				);
 			}
 
-			const messages = validated.issues.map((i) => i.message).join(", ");
-			throw new SchemaValidationError(`Schema validation failed: ${messages}`);
+			return {
+				task: {
+					...result.task,
+					output: validated.value,
+				},
+			};
 		}
 
 		return result;

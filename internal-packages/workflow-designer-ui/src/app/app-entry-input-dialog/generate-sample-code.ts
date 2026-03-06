@@ -8,6 +8,20 @@ interface SchemaLibraryConfig {
 
 const INDENT_UNIT = "  ";
 
+const validIdentifierPattern = /^[$A-Z_][0-9A-Z_$]*$/i;
+
+function formatPropertyKey(key: string): string {
+	return validIdentifierPattern.test(key) ? key : JSON.stringify(key);
+}
+
+function formatStringLiteral(value: string): string {
+	return JSON.stringify(value);
+}
+
+function isRequiredField(key: string, required?: string[]): boolean {
+	return required?.includes(key) ?? false;
+}
+
 const defaultSchemaDeclaration = (schemaCode: string) =>
 	`const schema = ${schemaCode};`;
 
@@ -25,16 +39,6 @@ const schemaLibraries = {
 	arktype: {
 		importLine: 'import { type } from "arktype";',
 		generateSchemaCode: generateArkTypeCode,
-		formatSchemaDeclaration: defaultSchemaDeclaration,
-	},
-	joi: {
-		importLine: 'import Joi from "joi";',
-		generateSchemaCode: generateJoiCode,
-		formatSchemaDeclaration: defaultSchemaDeclaration,
-	},
-	yup: {
-		importLine: 'import * as y from "yup";',
-		generateSchemaCode: generateYupCode,
 		formatSchemaDeclaration: defaultSchemaDeclaration,
 	},
 	effect: {
@@ -86,7 +90,9 @@ function generateZodCode(subSchema: SubSchema, indent: number): string {
 	switch (subSchema.type) {
 		case "string":
 			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
+				const values = subSchema.enum
+					.map((v) => formatStringLiteral(v))
+					.join(", ");
 				return `z.enum([${values}])`;
 			}
 			return "z.string()";
@@ -100,10 +106,13 @@ function generateZodCode(subSchema: SubSchema, indent: number): string {
 				return "z.object({})";
 			}
 			const fields = entries
-				.map(
-					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateZodCode(value, indent + 1)},`,
-				)
+				.map(([key, value]) => {
+					const fieldCode = generateZodCode(value, indent + 1);
+					const optionalSuffix = isRequiredField(key, subSchema.required)
+						? ""
+						: ".optional()";
+					return `${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${fieldCode}${optionalSuffix},`;
+				})
 				.join("\n");
 			return `z.object({\n${fields}\n${pad}})`;
 		}
@@ -121,7 +130,9 @@ function generateValibotCode(subSchema: SubSchema, indent: number): string {
 	switch (subSchema.type) {
 		case "string":
 			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
+				const values = subSchema.enum
+					.map((v) => formatStringLiteral(v))
+					.join(", ");
 				return `v.picklist([${values}])`;
 			}
 			return "v.string()";
@@ -135,10 +146,13 @@ function generateValibotCode(subSchema: SubSchema, indent: number): string {
 				return "v.object({})";
 			}
 			const fields = entries
-				.map(
-					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateValibotCode(value, indent + 1)},`,
-				)
+				.map(([key, value]) => {
+					const fieldCode = generateValibotCode(value, indent + 1);
+					const wrappedCode = isRequiredField(key, subSchema.required)
+						? fieldCode
+						: `v.optional(${fieldCode})`;
+					return `${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${wrappedCode},`;
+				})
 				.join("\n");
 			return `v.object({\n${fields}\n${pad}})`;
 		}
@@ -156,7 +170,9 @@ function generateArkTypeCode(subSchema: SubSchema, indent: number): string {
 	switch (subSchema.type) {
 		case "string":
 			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `'${v}'`).join(" | ");
+				const values = subSchema.enum
+					.map((v) => `'${v.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`)
+					.join(" | ");
 				return `"${values}"`;
 			}
 			return '"string"';
@@ -170,10 +186,12 @@ function generateArkTypeCode(subSchema: SubSchema, indent: number): string {
 				return "type({})";
 			}
 			const fields = entries
-				.map(
-					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateArkTypeCode(value, indent + 1)},`,
-				)
+				.map(([key, value]) => {
+					const fieldKey = isRequiredField(key, subSchema.required)
+						? formatPropertyKey(key)
+						: `${formatPropertyKey(`${key}?`)}`;
+					return `${pad}${INDENT_UNIT}${fieldKey}: ${generateArkTypeCode(value, indent + 1)},`;
+				})
 				.join("\n");
 			return `type({\n${fields}\n${pad}})`;
 		}
@@ -194,76 +212,6 @@ function generateArkTypeCode(subSchema: SubSchema, indent: number): string {
 	}
 }
 
-function generateJoiCode(subSchema: SubSchema, indent: number): string {
-	const pad = INDENT_UNIT.repeat(indent);
-	switch (subSchema.type) {
-		case "string":
-			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
-				return `Joi.string().valid(${values})`;
-			}
-			return "Joi.string()";
-		case "number":
-			return "Joi.number()";
-		case "boolean":
-			return "Joi.boolean()";
-		case "object": {
-			const entries = Object.entries(subSchema.properties);
-			if (entries.length === 0) {
-				return "Joi.object({})";
-			}
-			const fields = entries
-				.map(
-					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateJoiCode(value, indent + 1)},`,
-				)
-				.join("\n");
-			return `Joi.object({\n${fields}\n${pad}})`;
-		}
-		case "array":
-			return `Joi.array().items(${generateJoiCode(subSchema.items, indent)})`;
-		default: {
-			const _exhaustiveCheck: never = subSchema;
-			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
-		}
-	}
-}
-
-function generateYupCode(subSchema: SubSchema, indent: number): string {
-	const pad = INDENT_UNIT.repeat(indent);
-	switch (subSchema.type) {
-		case "string":
-			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
-				return `y.string().oneOf([${values}])`;
-			}
-			return "y.string()";
-		case "number":
-			return "y.number()";
-		case "boolean":
-			return "y.boolean()";
-		case "object": {
-			const entries = Object.entries(subSchema.properties);
-			if (entries.length === 0) {
-				return "y.object({})";
-			}
-			const fields = entries
-				.map(
-					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateYupCode(value, indent + 1)},`,
-				)
-				.join("\n");
-			return `y.object({\n${fields}\n${pad}})`;
-		}
-		case "array":
-			return `y.array().of(${generateYupCode(subSchema.items, indent)})`;
-		default: {
-			const _exhaustiveCheck: never = subSchema;
-			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
-		}
-	}
-}
-
 function generateEffectSchemaCode(
 	subSchema: SubSchema,
 	indent: number,
@@ -272,7 +220,9 @@ function generateEffectSchemaCode(
 	switch (subSchema.type) {
 		case "string":
 			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
+				const values = subSchema.enum
+					.map((v) => formatStringLiteral(v))
+					.join(", ");
 				return `S.Literal(${values})`;
 			}
 			return "S.String";
@@ -286,10 +236,13 @@ function generateEffectSchemaCode(
 				return "S.Struct({})";
 			}
 			const fields = entries
-				.map(
-					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateEffectSchemaCode(value, indent + 1)},`,
-				)
+				.map(([key, value]) => {
+					const fieldCode = generateEffectSchemaCode(value, indent + 1);
+					const wrappedCode = isRequiredField(key, subSchema.required)
+						? fieldCode
+						: `S.optional(${fieldCode})`;
+					return `${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${wrappedCode},`;
+				})
 				.join("\n");
 			return `S.Struct({\n${fields}\n${pad}})`;
 		}

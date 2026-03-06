@@ -36,6 +36,21 @@ import {
 	type SchemaLibrary,
 } from "./generate-sample-code";
 
+const schemaLibraryOptions: { value: SchemaLibrary; label: string }[] = [
+	{ value: "zod", label: "Zod" },
+	{ value: "valibot", label: "Valibot" },
+	{ value: "arktype", label: "ArkType" },
+	{ value: "effect", label: "Effect Schema" },
+];
+
+const schemaLibraryValues = new Set<string>(
+	schemaLibraryOptions.map((o) => o.value),
+);
+
+function isSchemaLibrary(value: string): value is SchemaLibrary {
+	return schemaLibraryValues.has(value);
+}
+
 export function AppEntryInputDialog({
 	onClose,
 	onSubmit,
@@ -446,16 +461,13 @@ export function AppEntryInputDialog({
 									</label>
 									<Select
 										id="schema-library-select"
-										options={[
-											{ value: "zod", label: "Zod" },
-											{ value: "valibot", label: "Valibot" },
-											{ value: "arktype", label: "ArkType" },
-											{ value: "joi", label: "Joi" },
-											{ value: "yup", label: "Yup" },
-											{ value: "effect", label: "Effect Schema" },
-										]}
+										options={schemaLibraryOptions}
 										value={schemaLibrary}
-										onValueChange={(v) => setSchemaLibrary(v as SchemaLibrary)}
+										onValueChange={(v) => {
+											if (isSchemaLibrary(v)) {
+												setSchemaLibrary(v);
+											}
+										}}
 										placeholder="Validation Library"
 										widthClassName="w-[150px]"
 										triggerClassName="h-auto py-[4px] text-[12px]"
