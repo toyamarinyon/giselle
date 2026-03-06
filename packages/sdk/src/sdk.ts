@@ -58,7 +58,9 @@ export type AppRunAndWaitArgs<T = Record<string, unknown>> = AppRunArgs & {
 	/**
 	 * When provided, validates the task output against this schema
 	 * and types the result accordingly.
-	 * Accepts any Standard Schema v1 compatible schema (Zod, Valibot, ArkType, etc.).
+	 * Accepts any Standard Schema v1 compatible schema.
+	 * Verified with: Zod (3.24+), Valibot (1.0+), ArkType (2.0+), Yup (1.7+), Effect Schema (3.13+).
+	 * @see https://standardschema.dev/schema
 	 *
 	 * Requires the End Node to have Structured Output configured in the workflow.
 	 * Only applied when the task's outputType is "object".
