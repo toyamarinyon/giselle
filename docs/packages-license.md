@@ -1228,8 +1228,8 @@ MIT-0 permitted
 
 
 
-<a name="@giselles-ai/browser-tool"></a>
-### @giselles-ai/browser-tool v0.1.9
+<a name="@giselles-ai/agent-runtime"></a>
+### @giselles-ai/agent-runtime v0.1.16
 #### 
 
 ##### Paths
@@ -1239,8 +1239,8 @@ MIT-0 permitted
 
 
 
-<a name="@giselles-ai/sandbox-agent"></a>
-### @giselles-ai/sandbox-agent v0.1.15
+<a name="@giselles-ai/browser-tool"></a>
+### @giselles-ai/browser-tool v0.1.9
 #### 
 
 ##### Paths
