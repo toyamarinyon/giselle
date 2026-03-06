@@ -34,6 +34,7 @@ const config: KnipConfig = {
 				"pino-pretty",
 				"prettier",
 				"shiki",
+				"webpack",
 			],
 		},
 		"internal-packages/workflow-designer-ui": {
