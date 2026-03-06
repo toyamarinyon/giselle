@@ -310,6 +310,9 @@ importers:
       '@giselles-ai/agent-builder':
         specifier: 0.1.0
         version: 0.1.0(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
+      '@giselles-ai/agent-runtime':
+        specifier: 0.1.16
+        version: 0.1.16
       '@giselles-ai/browser-tool':
         specifier: 0.1.9
         version: 0.1.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -346,9 +349,6 @@ importers:
       '@giselles-ai/react':
         specifier: workspace:*
         version: link:../../packages/react
-      '@giselles-ai/sandbox-agent':
-        specifier: 0.1.15
-        version: 0.1.15
       '@giselles-ai/supabase-driver':
         specifier: workspace:*
         version: link:../../packages/supabase-driver
@@ -2578,14 +2578,14 @@ packages:
       next:
         optional: true
 
+  '@giselles-ai/agent-runtime@0.1.16':
+    resolution: {integrity: sha512-dxwqfaxpSzYtoj78lmrkTfbx/WWsfpvQ5J8B9XyVArqpotcaEkhQ/J5nFMNI2UVF42IYYOV8GOdqdLLqnYsZ5w==}
+
   '@giselles-ai/browser-tool@0.1.9':
     resolution: {integrity: sha512-9Yqz0qqf2mFPC79ylARstFSvg9Ug/6XKzLYV/GcUhwDIh2FJBSct0e9/XIz5Nv3uOc/oTkHhqpMd10OnwA5MgA==}
     peerDependencies:
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
-
-  '@giselles-ai/sandbox-agent@0.1.15':
-    resolution: {integrity: sha512-ihfwpg2Ojz2Pa4dn7soEtvfM5Yn843N6b4P4o3nsK94KbwuETUUa7j8ujjccdU6hb5BfTLTaXHQwHn2KBlQ8kA==}
 
   '@google-cloud/precise-date@4.0.0':
     resolution: {integrity: sha512-1TUx3KdaU3cN7nfCdNf+UVqA/PSX29Cjcox3fZZBtINlRrXVTmUkQnCKv2MbBUbCopbK4olAT1IHl76uZyCiVA==}
@@ -10409,6 +10409,15 @@ snapshots:
       - bare-abort-controller
       - react-native-b4a
 
+  '@giselles-ai/agent-runtime@0.1.16':
+    dependencies:
+      '@iarna/toml': 3.0.0
+      '@vercel/sandbox': 1.6.0
+      zod: 4.3.6
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - react-native-b4a
+
   '@giselles-ai/browser-tool@0.1.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.26.0(zod@4.3.6)
@@ -10419,15 +10428,6 @@ snapshots:
     transitivePeerDependencies:
       - '@cfworker/json-schema'
       - supports-color
-
-  '@giselles-ai/sandbox-agent@0.1.15':
-    dependencies:
-      '@iarna/toml': 3.0.0
-      '@vercel/sandbox': 1.6.0
-      zod: 4.3.6
-    transitivePeerDependencies:
-      - bare-abort-controller
-      - react-native-b4a
 
   '@google-cloud/precise-date@4.0.0': {}
 

@@ -1,9 +1,9 @@
-import { createRelaySession } from "@giselles-ai/browser-tool/relay";
 import {
 	createCodexAgent,
 	createGeminiAgent,
 	runChat,
-} from "@giselles-ai/sandbox-agent";
+} from "@giselles-ai/agent-runtime";
+import { createRelaySession } from "@giselles-ai/browser-tool/relay";
 import { eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import * as z from "zod/v4";
