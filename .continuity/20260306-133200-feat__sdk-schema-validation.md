@@ -9,40 +9,43 @@
 ## Goal (incl. success criteria)
 
 - Standard Schema v1 validation on `runAndWait` with typed output.
-- Code generators for Zod, Valibot, ArkType, Effect in App Entry dialog.
+- Code generators for Zod, Valibot, ArkType, Joi, Yup, Effect in App Entry dialog.
 - All review comments from Codex, Copilot, and CodeRabbit addressed.
 
 ## Constraints/Assumptions
 
 - Only include validation libraries confirmed to support Standard Schema v1.
-- Follow codebase conventions (Symbol-based error branding, escaping in code gen).
+- Follow codebase conventions (escaping in code gen).
 
 ## Key decisions
 
-- Removed Yup and Joi from library options (not confirmed Standard Schema v1 support).
+- **Keep Yup and Joi** — both are confirmed Standard Schema v1 implementations per [standardschema.dev](https://standardschema.dev/schema#what-schema-libraries-implement-the-spec) (Yup v1.7.0+, Joi v18.0.0+).
+- **No `.strict()` on generated object schemas** — AI model output validation benefits from Zod's default strip behavior (forgiving). `additionalProperties: false` in JSON Schema already instructs the model.
+- **No runtime Standard Schema v1 guard** — `schema` is typed as `StandardSchemaV1<unknown, T>`, TypeScript enforces the contract at compile time. YAGNI for JS callers.
+- **No Symbol-based branding on `SchemaValidationError`** — other SDK error classes don't have it either. Add consistently across all errors in a separate PR if needed.
+- **No runtime guard on `onValueChange` cast** — Select options are hardcoded in the same component.
 - Schema validation only runs on completed tasks (not failed/cancelled).
-- Added `formatPropertyKey` and `formatStringLiteral` helpers for safe code generation.
-- Each library generator respects `subSchema.required` for optional field markers.
+- Added `formatPropertyKey`, `formatStringLiteral`, `formatArkTypeLiteral` helpers for safe code generation.
+- Sample code: `task.status === "completed"` guard added to mirror SDK behavior.
+- Sample code: schema declaration moved below client instantiation for better readability.
 
 ## State
 
-- All review feedback addressed, all quality checks pass.
+- All review feedback addressed via PR comment replies and code changes.
 
 ## Done
 
 - P1: Skip schema validation when task is not completed (failed/cancelled).
 - Fix JSDoc "Zod v4" to "Zod".
-- Add Symbol-based branding for `SchemaValidationError`.
-- Remove Yup and Joi options.
-- Guard `onValueChange` with runtime type check instead of force-cast.
-- Escape property keys and enum literals in generated code.
-- Respect `subSchema.required` for optional fields in all code generators.
+- Escape property keys and enum literals in all code generators.
+- Add `task.status === "completed"` guard in sample code.
+- Move schema declaration below client instantiation in sample code.
 - Add 4 unit tests for schema validation behavior.
-- All quality checks pass: format, build-sdk, check-types, tidy, test.
+- Reply to all PR review comments with rationale.
 
 ## Now
 
-- Ready for commit and push.
+- Ready for push and human reviewer approval.
 
 ## Next
 
