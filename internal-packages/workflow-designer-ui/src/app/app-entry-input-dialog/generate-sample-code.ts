@@ -8,6 +8,21 @@ interface SchemaLibraryConfig {
 
 const INDENT_UNIT = "  ";
 
+const validIdentifierPattern = /^[$A-Z_][0-9A-Z_$]*$/i;
+
+function formatPropertyKey(key: string): string {
+	return validIdentifierPattern.test(key) ? key : JSON.stringify(key);
+}
+
+function formatStringLiteral(value: string): string {
+	return JSON.stringify(value);
+}
+
+// Use JSON.stringify for escaping, strip its double quotes, then escape single quotes for ArkType's single-quoted syntax.
+function formatArkTypeLiteral(value: string): string {
+	return `'${JSON.stringify(value).slice(1, -1).replace(/'/g, "\\'")}'`;
+}
+
 const defaultSchemaDeclaration = (schemaCode: string) =>
 	`const schema = ${schemaCode};`;
 
@@ -86,7 +101,9 @@ function generateZodCode(subSchema: SubSchema, indent: number): string {
 	switch (subSchema.type) {
 		case "string":
 			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
+				const values = subSchema.enum
+					.map((v) => formatStringLiteral(v))
+					.join(", ");
 				return `z.enum([${values}])`;
 			}
 			return "z.string()";
@@ -102,7 +119,7 @@ function generateZodCode(subSchema: SubSchema, indent: number): string {
 			const fields = entries
 				.map(
 					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateZodCode(value, indent + 1)},`,
+						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateZodCode(value, indent + 1)},`,
 				)
 				.join("\n");
 			return `z.object({\n${fields}\n${pad}})`;
@@ -121,7 +138,9 @@ function generateValibotCode(subSchema: SubSchema, indent: number): string {
 	switch (subSchema.type) {
 		case "string":
 			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
+				const values = subSchema.enum
+					.map((v) => formatStringLiteral(v))
+					.join(", ");
 				return `v.picklist([${values}])`;
 			}
 			return "v.string()";
@@ -137,7 +156,7 @@ function generateValibotCode(subSchema: SubSchema, indent: number): string {
 			const fields = entries
 				.map(
 					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateValibotCode(value, indent + 1)},`,
+						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateValibotCode(value, indent + 1)},`,
 				)
 				.join("\n");
 			return `v.object({\n${fields}\n${pad}})`;
@@ -156,7 +175,9 @@ function generateArkTypeCode(subSchema: SubSchema, indent: number): string {
 	switch (subSchema.type) {
 		case "string":
 			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `'${v}'`).join(" | ");
+				const values = subSchema.enum
+					.map((v) => formatArkTypeLiteral(v))
+					.join(" | ");
 				return `"${values}"`;
 			}
 			return '"string"';
@@ -172,7 +193,7 @@ function generateArkTypeCode(subSchema: SubSchema, indent: number): string {
 			const fields = entries
 				.map(
 					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateArkTypeCode(value, indent + 1)},`,
+						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateArkTypeCode(value, indent + 1)},`,
 				)
 				.join("\n");
 			return `type({\n${fields}\n${pad}})`;
@@ -199,7 +220,9 @@ function generateJoiCode(subSchema: SubSchema, indent: number): string {
 	switch (subSchema.type) {
 		case "string":
 			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
+				const values = subSchema.enum
+					.map((v) => formatStringLiteral(v))
+					.join(", ");
 				return `Joi.string().valid(${values})`;
 			}
 			return "Joi.string()";
@@ -215,7 +238,7 @@ function generateJoiCode(subSchema: SubSchema, indent: number): string {
 			const fields = entries
 				.map(
 					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateJoiCode(value, indent + 1)},`,
+						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateJoiCode(value, indent + 1)},`,
 				)
 				.join("\n");
 			return `Joi.object({\n${fields}\n${pad}})`;
@@ -234,7 +257,9 @@ function generateYupCode(subSchema: SubSchema, indent: number): string {
 	switch (subSchema.type) {
 		case "string":
 			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
+				const values = subSchema.enum
+					.map((v) => formatStringLiteral(v))
+					.join(", ");
 				return `y.string().oneOf([${values}])`;
 			}
 			return "y.string()";
@@ -250,7 +275,7 @@ function generateYupCode(subSchema: SubSchema, indent: number): string {
 			const fields = entries
 				.map(
 					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateYupCode(value, indent + 1)},`,
+						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateYupCode(value, indent + 1)},`,
 				)
 				.join("\n");
 			return `y.object({\n${fields}\n${pad}})`;
@@ -272,7 +297,9 @@ function generateEffectSchemaCode(
 	switch (subSchema.type) {
 		case "string":
 			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum.map((v) => `"${v}"`).join(", ");
+				const values = subSchema.enum
+					.map((v) => formatStringLiteral(v))
+					.join(", ");
 				return `S.Literal(${values})`;
 			}
 			return "S.String";
@@ -288,7 +315,7 @@ function generateEffectSchemaCode(
 			const fields = entries
 				.map(
 					([key, value]) =>
-						`${pad}${INDENT_UNIT}${key}: ${generateEffectSchemaCode(value, indent + 1)},`,
+						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateEffectSchemaCode(value, indent + 1)},`,
 				)
 				.join("\n");
 			return `S.Struct({\n${fields}\n${pad}})`;
@@ -324,11 +351,11 @@ export function generateApiSampleCodeWithResponse(
 import Giselle from "@giselles-ai/sdk";
 ${importLine}
 
-${schemaDeclaration}
-
 const client = new Giselle({
   apiKey: process.env.GISELLE_API_KEY,
 });
+
+${schemaDeclaration}
 
 const { task } = await client.apps.runAndWait({
   appId: "${app.id}",
@@ -336,7 +363,7 @@ const { task } = await client.apps.runAndWait({
   schema,
 });
 
-if (task.outputType === "object") {
+if (task.status === "completed" && task.outputType === "object") {
   console.log(task.output);
 }
 \`\`\`
