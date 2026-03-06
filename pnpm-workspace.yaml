@@ -113,3 +113,4 @@ minimumReleaseAgeExclude:
   - "@next/third-parties"
   - "@giselles-ai/browser-tool"
   - "@giselles-ai/agent-runtime"
+  - "@giselles-ai/agent-builder"
