@@ -29,8 +29,8 @@ export function AdvancedOptions({ node }: { node: TextGenerationNode }) {
 			{isAdvancedOpen && (
 				<div className="mt-[12px] space-y-[12px]">
 					{structuredOutput && (
-						<div>
-							<SettingDetail className="mb-[6px]">Output format</SettingDetail>
+						<div className="flex items-start justify-between gap-[12px]">
+							<SettingDetail>Output Format</SettingDetail>
 							<OutputFormatPanel
 								output={node.content.output}
 								onOutputChange={(output) =>
