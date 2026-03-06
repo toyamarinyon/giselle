@@ -424,6 +424,12 @@ export const jsonRoutes = {
 				return JsonResponse.json(data);
 			},
 		}),
+	generateObject: (giselle: Giselle) =>
+		createHandler({
+			input: z.object({ prompt: z.string() }),
+			handler: async ({ input }) =>
+				JsonResponse.json(await giselle.generateObject(input)),
+		}),
 	startContentGeneration: (giselle: Giselle) =>
 		createHandler({
 			input: z.object({

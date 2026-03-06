@@ -54,6 +54,7 @@ import { executeAction, executeDataQuery } from "./operations";
 import { executeQuery } from "./operations/execute-query";
 import { addSecret, deleteSecret, getWorkspaceSecrets } from "./secrets";
 import { addWebPage } from "./sources";
+import { generateObject } from "./structured-output/generate-object";
 import {
 	type CreateAndStartTaskInputs,
 	type CreateTaskInputs,
@@ -395,6 +396,7 @@ export function Giselle(config: GiselleConfig) {
 				context,
 			});
 		},
+		generateObject,
 		setGenerateContentProcess(
 			process: (args: {
 				context: GiselleContext;
