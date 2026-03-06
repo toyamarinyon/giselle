@@ -24,7 +24,8 @@ const config: KnipConfig = {
 				"trigger.config.ts",
 				"trigger/investigate-private-key-job.ts",
 			],
-			// Ignore deps that are resolved dynamically in next.config or used only at build/runtime
+			// Ignore deps that are resolved dynamically in next.config, used only at build/runtime,
+			// or intentionally pinned to force a safe peer resolution (e.g. webpack)
 			ignoreDependencies: [
 				"@aws-sdk/client-s3",
 				"@embedpdf/pdfium",
@@ -34,6 +35,7 @@ const config: KnipConfig = {
 				"pino-pretty",
 				"prettier",
 				"shiki",
+				"webpack",
 			],
 		},
 		"internal-packages/workflow-designer-ui": {

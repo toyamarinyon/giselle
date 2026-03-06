@@ -2,26 +2,27 @@
 
 
 ## Summary
-* 966 MIT
-* 194 Apache 2.0
-* 45 ISC
-* 27 New BSD
-* 16 Simplified BSD
-* 9 BlueOak-1.0.0
-* 2 MIT OR Apache-2.0
-* 2 MIT-0
+* 962 MIT
+* 192 Apache 2.0
+* 44 ISC
+* 24 New BSD
+* 15 Simplified BSD
+* 10 BlueOak-1.0.0
 * 2 Mozilla Public License 2.0
-* 1 BSD
-* 1 (MIT OR CC0-1.0)
-* 1 BSD Zero Clause License
-* 1 Unknown
-* 1 (WTFPL OR MIT)
-* 1 (AFL-2.1 OR BSD-3-Clause)
-* 1 The Unlicense
-* 1 CC-BY-4.0
-* 1 Python-2.0
+* 2 FSL-1.1-MIT
+* 2 MIT-0
+* 2 MIT OR Apache-2.0
 * 1 (Apache-2.0 AND BSD-3-Clause)
 * 1 LGPL-3.0-or-later
+* 1 Python-2.0
+* 1 CC-BY-4.0
+* 1 The Unlicense
+* 1 (AFL-2.1 OR BSD-3-Clause)
+* 1 (WTFPL OR MIT)
+* 1 Unknown
+* 1 BSD Zero Clause License
+* 1 (MIT OR CC0-1.0)
+* 1 BSD
 
 
 
@@ -140,28 +141,6 @@
 
 <a name="@ampproject/remapping"></a>
 ### @ampproject/remapping v2.3.0
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> permitted
-
-
-
-<a name="@apm-js-collab/code-transformer"></a>
-### @apm-js-collab/code-transformer v0.8.2
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> permitted
-
-
-
-<a name="@apm-js-collab/tracing-hooks"></a>
-### @apm-js-collab/tracing-hooks v0.3.1
 #### 
 
 ##### Paths
@@ -1183,6 +1162,17 @@ MIT-0 permitted
 
 
 
+<a name="@fastify/otel"></a>
+### @fastify/otel v0.16.0
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
+
+
+
 <a name="@floating-ui/core"></a>
 ### @floating-ui/core v1.7.3
 #### 
@@ -1899,7 +1889,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-amqplib"></a>
-### @opentelemetry/instrumentation-amqplib v0.55.0
+### @opentelemetry/instrumentation-amqplib v0.58.0
 #### 
 
 ##### Paths
@@ -1910,7 +1900,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-connect"></a>
-### @opentelemetry/instrumentation-connect v0.52.0
+### @opentelemetry/instrumentation-connect v0.54.0
 #### 
 
 ##### Paths
@@ -1921,7 +1911,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-dataloader"></a>
-### @opentelemetry/instrumentation-dataloader v0.26.0
+### @opentelemetry/instrumentation-dataloader v0.28.0
 #### 
 
 ##### Paths
@@ -1932,7 +1922,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-express"></a>
-### @opentelemetry/instrumentation-express v0.57.0
+### @opentelemetry/instrumentation-express v0.59.0
 #### 
 
 ##### Paths
@@ -1943,7 +1933,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-fs"></a>
-### @opentelemetry/instrumentation-fs v0.28.0
+### @opentelemetry/instrumentation-fs v0.30.0
 #### 
 
 ##### Paths
@@ -1954,7 +1944,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-generic-pool"></a>
-### @opentelemetry/instrumentation-generic-pool v0.52.0
+### @opentelemetry/instrumentation-generic-pool v0.54.0
 #### 
 
 ##### Paths
@@ -1965,7 +1955,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-graphql"></a>
-### @opentelemetry/instrumentation-graphql v0.56.0
+### @opentelemetry/instrumentation-graphql v0.58.0
 #### 
 
 ##### Paths
@@ -1976,7 +1966,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-hapi"></a>
-### @opentelemetry/instrumentation-hapi v0.55.0
+### @opentelemetry/instrumentation-hapi v0.57.0
 #### 
 
 ##### Paths
@@ -1987,7 +1977,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-http"></a>
-### @opentelemetry/instrumentation-http v0.208.0
+### @opentelemetry/instrumentation-http v0.211.0
 #### 
 
 ##### Paths
@@ -1998,7 +1988,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-ioredis"></a>
-### @opentelemetry/instrumentation-ioredis v0.56.0
+### @opentelemetry/instrumentation-ioredis v0.59.0
 #### 
 
 ##### Paths
@@ -2009,7 +1999,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-kafkajs"></a>
-### @opentelemetry/instrumentation-kafkajs v0.18.0
+### @opentelemetry/instrumentation-kafkajs v0.20.0
 #### 
 
 ##### Paths
@@ -2020,7 +2010,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-knex"></a>
-### @opentelemetry/instrumentation-knex v0.53.0
+### @opentelemetry/instrumentation-knex v0.55.0
 #### 
 
 ##### Paths
@@ -2031,7 +2021,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-koa"></a>
-### @opentelemetry/instrumentation-koa v0.57.0
+### @opentelemetry/instrumentation-koa v0.59.0
 #### 
 
 ##### Paths
@@ -2042,7 +2032,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-lru-memoizer"></a>
-### @opentelemetry/instrumentation-lru-memoizer v0.53.0
+### @opentelemetry/instrumentation-lru-memoizer v0.55.0
 #### 
 
 ##### Paths
@@ -2053,7 +2043,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-mongodb"></a>
-### @opentelemetry/instrumentation-mongodb v0.61.0
+### @opentelemetry/instrumentation-mongodb v0.64.0
 #### 
 
 ##### Paths
@@ -2064,7 +2054,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-mongoose"></a>
-### @opentelemetry/instrumentation-mongoose v0.55.0
+### @opentelemetry/instrumentation-mongoose v0.57.0
 #### 
 
 ##### Paths
@@ -2075,7 +2065,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-mysql"></a>
-### @opentelemetry/instrumentation-mysql v0.54.0
+### @opentelemetry/instrumentation-mysql v0.57.0
 #### 
 
 ##### Paths
@@ -2086,7 +2076,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-mysql2"></a>
-### @opentelemetry/instrumentation-mysql2 v0.55.0
+### @opentelemetry/instrumentation-mysql2 v0.57.0
 #### 
 
 ##### Paths
@@ -2097,7 +2087,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-pg"></a>
-### @opentelemetry/instrumentation-pg v0.61.0
+### @opentelemetry/instrumentation-pg v0.63.0
 #### 
 
 ##### Paths
@@ -2108,7 +2098,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-redis"></a>
-### @opentelemetry/instrumentation-redis v0.57.0
+### @opentelemetry/instrumentation-redis v0.59.0
 #### 
 
 ##### Paths
@@ -2119,7 +2109,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-tedious"></a>
-### @opentelemetry/instrumentation-tedious v0.27.0
+### @opentelemetry/instrumentation-tedious v0.30.0
 #### 
 
 ##### Paths
@@ -2130,7 +2120,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@opentelemetry/instrumentation-undici"></a>
-### @opentelemetry/instrumentation-undici v0.19.0
+### @opentelemetry/instrumentation-undici v0.21.0
 #### 
 
 ##### Paths
@@ -2317,7 +2307,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@prisma/instrumentation"></a>
-### @prisma/instrumentation v6.19.0
+### @prisma/instrumentation v7.2.0
 #### 
 
 ##### Paths
@@ -3428,7 +3418,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry-internal/browser-utils"></a>
-### @sentry-internal/browser-utils v10.28.0
+### @sentry-internal/browser-utils v10.42.0
 #### 
 
 ##### Paths
@@ -3439,7 +3429,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry-internal/feedback"></a>
-### @sentry-internal/feedback v10.28.0
+### @sentry-internal/feedback v10.42.0
 #### 
 
 ##### Paths
@@ -3450,7 +3440,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry-internal/replay"></a>
-### @sentry-internal/replay v10.28.0
+### @sentry-internal/replay v10.42.0
 #### 
 
 ##### Paths
@@ -3461,7 +3451,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry-internal/replay-canvas"></a>
-### @sentry-internal/replay-canvas v10.28.0
+### @sentry-internal/replay-canvas v10.42.0
 #### 
 
 ##### Paths
@@ -3472,7 +3462,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/babel-plugin-component-annotate"></a>
-### @sentry/babel-plugin-component-annotate v4.6.1
+### @sentry/babel-plugin-component-annotate v5.1.1
 #### 
 
 ##### Paths
@@ -3483,7 +3473,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/browser"></a>
-### @sentry/browser v10.28.0
+### @sentry/browser v10.42.0
 #### 
 
 ##### Paths
@@ -3494,7 +3484,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/bundler-plugin-core"></a>
-### @sentry/bundler-plugin-core v4.6.1
+### @sentry/bundler-plugin-core v5.1.1
 #### 
 
 ##### Paths
@@ -3505,29 +3495,37 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/cli"></a>
-### @sentry/cli v2.58.2
+### @sentry/cli v2.58.5
 #### 
 
 ##### Paths
 * /home/runner/work/giselle/giselle
 
-<a href="http://opensource.org/licenses/BSD-3-Clause">New BSD</a> permitted
+FSL-1.1-MIT manually approved
+
+>FSL-1.1-MIT converts to MIT after 2 years. Giselle is not a competing error monitoring service, so the non-compete restriction does not apply. Used only at build time for source map uploads. https://github.com/getsentry/sentry-cli/blob/master/LICENSE.md
+
+><cite> shige 2026-03-06</cite>
 
 
 
 <a name="@sentry/cli-linux-x64"></a>
-### @sentry/cli-linux-x64 v2.58.2
+### @sentry/cli-linux-x64 v2.58.5
 #### 
 
 ##### Paths
 * /home/runner/work/giselle/giselle
 
-<a href="http://opensource.org/licenses/BSD-3-Clause">New BSD</a> permitted
+FSL-1.1-MIT manually approved
+
+>FSL-1.1-MIT converts to MIT after 2 years. Giselle is not a competing error monitoring service, so the non-compete restriction does not apply. Platform-specific binary for @sentry/cli. https://github.com/getsentry/sentry-cli/blob/master/LICENSE.md
+
+><cite> shige 2026-03-06</cite>
 
 
 
 <a name="@sentry/core"></a>
-### @sentry/core v10.28.0
+### @sentry/core v10.42.0
 #### 
 
 ##### Paths
@@ -3538,7 +3536,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/nextjs"></a>
-### @sentry/nextjs v10.28.0
+### @sentry/nextjs v10.42.0
 #### 
 
 ##### Paths
@@ -3549,7 +3547,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/node"></a>
-### @sentry/node v10.28.0
+### @sentry/node v10.42.0
 #### 
 
 ##### Paths
@@ -3560,7 +3558,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/node-core"></a>
-### @sentry/node-core v10.28.0
+### @sentry/node-core v10.42.0
 #### 
 
 ##### Paths
@@ -3571,7 +3569,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/opentelemetry"></a>
-### @sentry/opentelemetry v10.28.0
+### @sentry/opentelemetry v10.42.0
 #### 
 
 ##### Paths
@@ -3582,7 +3580,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/react"></a>
-### @sentry/react v10.28.0
+### @sentry/react v10.42.0
 #### 
 
 ##### Paths
@@ -3593,7 +3591,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/vercel-edge"></a>
-### @sentry/vercel-edge v10.28.0
+### @sentry/vercel-edge v10.42.0
 #### 
 
 ##### Paths
@@ -3604,7 +3602,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@sentry/webpack-plugin"></a>
-### @sentry/webpack-plugin v4.6.1
+### @sentry/webpack-plugin v5.1.1
 #### 
 
 ##### Paths
@@ -5089,7 +5087,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@types/pg-pool"></a>
-### @types/pg-pool v2.0.6
+### @types/pg-pool v2.0.7
 #### 
 
 ##### Paths
@@ -5649,6 +5647,17 @@ BlueOak-1.0.0 permitted
 
 
 
+<a name="acorn-import-phases"></a>
+### acorn-import-phases v1.0.4
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
+
+
+
 <a name="acorn-walk"></a>
 ### acorn-walk v8.3.4
 #### 
@@ -5683,7 +5692,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="ajv"></a>
-### ajv v6.14.0
+### ajv v8.18.0
 #### 
 
 ##### Paths
@@ -5705,7 +5714,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="ajv-keywords"></a>
-### ajv-keywords v3.5.2
+### ajv-keywords v5.1.0
 #### 
 
 ##### Paths
@@ -5756,17 +5765,6 @@ BlueOak-1.0.0 permitted
 * /home/runner/work/giselle/giselle
 
 <a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
-<a name="anymatch"></a>
-### anymatch v3.1.3
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://en.wikipedia.org/wiki/ISC_license">ISC</a> permitted
 
 
 
@@ -5961,17 +5959,6 @@ Python-2.0 manually approved
 
 
 
-<a name="binary-extensions"></a>
-### binary-extensions v2.3.0
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
 <a name="bintrees"></a>
 ### bintrees v1.0.2
 #### 
@@ -6039,7 +6026,7 @@ Python-2.0 manually approved
 
 
 <a name="browserslist"></a>
-### browserslist v4.27.0
+### browserslist v4.28.1
 #### 
 
 ##### Paths
@@ -6237,7 +6224,7 @@ CC-BY-4.0 permitted
 
 
 <a name="chokidar"></a>
-### chokidar v3.6.0
+### chokidar v4.0.3
 #### 
 
 ##### Paths
@@ -7051,7 +7038,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="electron-to-chromium"></a>
-### electron-to-chromium v1.5.244
+### electron-to-chromium v1.5.302
 #### 
 
 ##### Paths
@@ -7536,17 +7523,6 @@ BlueOak-1.0.0 permitted
 
 <a name="fast-glob"></a>
 ### fast-glob v3.3.3
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
-<a name="fast-json-stable-stringify"></a>
-### fast-json-stable-stringify v2.1.0
 #### 
 
 ##### Paths
@@ -8293,17 +8269,6 @@ BlueOak-1.0.0 permitted
 
 
 
-<a name="hoist-non-react-statics"></a>
-### hoist-non-react-statics v3.3.2
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/BSD-3-Clause">New BSD</a> permitted
-
-
-
 <a name="hono"></a>
 ### hono v4.12.4
 #### 
@@ -8559,17 +8524,6 @@ BlueOak-1.0.0 permitted
 
 <a name="is-alphanumerical"></a>
 ### is-alphanumerical v2.0.1
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
-<a name="is-binary-path"></a>
-### is-binary-path v2.1.0
 #### 
 
 ##### Paths
@@ -8932,7 +8886,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="json-schema-traverse"></a>
-### json-schema-traverse v0.4.1
+### json-schema-traverse v1.0.0
 #### 
 
 ##### Paths
@@ -9262,7 +9216,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="magic-string"></a>
-### magic-string v0.30.8
+### magic-string v0.30.21
 #### 
 
 ##### Paths
@@ -10017,6 +9971,17 @@ BlueOak-1.0.0 permitted
 * /home/runner/work/giselle/giselle
 
 <a href="http://en.wikipedia.org/wiki/ISC_license">ISC</a> permitted
+
+
+
+<a name="minipass"></a>
+### minipass v7.1.3
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+BlueOak-1.0.0 permitted
 
 
 
@@ -11494,17 +11459,6 @@ BlueOak-1.0.0 permitted
 
 
 
-<a name="react-is"></a>
-### react-is v16.13.1
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
 <a name="react-remove-scroll"></a>
 ### react-remove-scroll v2.7.1
 #### 
@@ -11561,7 +11515,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="readdirp"></a>
-### readdirp v3.6.0
+### readdirp v4.1.2
 #### 
 
 ##### Paths
@@ -11803,7 +11757,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="resolve"></a>
-### resolve v1.22.8
+### resolve v1.22.10
 #### 
 
 ##### Paths
@@ -11990,7 +11944,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="schema-utils"></a>
-### schema-utils v3.3.0
+### schema-utils v4.3.3
 #### 
 
 ##### Paths
@@ -13423,36 +13377,14 @@ BlueOak-1.0.0 permitted
 
 
 
-<a name="unplugin"></a>
-### unplugin v1.0.1
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
 <a name="update-browserslist-db"></a>
-### update-browserslist-db v1.1.4
+### update-browserslist-db v1.2.3
 #### 
 
 ##### Paths
 * /home/runner/work/giselle/giselle
 
 <a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
-<a name="uri-js"></a>
-### uri-js v4.4.1
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/bsd-license">Simplified BSD</a> permitted
 
 
 
@@ -13703,7 +13635,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="webpack"></a>
-### webpack v5.97.1
+### webpack v5.104.1
 #### 
 
 ##### Paths
@@ -13725,18 +13657,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="webpack-sources"></a>
-### webpack-sources v3.3.3
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
-<a name="webpack-virtual-modules"></a>
-### webpack-virtual-modules v0.5.0
+### webpack-sources v3.3.4
 #### 
 
 ##### Paths
