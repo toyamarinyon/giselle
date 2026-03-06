@@ -589,7 +589,9 @@ describe("Giselle SDK (public Runs API)", () => {
 			"~standard": {
 				version: 1 as const,
 				vendor: "test",
-				validate: (value: unknown) => ({ value }),
+				validate: (value: unknown) => ({
+					value: value as { summary: string; score: number },
+				}),
 			},
 		};
 
@@ -599,17 +601,20 @@ describe("Giselle SDK (public Runs API)", () => {
 			fetch: fetchMock as unknown as typeof fetch,
 		});
 
-		const result = await client.apps.runAndWait({
+		const { task } = await client.apps.runAndWait({
 			appId: "app-xxxxx",
 			input: { text: "hello" },
 			pollIntervalMs: 0,
 			schema: mockSchema,
 		});
 
-		expect(result.task).toMatchObject({
-			outputType: "object",
-			output: { summary: "ok", score: 10 },
-		});
+		expect(task.outputType).toBe("object");
+		if (task.outputType === "object") {
+			expect(typeof task.output.summary).toBe("string");
+			expect(task.output.summary).toBe("ok");
+			expect(typeof task.output.score).toBe("number");
+			expect(task.output.score).toBe(10);
+		}
 	});
 
 	it("app.runAndWait() throws SchemaValidationError when validation fails", async () => {
