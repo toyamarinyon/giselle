@@ -26,21 +26,8 @@ export class NotImplementedError extends GiselleSdkError {
 	name = "NotImplementedError";
 }
 
-const schemaValidationErrorBrand = Symbol.for(
-	"@giselles-ai/sdk/SchemaValidationError",
-);
-
 export class SchemaValidationError extends GiselleSdkError {
 	name = "SchemaValidationError";
-	readonly [schemaValidationErrorBrand] = true;
-
-	static [Symbol.hasInstance](instance: unknown): boolean {
-		return (
-			typeof instance === "object" &&
-			instance !== null &&
-			schemaValidationErrorBrand in instance
-		);
-	}
 }
 
 export class TimeoutError extends GiselleSdkError {

@@ -626,7 +626,7 @@ export default class Giselle {
 		}
 
 		// Fetch full results at the end.
-		const result = (await this.#getTask({
+		const { task } = (await this.#getTask({
 			appId: args.appId,
 			taskId,
 			includeGenerations: true,
@@ -634,12 +634,10 @@ export default class Giselle {
 
 		if (
 			args.schema &&
-			result.task.status === "completed" &&
-			result.task.outputType === "object"
+			task.status === "completed" &&
+			task.outputType === "object"
 		) {
-			const validated = await args.schema["~standard"].validate(
-				result.task.output,
-			);
+			const validated = await args.schema["~standard"].validate(task.output);
 
 			if (validated.issues) {
 				const messages = validated.issues
@@ -652,12 +650,12 @@ export default class Giselle {
 
 			return {
 				task: {
-					...result.task,
+					...task,
 					output: validated.value,
 				},
 			};
 		}
 
-		return result;
+		return { task };
 	}
 }
