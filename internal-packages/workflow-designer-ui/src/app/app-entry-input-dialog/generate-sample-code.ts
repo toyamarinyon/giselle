@@ -18,10 +18,6 @@ function formatStringLiteral(value: string): string {
 	return JSON.stringify(value);
 }
 
-function isRequiredField(key: string, required?: string[]): boolean {
-	return required?.includes(key) ?? false;
-}
-
 const defaultSchemaDeclaration = (schemaCode: string) =>
 	`const schema = ${schemaCode};`;
 
@@ -106,13 +102,10 @@ function generateZodCode(subSchema: SubSchema, indent: number): string {
 				return "z.object({})";
 			}
 			const fields = entries
-				.map(([key, value]) => {
-					const fieldCode = generateZodCode(value, indent + 1);
-					const optionalSuffix = isRequiredField(key, subSchema.required)
-						? ""
-						: ".optional()";
-					return `${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${fieldCode}${optionalSuffix},`;
-				})
+				.map(
+					([key, value]) =>
+						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateZodCode(value, indent + 1)},`,
+				)
 				.join("\n");
 			return `z.object({\n${fields}\n${pad}})`;
 		}
@@ -146,13 +139,10 @@ function generateValibotCode(subSchema: SubSchema, indent: number): string {
 				return "v.object({})";
 			}
 			const fields = entries
-				.map(([key, value]) => {
-					const fieldCode = generateValibotCode(value, indent + 1);
-					const wrappedCode = isRequiredField(key, subSchema.required)
-						? fieldCode
-						: `v.optional(${fieldCode})`;
-					return `${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${wrappedCode},`;
-				})
+				.map(
+					([key, value]) =>
+						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateValibotCode(value, indent + 1)},`,
+				)
 				.join("\n");
 			return `v.object({\n${fields}\n${pad}})`;
 		}
@@ -186,12 +176,10 @@ function generateArkTypeCode(subSchema: SubSchema, indent: number): string {
 				return "type({})";
 			}
 			const fields = entries
-				.map(([key, value]) => {
-					const fieldKey = isRequiredField(key, subSchema.required)
-						? formatPropertyKey(key)
-						: `${formatPropertyKey(`${key}?`)}`;
-					return `${pad}${INDENT_UNIT}${fieldKey}: ${generateArkTypeCode(value, indent + 1)},`;
-				})
+				.map(
+					([key, value]) =>
+						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateArkTypeCode(value, indent + 1)},`,
+				)
 				.join("\n");
 			return `type({\n${fields}\n${pad}})`;
 		}
@@ -236,13 +224,10 @@ function generateEffectSchemaCode(
 				return "S.Struct({})";
 			}
 			const fields = entries
-				.map(([key, value]) => {
-					const fieldCode = generateEffectSchemaCode(value, indent + 1);
-					const wrappedCode = isRequiredField(key, subSchema.required)
-						? fieldCode
-						: `S.optional(${fieldCode})`;
-					return `${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${wrappedCode},`;
-				})
+				.map(
+					([key, value]) =>
+						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateEffectSchemaCode(value, indent + 1)},`,
+				)
 				.join("\n");
 			return `S.Struct({\n${fields}\n${pad}})`;
 		}
