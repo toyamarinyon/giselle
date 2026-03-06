@@ -450,7 +450,6 @@ export function AppEntryInputDialog({
 											{ value: "zod", label: "Zod" },
 											{ value: "valibot", label: "Valibot" },
 											{ value: "arktype", label: "ArkType" },
-											{ value: "joi", label: "Joi" },
 											{ value: "yup", label: "Yup" },
 											{ value: "effect", label: "Effect Schema" },
 										]}

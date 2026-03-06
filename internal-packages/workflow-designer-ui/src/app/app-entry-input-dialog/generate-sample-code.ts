@@ -42,11 +42,6 @@ const schemaLibraries = {
 		generateSchemaCode: generateArkTypeCode,
 		formatSchemaDeclaration: defaultSchemaDeclaration,
 	},
-	joi: {
-		importLine: 'import Joi from "joi";',
-		generateSchemaCode: generateJoiCode,
-		formatSchemaDeclaration: defaultSchemaDeclaration,
-	},
 	yup: {
 		importLine: 'import * as y from "yup";',
 		generateSchemaCode: generateYupCode,
@@ -215,43 +210,6 @@ function generateArkTypeCode(subSchema: SubSchema, indent: number): string {
 	}
 }
 
-function generateJoiCode(subSchema: SubSchema, indent: number): string {
-	const pad = INDENT_UNIT.repeat(indent);
-	switch (subSchema.type) {
-		case "string":
-			if (subSchema.enum && subSchema.enum.length > 0) {
-				const values = subSchema.enum
-					.map((v) => formatStringLiteral(v))
-					.join(", ");
-				return `Joi.string().valid(${values})`;
-			}
-			return "Joi.string()";
-		case "number":
-			return "Joi.number()";
-		case "boolean":
-			return "Joi.boolean()";
-		case "object": {
-			const entries = Object.entries(subSchema.properties);
-			if (entries.length === 0) {
-				return "Joi.object({})";
-			}
-			const fields = entries
-				.map(
-					([key, value]) =>
-						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateJoiCode(value, indent + 1)},`,
-				)
-				.join("\n");
-			return `Joi.object({\n${fields}\n${pad}})`;
-		}
-		case "array":
-			return `Joi.array().items(${generateJoiCode(subSchema.items, indent)})`;
-		default: {
-			const _exhaustiveCheck: never = subSchema;
-			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
-		}
-	}
-}
-
 function generateYupCode(subSchema: SubSchema, indent: number): string {
 	const pad = INDENT_UNIT.repeat(indent);
 	switch (subSchema.type) {
@@ -260,17 +218,17 @@ function generateYupCode(subSchema: SubSchema, indent: number): string {
 				const values = subSchema.enum
 					.map((v) => formatStringLiteral(v))
 					.join(", ");
-				return `y.string().oneOf([${values}])`;
+				return `y.string().oneOf([${values}]).required()`;
 			}
-			return "y.string()";
+			return "y.string().required()";
 		case "number":
-			return "y.number()";
+			return "y.number().required()";
 		case "boolean":
-			return "y.boolean()";
+			return "y.boolean().required()";
 		case "object": {
 			const entries = Object.entries(subSchema.properties);
 			if (entries.length === 0) {
-				return "y.object({})";
+				return "y.object({}).required()";
 			}
 			const fields = entries
 				.map(
@@ -278,10 +236,10 @@ function generateYupCode(subSchema: SubSchema, indent: number): string {
 						`${pad}${INDENT_UNIT}${formatPropertyKey(key)}: ${generateYupCode(value, indent + 1)},`,
 				)
 				.join("\n");
-			return `y.object({\n${fields}\n${pad}})`;
+			return `y.object({\n${fields}\n${pad}}).required()`;
 		}
 		case "array":
-			return `y.array().of(${generateYupCode(subSchema.items, indent)})`;
+			return `y.array().of(${generateYupCode(subSchema.items, indent)}).required()`;
 		default: {
 			const _exhaustiveCheck: never = subSchema;
 			throw new Error(`Unhandled schema type: ${_exhaustiveCheck}`);
