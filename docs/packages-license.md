@@ -1218,7 +1218,7 @@ MIT-0 permitted
 
 
 <a name="@giselles-ai/agent-builder"></a>
-### @giselles-ai/agent-builder v0.1.17
+### @giselles-ai/agent-builder v0.1.18
 #### 
 
 ##### Paths
@@ -1229,7 +1229,7 @@ MIT-0 permitted
 
 
 <a name="@giselles-ai/agent-runtime"></a>
-### @giselles-ai/agent-runtime v0.1.17
+### @giselles-ai/agent-runtime v0.1.18
 #### 
 
 ##### Paths
