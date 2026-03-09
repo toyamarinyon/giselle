@@ -3,7 +3,7 @@
 
 ## Summary
 * 962 MIT
-* 192 Apache 2.0
+* 191 Apache 2.0
 * 44 ISC
 * 24 New BSD
 * 15 Simplified BSD
@@ -1217,19 +1217,8 @@ MIT-0 permitted
 
 
 
-<a name="@giselles-ai/agent-builder"></a>
-### @giselles-ai/agent-builder v0.1.18
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> permitted
-
-
-
-<a name="@giselles-ai/agent-runtime"></a>
-### @giselles-ai/agent-runtime v0.1.18
+<a name="@giselles-ai/agent"></a>
+### @giselles-ai/agent v0.1.23
 #### 
 
 ##### Paths
@@ -1240,7 +1229,7 @@ MIT-0 permitted
 
 
 <a name="@giselles-ai/browser-tool"></a>
-### @giselles-ai/browser-tool v0.1.9
+### @giselles-ai/browser-tool v0.1.23
 #### 
 
 ##### Paths
