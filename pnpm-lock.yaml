@@ -307,15 +307,9 @@ importers:
       '@giselle-internal/workflow-designer-ui':
         specifier: workspace:*
         version: link:../../internal-packages/workflow-designer-ui
-      '@giselles-ai/agent-builder':
-        specifier: 0.1.18
-        version: 0.1.18(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
-      '@giselles-ai/agent-runtime':
-        specifier: 0.1.18
-        version: 0.1.18(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-      '@giselles-ai/browser-tool':
-        specifier: 0.1.9
-        version: 0.1.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@giselles-ai/agent':
+        specifier: 0.1.22
+        version: 0.1.22(ioredis@5.9.3)(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@giselles-ai/data-store-registry':
         specifier: workspace:*
         version: link:../../packages/data-store-registry
@@ -2570,19 +2564,19 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
-  '@giselles-ai/agent-builder@0.1.18':
-    resolution: {integrity: sha512-RvD3QYZzVw6RZfewrSnLBrfis3SuDUdwc6pYt1ERAo6V2ifV3LAICm6xcxmmIlLr5WrR5Tg4yLoiabyQ04jDcA==}
+  '@giselles-ai/agent@0.1.22':
+    resolution: {integrity: sha512-QkM9rKwCg5rE2g0b4q/R3mf4BRERJBhh7RlME7osLZJWzjdoZKNeL7JgDJAMNWz4zwdYye+Pf00sMC7TIh/MDQ==}
     peerDependencies:
+      ioredis: '>=5.0.0'
       next: '>=15.0.0'
     peerDependenciesMeta:
+      ioredis:
+        optional: true
       next:
         optional: true
 
-  '@giselles-ai/agent-runtime@0.1.18':
-    resolution: {integrity: sha512-/KW51LoqGOFNQ3AAmQn1h5zCIVVfCStPOTY/9LMQBLTCz9JLpxVAT+wM8/HLVZPOJDUwJMidowdroRzW/ZNICA==}
-
-  '@giselles-ai/browser-tool@0.1.18':
-    resolution: {integrity: sha512-5Lim4FNEkofDidIM73WOmVWueJ5STLDdx+05EbZqYvwd/5Vx4cTgKVbO5rrmUuaV9DWR7YqP+2ECYY4mfTdc3A==}
+  '@giselles-ai/browser-tool@0.1.22':
+    resolution: {integrity: sha512-Glv2HlYh4MdD9Np1Ws8WoOuBdsZZATbuX4hg8jz6oM3kn04/WBVpLnjvqV5mNzId6wkY0YFidvkFgG/cldb6fQ==}
     peerDependencies:
       react: '>=19.0.0'
       react-dom: '>=19.0.0'
@@ -2591,12 +2585,6 @@ packages:
         optional: true
       react-dom:
         optional: true
-
-  '@giselles-ai/browser-tool@0.1.9':
-    resolution: {integrity: sha512-9Yqz0qqf2mFPC79ylARstFSvg9Ug/6XKzLYV/GcUhwDIh2FJBSct0e9/XIz5Nv3uOc/oTkHhqpMd10OnwA5MgA==}
-    peerDependencies:
-      react: '>=19.0.0'
-      react-dom: '>=19.0.0'
 
   '@google-cloud/precise-date@4.0.0':
     resolution: {integrity: sha512-1TUx3KdaU3cN7nfCdNf+UVqA/PSX29Cjcox3fZZBtINlRrXVTmUkQnCKv2MbBUbCopbK4olAT1IHl76uZyCiVA==}
@@ -10411,21 +10399,15 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@giselles-ai/agent-builder@0.1.18(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))':
+  '@giselles-ai/agent@0.1.22(ioredis@5.9.3)(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
-      '@vercel/sandbox': 1.6.0
-    optionalDependencies:
-      next: 16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-    transitivePeerDependencies:
-      - bare-abort-controller
-      - react-native-b4a
-
-  '@giselles-ai/agent-runtime@0.1.18(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
-    dependencies:
-      '@giselles-ai/browser-tool': 0.1.18(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@giselles-ai/browser-tool': 0.1.22(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@iarna/toml': 3.0.0
       '@vercel/sandbox': 1.6.0
       zod: 4.3.6
+    optionalDependencies:
+      ioredis: 5.9.3
+      next: 16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
     transitivePeerDependencies:
       - '@cfworker/json-schema'
       - bare-abort-controller
@@ -10434,7 +10416,7 @@ snapshots:
       - react-native-b4a
       - supports-color
 
-  '@giselles-ai/browser-tool@0.1.18(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@giselles-ai/browser-tool@0.1.22(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.26.0(zod@4.3.6)
       ioredis: 5.9.3
@@ -10442,17 +10424,6 @@ snapshots:
     optionalDependencies:
       react: 19.2.1
       react-dom: 19.2.1(react@19.2.1)
-    transitivePeerDependencies:
-      - '@cfworker/json-schema'
-      - supports-color
-
-  '@giselles-ai/browser-tool@0.1.9(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
-    dependencies:
-      '@modelcontextprotocol/sdk': 1.26.0(zod@4.3.6)
-      ioredis: 5.9.3
-      react: 19.2.1
-      react-dom: 19.2.1(react@19.2.1)
-      zod: 4.3.6
     transitivePeerDependencies:
       - '@cfworker/json-schema'
       - supports-color
