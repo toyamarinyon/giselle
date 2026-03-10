@@ -81,7 +81,7 @@ function coerceToSubSchema(
 				return undefined;
 			}
 			const input = value as Record<string, unknown>;
-			const result = Object.create(null) as Record<string, unknown>;
+			const result: Record<string, unknown> = {};
 			for (const [key, childSchema] of Object.entries(
 				targetSchema.properties,
 			)) {
@@ -212,7 +212,7 @@ function buildValueFromSubSchema(params: {
 				});
 			}
 
-			const result = Object.create(null) as Record<string, unknown>;
+			const result: Record<string, unknown> = {};
 			for (const [key, childSchema] of Object.entries(subSchema.properties)) {
 				const childValue = buildValueFromSubSchema({
 					subSchema: childSchema,
@@ -261,7 +261,7 @@ export function buildObject(
 	endNodeOutput: Extract<EndOutput, { format: "object" }>,
 	generationsByNodeId: Record<NodeId, CompletedGeneration>,
 ): Record<string, unknown> {
-	const result = Object.create(null) as Record<string, unknown>;
+	const result: Record<string, unknown> = {};
 	for (const [key, subSchema] of Object.entries(
 		endNodeOutput.schema.properties,
 	)) {
