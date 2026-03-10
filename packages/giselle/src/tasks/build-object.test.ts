@@ -865,9 +865,7 @@ describe("buildObject", () => {
 				expect(result).toEqual({ data: { name: "Alice" } });
 				expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
 				expect(
-					Object.getPrototypeOf(
-						result.data as Record<string, unknown>,
-					),
+					Object.getPrototypeOf(result.data as Record<string, unknown>),
 				).toBe(Object.prototype);
 			});
 		});
