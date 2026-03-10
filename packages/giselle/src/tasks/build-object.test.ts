@@ -237,49 +237,6 @@ describe("buildObject", () => {
 			});
 		});
 
-		it("maps array values from mapping path ending with items", () => {
-			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
-				format: "object",
-				schema: {
-					title: "TestSchema",
-					type: "object",
-					properties: {
-						tags: {
-							type: "array",
-							items: { type: "string" },
-						},
-					},
-					additionalProperties: false,
-					required: ["tags"],
-				},
-				mappings: [
-					{
-						path: ["tags", "items"],
-						source: {
-							nodeId: defaultNodeId,
-							outputId: defaultOutputId,
-							path: ["tags"],
-						},
-					},
-				],
-			};
-			const generationsByNodeId = {
-				[defaultNodeId]: createCompletedGeneration({
-					outputs: [
-						{
-							type: "generated-text",
-							outputId: defaultOutputId,
-							content: JSON.stringify({ tags: ["a", "b"] }),
-						},
-					],
-				}),
-			};
-
-			expect(buildObject(endNodeOutput, generationsByNodeId)).toEqual({
-				tags: ["a", "b"],
-			});
-		});
-
 		it("maps array directly when mapping path matches array schema path", () => {
 			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
 				format: "object",

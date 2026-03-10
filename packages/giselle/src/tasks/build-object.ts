@@ -237,21 +237,12 @@ function buildValueFromSubSchema(params: {
 		}
 		case "array": {
 			const mapping = findMappingAtSchemaPath(mappings, schemaPath);
-			if (mapping) {
-				return resolveValue({
-					mapping,
-					targetSchema: subSchema,
-					generationsByNodeId,
-				});
-			}
-
-			const itemsSchemaPath = [...schemaPath, "items"];
-			const itemsMapping = findMappingAtSchemaPath(mappings, itemsSchemaPath);
-			if (!itemsMapping) {
+			if (mapping === undefined) {
 				return undefined;
 			}
+
 			return resolveValue({
-				mapping: itemsMapping,
+				mapping,
 				targetSchema: subSchema,
 				generationsByNodeId,
 			});
