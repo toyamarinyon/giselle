@@ -1,3 +1,4 @@
+export * from "./sync-end-node-output";
 export * from "./use-add-app-entry-with-end-nodes";
 export * from "./use-add-connection";
 export * from "./use-add-connection-and-add-input";
@@ -31,5 +32,6 @@ export * from "./use-sync-app-connection-state-if-needed";
 export * from "./use-update-file-status";
 export * from "./use-update-node-data";
 export * from "./use-update-node-data-content";
+export * from "./use-update-node-output-and-sync-end-node";
 export * from "./use-update-workspace-name";
 export * from "./use-upload-file";

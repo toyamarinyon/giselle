@@ -2,14 +2,14 @@ import type { ContentGenerationNode } from "@giselles-ai/protocol";
 import { useFeatureFlag } from "@giselles-ai/react";
 import { ChevronRightIcon } from "lucide-react";
 import { useState } from "react";
-import { useUpdateNodeDataContent } from "../../../app-designer";
+import { useUpdateNodeOutputAndSyncEndNode } from "../../../app-designer";
 import { OutputFormatPanel } from "../ui/output-format-panel";
 import { SettingDetail, SettingLabel } from "../ui/setting-label";
 import { ToolsPanel } from "./tools";
 
 export function AdvancedOptions({ node }: { node: ContentGenerationNode }) {
 	const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-	const updateNodeDataContent = useUpdateNodeDataContent();
+	const updateNodeOutputAndSyncEndNode = useUpdateNodeOutputAndSyncEndNode();
 	const { structuredOutput } = useFeatureFlag();
 
 	return (
@@ -34,7 +34,7 @@ export function AdvancedOptions({ node }: { node: ContentGenerationNode }) {
 							<OutputFormatPanel
 								output={node.content.output}
 								onOutputChange={(output) =>
-									updateNodeDataContent(node, { output })
+									updateNodeOutputAndSyncEndNode(node, output)
 								}
 							/>
 						</div>
