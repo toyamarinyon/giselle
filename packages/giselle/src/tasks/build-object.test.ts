@@ -673,7 +673,7 @@ describe("buildObject", () => {
 						title: "TestSchema",
 						type: "object",
 						properties: {
-							__proto__: { type: "string" },
+							["__proto__"]: { type: "string" },
 							name: { type: "string" },
 						},
 						additionalProperties: false,
@@ -798,7 +798,7 @@ describe("buildObject", () => {
 							data: {
 								type: "object",
 								properties: {
-									__proto__: { type: "string" },
+									["__proto__"]: { type: "string" },
 									name: { type: "string" },
 								},
 								required: ["__proto__", "name"],
@@ -826,7 +826,7 @@ describe("buildObject", () => {
 								type: "generated-text",
 								outputId: defaultOutputId,
 								content: JSON.stringify({
-									__proto__: "evil",
+									["__proto__"]: "evil",
 									name: "Alice",
 								}),
 							},
@@ -840,7 +840,7 @@ describe("buildObject", () => {
 				expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
 			});
 		});
-		
+
 		it("returns empty object when generation is missing for mapped nodeId", () => {
 			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
 				format: "object",
