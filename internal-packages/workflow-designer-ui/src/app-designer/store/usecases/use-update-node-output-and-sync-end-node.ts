@@ -2,6 +2,7 @@ import { useToasts } from "@giselle-internal/ui/toast";
 import {
 	type ContentGenerationNode,
 	isEndNode,
+	type PropertyMapping,
 	type TextGenerationContent,
 	type TextGenerationNode,
 } from "@giselles-ai/protocol";
@@ -34,13 +35,22 @@ export function useUpdateNodeOutputAndSyncEndNode() {
 				return;
 			}
 
+			const structuredOutput = node.outputs.find(
+				(o) => o.accessor === "generated-text",
+			);
+			if (!structuredOutput) return;
+
 			if (output.format === "text") {
-				const staleMappings = endNode.content.output.mappings.filter(
-					(m) => m.source.nodeId === node.id,
-				);
+				const isStaleMapping = (m: PropertyMapping) =>
+					m.source.nodeId === node.id &&
+					m.source.outputId === structuredOutput.id;
+
+				const staleMappings =
+					endNode.content.output.mappings.filter(isStaleMapping);
+
 				if (staleMappings.length > 0) {
 					const cleanedMappings = endNode.content.output.mappings.filter(
-						(m) => m.source.nodeId !== node.id,
+						(m) => !isStaleMapping(m),
 					);
 					updateNode(endNode.id, {
 						content: {
@@ -51,19 +61,16 @@ export function useUpdateNodeOutputAndSyncEndNode() {
 							},
 						},
 					} as never);
+
 					const paths = staleMappings.map((m) => m.path.join(".")).join(", ");
 					toast(
 						`End node: mapping for "${paths}" was removed because the source switched to text format`,
 						{ type: "warning" },
 					);
 				}
+				
 				return;
 			}
-
-			const structuredOutput = node.outputs.find(
-				(o) => o.accessor === "generated-text",
-			);
-			if (!structuredOutput) return;
 
 			const result = syncEndNodeOutput(
 				endNode.content.output,
