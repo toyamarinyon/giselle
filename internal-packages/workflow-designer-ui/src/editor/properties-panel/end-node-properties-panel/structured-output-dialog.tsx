@@ -144,15 +144,6 @@ function convertFieldSourceMappingToPropertyMappings(
 				),
 			);
 		}
-		if (field.type === "array") {
-			mappings.push(
-				...convertFieldSourceMappingToPropertyMappings(
-					[field.items],
-					fieldSourceMapping,
-					fieldPath,
-				),
-			);
-		}
 	}
 	return mappings;
 }
@@ -183,16 +174,6 @@ function convertPropertyMappingsToFieldSourceMapping(
 				map.set(k, v);
 			}
 		}
-		if (field.type === "array") {
-			const itemMap = convertPropertyMappingsToFieldSourceMapping(
-				[field.items],
-				mappings,
-				fieldPath,
-			);
-			for (const [k, v] of itemMap) {
-				map.set(k, v);
-			}
-		}
 	}
 	return map;
 }
@@ -206,8 +187,6 @@ function hasUnmappedFields(
 		if (field.type === "object") {
 			if (field.children.length === 0) return true;
 			if (hasUnmappedFields(field.children, fieldSourceMapping)) return true;
-		} else if (field.type === "array") {
-			if (hasUnmappedFields([field.items], fieldSourceMapping)) return true;
 		} else {
 			return true;
 		}
@@ -225,10 +204,6 @@ function findFieldById(
 			const found = findFieldById(field.children, fieldId);
 			if (found) return found;
 		}
-		if (field.type === "array") {
-			const found = findFieldById([field.items], fieldId);
-			if (found) return found;
-		}
 	}
 	return undefined;
 }
@@ -243,10 +218,6 @@ function replaceFieldById(
 		if (field.type === "object") {
 			const updated = replaceFieldById(field.children, fieldId, newField);
 			if (updated !== field.children) return { ...field, children: updated };
-		}
-		if (field.type === "array") {
-			const [updated] = replaceFieldById([field.items], fieldId, newField);
-			if (updated !== field.items) return { ...field, items: updated };
 		}
 		return field;
 	});
@@ -363,9 +334,6 @@ export function StructuredOutputDialog({
 						for (const child of field.children) {
 							ids.push(...collectIds(child));
 						}
-					}
-					if (field.type === "array") {
-						ids.push(...collectIds(field.items));
 					}
 					return ids;
 				};
@@ -485,7 +453,7 @@ export function StructuredOutputDialog({
 										onDelete={() => handleFieldDelete(index)}
 										renderExtra={renderExtra}
 										isTypeLocked={isTypeLocked}
-										excludeTypes={["enum"]}
+										excludeTypes={["enum", "array"]}
 									/>
 								))}
 							</div>
