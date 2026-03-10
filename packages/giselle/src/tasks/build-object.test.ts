@@ -665,6 +665,182 @@ describe("buildObject", () => {
 	});
 
 	describe("invalid", () => {
+		describe("dangerous keys", () => {
+			it("skips __proto__ schema property to prevent prototype pollution", () => {
+				const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+					format: "object",
+					schema: {
+						title: "TestSchema",
+						type: "object",
+						properties: {
+							__proto__: { type: "string" },
+							name: { type: "string" },
+						},
+						additionalProperties: false,
+						required: ["__proto__", "name"],
+					},
+					mappings: [
+						{
+							path: ["__proto__"],
+							source: {
+								nodeId: defaultNodeId,
+								outputId: defaultOutputId,
+								path: [],
+							},
+						},
+						{
+							path: ["name"],
+							source: {
+								nodeId: defaultNodeId,
+								outputId: defaultOutputId,
+								path: [],
+							},
+						},
+					],
+				};
+				const generationsByNodeId = {
+					[defaultNodeId]: createCompletedGeneration({
+						outputs: [
+							{
+								type: "generated-text",
+								outputId: defaultOutputId,
+								content: "hello",
+							},
+						],
+					}),
+				};
+
+				const result = buildObject(endNodeOutput, generationsByNodeId);
+
+				expect(result).toEqual({ name: "hello" });
+				expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+			});
+
+			it("skips constructor and prototype schema properties", () => {
+				const constructorOutputId = OutputId.generate();
+				const prototypeOutputId = OutputId.generate();
+				const safeOutputId = OutputId.generate();
+
+				const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+					format: "object",
+					schema: {
+						title: "TestSchema",
+						type: "object",
+						properties: {
+							constructor: { type: "string" } as const,
+							prototype: { type: "string" } as const,
+							safe: { type: "string" },
+						},
+						additionalProperties: false,
+						required: ["constructor", "prototype", "safe"],
+					},
+					mappings: [
+						{
+							path: ["constructor"],
+							source: {
+								nodeId: defaultNodeId,
+								outputId: constructorOutputId,
+								path: [],
+							},
+						},
+						{
+							path: ["prototype"],
+							source: {
+								nodeId: defaultNodeId,
+								outputId: prototypeOutputId,
+								path: [],
+							},
+						},
+						{
+							path: ["safe"],
+							source: {
+								nodeId: defaultNodeId,
+								outputId: safeOutputId,
+								path: [],
+							},
+						},
+					],
+				};
+				const generationsByNodeId = {
+					[defaultNodeId]: createCompletedGeneration({
+						outputs: [
+							{
+								type: "generated-text",
+								outputId: constructorOutputId,
+								content: "ctor",
+							},
+							{
+								type: "generated-text",
+								outputId: prototypeOutputId,
+								content: "proto",
+							},
+							{
+								type: "generated-text",
+								outputId: safeOutputId,
+								content: "ok",
+							},
+						],
+					}),
+				};
+
+				const result = buildObject(endNodeOutput, generationsByNodeId);
+
+				expect(result).toEqual({ safe: "ok" });
+			});
+
+			it("skips __proto__ in nested object properties via coerceToSubSchema", () => {
+				const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+					format: "object",
+					schema: {
+						title: "TestSchema",
+						type: "object",
+						properties: {
+							data: {
+								type: "object",
+								properties: {
+									__proto__: { type: "string" },
+									name: { type: "string" },
+								},
+								required: ["__proto__", "name"],
+								additionalProperties: false,
+							},
+						},
+						additionalProperties: false,
+						required: ["data"],
+					},
+					mappings: [
+						{
+							path: ["data"],
+							source: {
+								nodeId: defaultNodeId,
+								outputId: defaultOutputId,
+								path: [],
+							},
+						},
+					],
+				};
+				const generationsByNodeId = {
+					[defaultNodeId]: createCompletedGeneration({
+						outputs: [
+							{
+								type: "generated-text",
+								outputId: defaultOutputId,
+								content: JSON.stringify({
+									__proto__: "evil",
+									name: "Alice",
+								}),
+							},
+						],
+					}),
+				};
+
+				const result = buildObject(endNodeOutput, generationsByNodeId);
+
+				expect(result).toEqual({ data: { name: "Alice" } });
+				expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+			});
+		});
+		
 		it("returns empty object when generation is missing for mapped nodeId", () => {
 			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
 				format: "object",

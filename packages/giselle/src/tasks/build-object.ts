@@ -8,6 +8,16 @@ import type {
 } from "@giselles-ai/protocol";
 import { dataQueryResultToText, queryResultToText } from "../generations/utils";
 
+const DANGEROUS_KEYS = new Set(["__proto__", "constructor", "prototype"]);
+
+function isDangerousKey(key: string): boolean {
+	if (!DANGEROUS_KEYS.has(key)) return false;
+	console.warn(
+		`[buildObject] Skipping dangerous property key "${key}" to prevent prototype pollution`,
+	);
+	return true;
+}
+
 function isEqualPath(a: string[], b: string[]): boolean {
 	if (a.length !== b.length) return false;
 	return a.every((segment, i) => segment === b[i]);
@@ -85,6 +95,7 @@ function coerceToSubSchema(
 			for (const [key, childSchema] of Object.entries(
 				targetSchema.properties,
 			)) {
+				if (isDangerousKey(key)) continue;
 				const child = coerceToSubSchema(input[key], childSchema);
 				if (child !== undefined) {
 					result[key] = child;
@@ -214,6 +225,7 @@ function buildValueFromSubSchema(params: {
 
 			const result: Record<string, unknown> = {};
 			for (const [key, childSchema] of Object.entries(subSchema.properties)) {
+				if (isDangerousKey(key)) continue;
 				const childValue = buildValueFromSubSchema({
 					subSchema: childSchema,
 					schemaPath: [...schemaPath, key],
@@ -265,6 +277,7 @@ export function buildObject(
 	for (const [key, subSchema] of Object.entries(
 		endNodeOutput.schema.properties,
 	)) {
+		if (isDangerousKey(key)) continue;
 		const value = buildValueFromSubSchema({
 			subSchema,
 			schemaPath: [key],
