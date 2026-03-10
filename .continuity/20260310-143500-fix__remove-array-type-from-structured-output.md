@@ -9,27 +9,35 @@
 - Hide `array` from the End Node structured output type picker (same mechanism as `enum`).
 - Remove the `items` path fallback in `buildValueFromSubSchema` `case "array"`.
 - Delete the corresponding test for items path mapping.
+- Remove dead array-items-level code from dialog utility functions.
 - All existing tests pass; no type errors introduced.
 
 ## Constraints/Assumptions
 
-- Existing data with items path mappings will stop working, but this is acceptable because the feature was already broken (type mismatch caused silent `{}` output).
-- `convertFieldSourceMappingToPropertyMappings` array branches are kept for backward compatibility.
+- No legacy data with items-path mappings exists; backward compatibility is not required.
 
 ## Key decisions
 
 - Array type hidden via `excludeTypes` prop (same pattern as enum).
 - Items path fallback removed entirely rather than deprecated.
+- Dead array-items branches removed from dialog utility functions since arrays are only created via direct mapping (always type-locked, ArrayItems never renders, items never independently mapped).
 
 ## State
 
-- All three changes implemented and verified.
+- All changes implemented and verified.
 
 ## Done
 
 - Added `"array"` to `excludeTypes` in `structured-output-dialog.tsx`.
 - Simplified `case "array"` in `build-object.ts` to direct mapping only.
 - Removed `"maps array values from mapping path ending with items"` test.
+- Removed 6 dead array-items branches from `structured-output-dialog.tsx`:
+  - `convertFieldSourceMappingToPropertyMappings`: items recursion
+  - `convertPropertyMappingsToFieldSourceMapping`: items recursion
+  - `hasUnmappedFields`: `field.type === "array"` branch
+  - `findFieldById`: items search
+  - `replaceFieldById`: items replacement
+  - `handleFieldDelete` `collectIds`: items id collection
 - `pnpm format` — clean.
 - `pnpm build-sdk` — success.
 - `pnpm check-types` — success (31/31 packages).
