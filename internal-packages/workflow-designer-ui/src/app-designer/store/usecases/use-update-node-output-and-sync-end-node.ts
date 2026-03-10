@@ -68,7 +68,7 @@ export function useUpdateNodeOutputAndSyncEndNode() {
 						{ type: "warning" },
 					);
 				}
-				
+
 				return;
 			}
 
