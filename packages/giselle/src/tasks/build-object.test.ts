@@ -667,13 +667,23 @@ describe("buildObject", () => {
 	describe("invalid", () => {
 		describe("dangerous keys", () => {
 			it("skips __proto__ schema property to prevent prototype pollution", () => {
+				const protoOutputId = OutputId.generate();
+				const nameOutputId = OutputId.generate();
+
 				const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
 					format: "object",
 					schema: {
 						title: "TestSchema",
 						type: "object",
 						properties: {
-							["__proto__"]: { type: "string" },
+							["__proto__"]: {
+								type: "object",
+								properties: {
+									polluted: { type: "boolean" },
+								},
+								required: ["polluted"],
+								additionalProperties: false,
+							},
 							name: { type: "string" },
 						},
 						additionalProperties: false,
@@ -684,7 +694,7 @@ describe("buildObject", () => {
 							path: ["__proto__"],
 							source: {
 								nodeId: defaultNodeId,
-								outputId: defaultOutputId,
+								outputId: protoOutputId,
 								path: [],
 							},
 						},
@@ -692,7 +702,7 @@ describe("buildObject", () => {
 							path: ["name"],
 							source: {
 								nodeId: defaultNodeId,
-								outputId: defaultOutputId,
+								outputId: nameOutputId,
 								path: [],
 							},
 						},
@@ -703,7 +713,12 @@ describe("buildObject", () => {
 						outputs: [
 							{
 								type: "generated-text",
-								outputId: defaultOutputId,
+								outputId: protoOutputId,
+								content: JSON.stringify({ polluted: true }),
+							},
+							{
+								type: "generated-text",
+								outputId: nameOutputId,
 								content: "hello",
 							},
 						],
@@ -716,7 +731,7 @@ describe("buildObject", () => {
 				expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
 			});
 
-			it("skips constructor and prototype schema properties", () => {
+			it("allows constructor and prototype as schema properties", () => {
 				const constructorOutputId = OutputId.generate();
 				const prototypeOutputId = OutputId.generate();
 				const safeOutputId = OutputId.generate();
@@ -785,7 +800,11 @@ describe("buildObject", () => {
 
 				const result = buildObject(endNodeOutput, generationsByNodeId);
 
-				expect(result).toEqual({ safe: "ok" });
+				expect(result).toEqual({
+					constructor: "ctor",
+					prototype: "proto",
+					safe: "ok",
+				});
 			});
 
 			it("skips __proto__ in nested object properties via coerceToSubSchema", () => {
@@ -798,7 +817,14 @@ describe("buildObject", () => {
 							data: {
 								type: "object",
 								properties: {
-									["__proto__"]: { type: "string" },
+									["__proto__"]: {
+										type: "object",
+										properties: {
+											polluted: { type: "boolean" },
+										},
+										required: ["polluted"],
+										additionalProperties: false,
+									},
 									name: { type: "string" },
 								},
 								required: ["__proto__", "name"],
@@ -826,7 +852,7 @@ describe("buildObject", () => {
 								type: "generated-text",
 								outputId: defaultOutputId,
 								content: JSON.stringify({
-									["__proto__"]: "evil",
+									["__proto__"]: { polluted: true },
 									name: "Alice",
 								}),
 							},
@@ -838,6 +864,11 @@ describe("buildObject", () => {
 
 				expect(result).toEqual({ data: { name: "Alice" } });
 				expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+				expect(
+					Object.getPrototypeOf(
+						result.data as Record<string, unknown>,
+					),
+				).toBe(Object.prototype);
 			});
 		});
 
