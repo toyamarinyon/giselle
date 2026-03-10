@@ -8,6 +8,10 @@ import type {
 } from "@giselles-ai/protocol";
 import { dataQueryResultToText, queryResultToText } from "../generations/utils";
 
+function isProtoKey(key: string): boolean {
+	return key === "__proto__";
+}
+
 function isEqualPath(a: string[], b: string[]): boolean {
 	if (a.length !== b.length) return false;
 	return a.every((segment, i) => segment === b[i]);
@@ -81,10 +85,11 @@ function coerceToSubSchema(
 				return undefined;
 			}
 			const input = value as Record<string, unknown>;
-			const result = Object.create(null) as Record<string, unknown>;
+			const result: Record<string, unknown> = {};
 			for (const [key, childSchema] of Object.entries(
 				targetSchema.properties,
 			)) {
+				if (isProtoKey(key)) continue;
 				const child = coerceToSubSchema(input[key], childSchema);
 				if (child !== undefined) {
 					result[key] = child;
@@ -212,8 +217,9 @@ function buildValueFromSubSchema(params: {
 				});
 			}
 
-			const result = Object.create(null) as Record<string, unknown>;
+			const result: Record<string, unknown> = {};
 			for (const [key, childSchema] of Object.entries(subSchema.properties)) {
+				if (isProtoKey(key)) continue;
 				const childValue = buildValueFromSubSchema({
 					subSchema: childSchema,
 					schemaPath: [...schemaPath, key],
@@ -261,10 +267,11 @@ export function buildObject(
 	endNodeOutput: Extract<EndOutput, { format: "object" }>,
 	generationsByNodeId: Record<NodeId, CompletedGeneration>,
 ): Record<string, unknown> {
-	const result = Object.create(null) as Record<string, unknown>;
+	const result: Record<string, unknown> = {};
 	for (const [key, subSchema] of Object.entries(
 		endNodeOutput.schema.properties,
 	)) {
+		if (isProtoKey(key)) continue;
 		const value = buildValueFromSubSchema({
 			subSchema,
 			schemaPath: [key],
