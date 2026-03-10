@@ -66,11 +66,8 @@ export function executeAction(args: {
 					});
 					break;
 				default: {
-					// TODO: Uncomment after implementing all action providers
-					// const _exhaustiveCheck: never = command.provider;
-					// throw new Error(`Unhandled provider: ${_exhaustiveCheck}`);
-					const unknownProvider = (command as { provider: string }).provider;
-					throw new Error(`Unhandled provider: ${unknownProvider}`);
+					const _exhaustiveCheck: never = command.provider;
+					throw new Error(`Unhandled provider: ${_exhaustiveCheck}`);
 				}
 			}
 			await finishGeneration({
