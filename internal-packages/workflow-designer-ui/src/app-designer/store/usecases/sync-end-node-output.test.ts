@@ -56,6 +56,7 @@ describe("syncEndNodeOutput", () => {
 			const result = syncEndNodeOutput(
 				endNodeOutput,
 				sourceNodeId,
+				sourceOutputId,
 				updatedSourceSchema,
 			);
 
@@ -128,6 +129,7 @@ describe("syncEndNodeOutput", () => {
 			const result = syncEndNodeOutput(
 				endNodeOutput,
 				sourceNodeId,
+				sourceOutputId,
 				updatedSourceSchema,
 			);
 
@@ -152,122 +154,125 @@ describe("syncEndNodeOutput", () => {
 			// no mappings were removed
 			expect(result?.removedMappings).toEqual([]);
 		});
+	});
 
-		describe("single property mapping", () => {
-			it("follows when text gen node changes the property type", () => {
-				const sourceNodeId = NodeId.generate();
-				const sourceOutputId = OutputId.generate();
-				const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
-					format: "object",
-					schema: {
-						title: "output",
-						type: "object",
-						properties: {
-							title: { type: "string" },
-						},
-						additionalProperties: false,
-						required: ["title"],
-					},
-					mappings: [
-						{
-							path: ["title"],
-							source: {
-								nodeId: sourceNodeId,
-								outputId: sourceOutputId,
-								path: ["title"], // single property mapping
-							},
-						},
-					],
-				};
-
-				// source changes "title" from string -> number
-				const updatedSourceSchema: Schema = {
+	describe("single property mapping", () => {
+		it("follows when text gen node changes the property type", () => {
+			const sourceNodeId = NodeId.generate();
+			const sourceOutputId = OutputId.generate();
+			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+				format: "object",
+				schema: {
 					title: "output",
 					type: "object",
 					properties: {
-						title: { type: "number" },
+						title: { type: "string" },
 					},
 					additionalProperties: false,
 					required: ["title"],
-				};
-
-				const result = syncEndNodeOutput(
-					endNodeOutput,
-					sourceNodeId,
-					updatedSourceSchema,
-				);
-
-				// end node's "title" should follow the type change
-				expect(result?.output.schema.properties.title).toEqual({
-					type: "number",
-				});
-				// mapping itself is preserved
-				expect(result?.output.mappings).toEqual([
+				},
+				mappings: [
 					{
 						path: ["title"],
 						source: {
 							nodeId: sourceNodeId,
 							outputId: sourceOutputId,
-							path: ["title"],
+							path: ["title"], // single property mapping
 						},
 					},
-				]);
-				// no mappings were removed
-				expect(result?.removedMappings).toEqual([]);
+				],
+			};
+
+			// source changes "title" from string -> number
+			const updatedSourceSchema: Schema = {
+				title: "output",
+				type: "object",
+				properties: {
+					title: { type: "number" },
+				},
+				additionalProperties: false,
+				required: ["title"],
+			};
+
+			const result = syncEndNodeOutput(
+				endNodeOutput,
+				sourceNodeId,
+				sourceOutputId,
+				updatedSourceSchema,
+			);
+
+			// end node's "title" should follow the type change
+			expect(result?.output.schema.properties.title).toEqual({
+				type: "number",
 			});
-
-			it("clears the mapping when text gen node renames the property", () => {
-				const sourceNodeId = NodeId.generate();
-				const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
-					format: "object",
-					schema: {
-						title: "output",
-						type: "object",
-						properties: {
-							title: { type: "string" },
-						},
-						additionalProperties: false,
-						required: ["title"],
+			// mapping itself is preserved
+			expect(result?.output.mappings).toEqual([
+				{
+					path: ["title"],
+					source: {
+						nodeId: sourceNodeId,
+						outputId: sourceOutputId,
+						path: ["title"],
 					},
-					mappings: [
-						{
-							path: ["title"],
-							source: {
-								nodeId: sourceNodeId,
-								outputId: OutputId.generate(),
-								path: ["name"], // maps to source's "name"
-							},
-						},
-					],
-				};
+				},
+			]);
+			// no mappings were removed
+			expect(result?.removedMappings).toEqual([]);
+		});
 
-				// source renames "name" -> "fullName", so mapped path ["name"] no longer exists
-				const updatedSourceSchema: Schema = {
+		it("clears the mapping when text gen node renames the property", () => {
+			const sourceNodeId = NodeId.generate();
+			const sourceOutputId = OutputId.generate();
+			const endNodeOutput: Extract<EndOutput, { format: "object" }> = {
+				format: "object",
+				schema: {
 					title: "output",
 					type: "object",
 					properties: {
-						fullName: { type: "string" },
+						title: { type: "string" },
 					},
 					additionalProperties: false,
-					required: ["fullName"],
-				};
+					required: ["title"],
+				},
+				mappings: [
+					{
+						path: ["title"],
+						source: {
+							nodeId: sourceNodeId,
+							outputId: sourceOutputId,
+							path: ["name"], // maps to source's "name"
+						},
+					},
+				],
+			};
 
-				const result = syncEndNodeOutput(
-					endNodeOutput,
-					sourceNodeId,
-					updatedSourceSchema,
-				);
+			// source renames "name" -> "fullName", so mapped path ["name"] no longer exists
+			const updatedSourceSchema: Schema = {
+				title: "output",
+				type: "object",
+				properties: {
+					fullName: { type: "string" },
+				},
+				additionalProperties: false,
+				required: ["fullName"],
+			};
 
-				// mapping is cleared because the source path disappeared
-				expect(result?.output.mappings).toEqual([]);
-				// end node's "title" field stays in the schema (unmapped)
-				expect(result?.output.schema.properties).toEqual({
-					title: { type: "string" },
-				});
-				// the removed mapping is reported
-				expect(result?.removedMappings).toHaveLength(1);
-				expect(result?.removedMappings[0].path).toEqual(["title"]);
+			const result = syncEndNodeOutput(
+				endNodeOutput,
+				sourceNodeId,
+				sourceOutputId,
+				updatedSourceSchema,
+			);
+
+			// mapping is cleared because the source path disappeared
+			expect(result?.output.mappings).toEqual([]);
+			// end node's "title" field stays in the schema (unmapped)
+			expect(result?.output.schema.properties).toEqual({
+				title: { type: "string" },
 			});
+			// the removed mapping is reported
+			expect(result?.removedMappings).toHaveLength(1);
+			expect(result?.removedMappings[0].path).toEqual(["title"]);
 		});
 	});
 });

@@ -22,12 +22,10 @@ export function useUpdateNodeOutputAndSyncEndNode() {
 			node: TextGenerationNode | ContentGenerationNode,
 			output: TextGenerationContent["output"],
 		) => {
-			const nextContent = { ...node.content, output };
+			const current = store.getState().nodes.find((n) => n.id === node.id);
+			if (!current) return;
+			const nextContent = { ...current.content, output };
 			updateNode(node.id, { content: nextContent } as never);
-			if (output.format === "text") {
-				return;
-			}
-
 			const endNode = store.getState().nodes.find((n) => isEndNode(n));
 			if (
 				endNode === undefined ||
@@ -36,9 +34,41 @@ export function useUpdateNodeOutputAndSyncEndNode() {
 				return;
 			}
 
+			if (output.format === "text") {
+				const staleMappings = endNode.content.output.mappings.filter(
+					(m) => m.source.nodeId === node.id,
+				);
+				if (staleMappings.length > 0) {
+					const cleanedMappings = endNode.content.output.mappings.filter(
+						(m) => m.source.nodeId !== node.id,
+					);
+					updateNode(endNode.id, {
+						content: {
+							...endNode.content,
+							output: {
+								...endNode.content.output,
+								mappings: cleanedMappings,
+							},
+						},
+					} as never);
+					const paths = staleMappings.map((m) => m.path.join(".")).join(", ");
+					toast(
+						`End node: mapping for "${paths}" was removed because the source switched to text format`,
+						{ type: "warning" },
+					);
+				}
+				return;
+			}
+
+			const structuredOutput = node.outputs.find(
+				(o) => o.accessor === "generated-text",
+			);
+			if (!structuredOutput) return;
+
 			const result = syncEndNodeOutput(
 				endNode.content.output,
 				node.id,
+				structuredOutput.id,
 				output.schema,
 			);
 			if (result) {

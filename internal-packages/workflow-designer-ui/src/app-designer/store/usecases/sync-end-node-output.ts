@@ -1,5 +1,6 @@
 import type {
 	EndOutput,
+	OutputId,
 	PropertyMapping,
 	Schema,
 	SubSchema,
@@ -45,11 +46,22 @@ function resolveSubSchema(params: {
 	mapping: PropertyMapping;
 	subSchema: SubSchema;
 	sourceNodeId: string;
+	sourceOutputId: OutputId;
 	sourceSchema: Schema;
 	mappings: PropertyMapping[];
 }): SyncResult {
-	const { mapping, subSchema, sourceNodeId, sourceSchema, mappings } = params;
-	if (mapping.source.nodeId !== sourceNodeId) {
+	const {
+		mapping,
+		subSchema,
+		sourceNodeId,
+		sourceOutputId,
+		sourceSchema,
+		mappings,
+	} = params;
+	if (
+		mapping.source.nodeId !== sourceNodeId ||
+		mapping.source.outputId !== sourceOutputId
+	) {
 		return { subSchema, mappings };
 	}
 
@@ -85,10 +97,17 @@ function syncSubSchema(params: {
 	schemaPath: string[];
 	mappings: PropertyMapping[];
 	sourceNodeId: string;
+	sourceOutputId: OutputId;
 	sourceSchema: Schema;
 }): SyncResult {
-	const { subSchema, schemaPath, mappings, sourceNodeId, sourceSchema } =
-		params;
+	const {
+		subSchema,
+		schemaPath,
+		mappings,
+		sourceNodeId,
+		sourceOutputId,
+		sourceSchema,
+	} = params;
 
 	switch (subSchema.type) {
 		case "string":
@@ -103,6 +122,7 @@ function syncSubSchema(params: {
 				mapping,
 				subSchema,
 				sourceNodeId,
+				sourceOutputId,
 				sourceSchema,
 				mappings,
 			});
@@ -114,6 +134,7 @@ function syncSubSchema(params: {
 					mapping,
 					subSchema,
 					sourceNodeId,
+					sourceOutputId,
 					sourceSchema,
 					mappings,
 				});
@@ -129,6 +150,7 @@ function syncSubSchema(params: {
 					schemaPath: [...schemaPath, key],
 					mappings: updatedMappings,
 					sourceNodeId,
+					sourceOutputId,
 					sourceSchema,
 				});
 				updatedProperties[key] = syncedResult.subSchema;
@@ -159,6 +181,7 @@ function syncSubSchema(params: {
 					mapping,
 					subSchema,
 					sourceNodeId,
+					sourceOutputId,
 					sourceSchema,
 					mappings,
 				});
@@ -181,6 +204,7 @@ export interface SyncEndNodeOutputResult {
 export function syncEndNodeOutput(
 	endNodeOutput: Extract<EndOutput, { format: "object" }>,
 	sourceNodeId: string,
+	sourceOutputId: OutputId,
 	sourceSchema: Schema,
 ): SyncEndNodeOutputResult | null {
 	let hasChanged = false;
@@ -195,6 +219,7 @@ export function syncEndNodeOutput(
 			schemaPath: [key],
 			mappings: updatedMappings,
 			sourceNodeId,
+			sourceOutputId,
 			sourceSchema,
 		});
 		updatedProperties[key] = syncedResult.subSchema;
