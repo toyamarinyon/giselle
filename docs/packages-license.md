@@ -4,7 +4,7 @@
 ## Summary
 * 962 MIT
 * 191 Apache 2.0
-* 44 ISC
+* 43 ISC
 * 24 New BSD
 * 15 Simplified BSD
 * 10 BlueOak-1.0.0
@@ -6796,7 +6796,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="defuddle"></a>
-### defuddle v0.6.4
+### defuddle v0.9.0
 #### 
 
 ##### Paths
@@ -9953,17 +9953,6 @@ BlueOak-1.0.0 permitted
 
 
 <a name="minipass"></a>
-### minipass v7.1.2
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://en.wikipedia.org/wiki/ISC_license">ISC</a> permitted
-
-
-
-<a name="minipass"></a>
 ### minipass v7.1.3
 #### 
 
@@ -12663,7 +12652,7 @@ Unknown manually approved
 
 
 <a name="tar"></a>
-### tar v7.5.10
+### tar v7.5.11
 #### 
 
 ##### Paths
