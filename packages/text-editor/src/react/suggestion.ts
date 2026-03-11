@@ -29,7 +29,7 @@ export function createSuggestion(
 			for (const connection of connections) {
 				const { outputNode, output } = connection;
 				const schema = getSchema(connection);
-				
+
 				items.push({
 					id: output.id,
 					node: outputNode,
