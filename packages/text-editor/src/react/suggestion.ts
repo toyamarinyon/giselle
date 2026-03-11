@@ -28,13 +28,13 @@ export function createSuggestion(
 
 			for (const connection of connections) {
 				const { outputNode, output } = connection;
-				const baseLabel = `${outputNode.name ?? defaultName(outputNode)} / ${output.label}`;
 				const schema = getSchema(connection);
+				
 				items.push({
 					id: output.id,
 					node: outputNode,
 					output,
-					label: baseLabel,
+					label: `${defaultName(outputNode)} / ${output.label}`,
 					fieldType: schema !== undefined ? "object" : undefined,
 				});
 
