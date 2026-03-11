@@ -11,6 +11,19 @@ interface SyncResult {
 	mappings: PropertyMapping[];
 }
 
+function toEditableSubSchema(subSchema: SubSchema): SubSchema {
+	// Enum and array types can only originate from upstream mappings,
+	// so reset them to plain string.
+	if (
+		subSchema.type === "array" ||
+		(subSchema.type === "string" && subSchema.enum !== undefined)
+	) {
+		return { type: "string" };
+	}
+
+	return subSchema;
+}
+
 function isEqualPath(a: string[], b: string[]): boolean {
 	if (a.length !== b.length) return false;
 	return a.every((segment, i) => segment === b[i]);
@@ -65,8 +78,15 @@ function resolveSubSchema(params: {
 		return { subSchema, mappings };
 	}
 
-	// Whole object mapping: replace with the entire source schema
+	// Whole node mapping: replace with the entire source schema
 	if (mapping.source.path.length === 0) {
+		if (Object.keys(sourceSchema.properties).length === 0) {
+			return {
+				subSchema: toEditableSubSchema(subSchema),
+				mappings: mappings.filter((m) => m !== mapping),
+			};
+		}
+
 		return {
 			subSchema: {
 				type: "object",
@@ -78,12 +98,11 @@ function resolveSubSchema(params: {
 		};
 	}
 
-	// Single property mapping: navigate to the referenced path in the source
+	// Property path mapping: navigate to the referenced path in the source
 	const sourceSubSchema = navigateSchemaPath(sourceSchema, mapping.source.path);
 	if (sourceSubSchema === undefined) {
-		// Source property no longer exists: remove the stale mapping
 		return {
-			subSchema,
+			subSchema: toEditableSubSchema(subSchema),
 			mappings: mappings.filter((m) => m !== mapping),
 		};
 	}

@@ -2,7 +2,7 @@ import { useToasts } from "@giselle-internal/ui/toast";
 import {
 	type ContentGenerationNode,
 	isEndNode,
-	type PropertyMapping,
+	type Schema,
 	type TextGenerationContent,
 	type TextGenerationNode,
 } from "@giselles-ai/protocol";
@@ -40,43 +40,22 @@ export function useUpdateNodeOutputAndSyncEndNode() {
 			);
 			if (!structuredOutput) return;
 
-			if (output.format === "text") {
-				const isStaleMapping = (m: PropertyMapping) =>
-					m.source.nodeId === node.id &&
-					m.source.outputId === structuredOutput.id;
-
-				const staleMappings =
-					endNode.content.output.mappings.filter(isStaleMapping);
-
-				if (staleMappings.length > 0) {
-					const cleanedMappings = endNode.content.output.mappings.filter(
-						(m) => !isStaleMapping(m),
-					);
-					updateNode(endNode.id, {
-						content: {
-							...endNode.content,
-							output: {
-								...endNode.content.output,
-								mappings: cleanedMappings,
-							},
-						},
-					} as never);
-
-					const paths = staleMappings.map((m) => m.path.join(".")).join(", ");
-					toast(
-						`End node: mapping for "${paths}" was removed because the source switched to text format`,
-						{ type: "warning" },
-					);
-				}
-
-				return;
-			}
+			const sourceSchema: Schema =
+				output.format === "text"
+					? {
+							title: "",
+							type: "object",
+							properties: {},
+							additionalProperties: false,
+							required: [],
+						}
+					: output.schema;
 
 			const result = syncEndNodeOutput(
 				endNode.content.output,
 				node.id,
 				structuredOutput.id,
-				output.schema,
+				sourceSchema,
 			);
 			if (result) {
 				updateNode(endNode.id, {
@@ -87,9 +66,15 @@ export function useUpdateNodeOutputAndSyncEndNode() {
 					const paths = result.removedMappings
 						.map((m) => m.path.join("."))
 						.join(", ");
+					const reason =
+						output.format === "text"
+							? "the source switched to text format"
+							: "the source property no longer exists";
 					toast(
-						`End node: mapping for "${paths}" was removed because the source property no longer exists`,
-						{ type: "warning" },
+						`End node: mapping for "${paths}" was removed because ${reason}`,
+						{
+							type: "warning",
+						},
 					);
 				}
 			}
