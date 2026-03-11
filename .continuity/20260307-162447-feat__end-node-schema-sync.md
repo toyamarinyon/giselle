@@ -43,10 +43,12 @@
 - Added concise comments to `resolveSubSchema` (whole object / single property / stale mapping removal / source found).
 - Renamed `syncEndNodeSchema` → `syncEndNodeOutput` and `SyncEndNodeSchemaResult` → `SyncEndNodeOutputResult`. Also renamed files from `sync-end-node-schema.*` → `sync-end-node-output.*`.
 - Updated both `advanced-options.tsx` files (for `text-generation-node-properties-panel` and `text-generation-node-properties-panel-v2`) to replace `useUpdateNodeDataContent` with `useUpdateNodeOutputAndSyncEndNode`, wiring the new sync hook into the output format change handler.
+- When a stale single-property mapping is removed, reset `subSchema` to `{ type: "string" }` only for upstream-only types (enum and array). User-configurable types (`number`, `boolean`, plain `string`, `object`) are preserved as-is. Added tests: enum resets, array resets, number stays.
 
 ## Now
 
-- Removed dead code: `"items"` mapping lookup in `syncSubSchema` array case and `"items"` segment handling in `navigateSchemaPath` (unreachable because `PropertyMapping.path` never contains `"items"` in the current UI).
+- When a single-property mapping becomes stale, enum and array types (upstream-only) are reset to `{ type: "string" }`. User-configurable types are preserved.
+- Refactored JSON→text format switch handler to reuse `syncEndNodeOutput` with an empty schema instead of inline stale-mapping cleanup. Added empty-source guard to whole node mapping branch in `resolveSubSchema` so it removes the mapping and resets to string.
 
 ## Next
 
