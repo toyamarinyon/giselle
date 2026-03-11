@@ -130,6 +130,7 @@ async function buildGenerationMessageForTextGeneration({
 	generationContentResolver: (
 		nodeId: NodeId,
 		outputId: OutputId,
+		path?: string[],
 	) => Promise<string | undefined>;
 	appEntryResolver: AppEntryResolver;
 	dataStoreSchemaResolver: (
@@ -148,10 +149,12 @@ async function buildGenerationMessageForTextGeneration({
 		userMessage = jsonContentToText(JSON.parse(prompt));
 	}
 
-	const pattern = /\{\{(nd-[a-zA-Z0-9]+):(otp-[a-zA-Z0-9]+)\}\}/g;
+	const pattern =
+		/\{\{(nd-[a-zA-Z0-9]+):(otp-[a-zA-Z0-9]+)(?::([a-zA-Z0-9_.]+))?\}\}/g;
 	const sourceKeywords = [...userMessage.matchAll(pattern)].map((match) => ({
 		nodeId: NodeId.parse(match[1]),
 		outputId: OutputId.parse(match[2]),
+		path: match[3]?.split("."),
 	}));
 
 	const attachedFiles: (FilePart | ImagePart)[] = [];
@@ -163,7 +166,10 @@ async function buildGenerationMessageForTextGeneration({
 		if (contextNode === undefined) {
 			continue;
 		}
-		const replaceKeyword = `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}}}`;
+		const replaceKeyword =
+			sourceKeyword.path === undefined
+				? `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}}}`
+				: `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}:${sourceKeyword.path.join(".")}}}`;
 
 		switch (contextNode.content.type) {
 			case "text": {
@@ -179,6 +185,7 @@ async function buildGenerationMessageForTextGeneration({
 				const result = await generationContentResolver(
 					contextNode.id,
 					sourceKeyword.outputId,
+					sourceKeyword.path,
 				);
 				// If there is no matching Output, replace it with an empty string (remove the pattern string from userMessage)
 				userMessage = userMessage.replace(replaceKeyword, result ?? "");
@@ -497,6 +504,7 @@ async function buildGenerationMessageForImageGeneration(
 	textGenerationResolver: (
 		nodeId: NodeId,
 		outputId: OutputId,
+		path?: string[],
 	) => Promise<string | undefined>,
 	imageGenerationResolver: (
 		nodeId: NodeId,
@@ -518,10 +526,12 @@ async function buildGenerationMessageForImageGeneration(
 		userMessage = jsonContentToText(JSON.parse(prompt));
 	}
 
-	const pattern = /\{\{(nd-[a-zA-Z0-9]+):(otp-[a-zA-Z0-9]+)\}\}/g;
+	const pattern =
+		/\{\{(nd-[a-zA-Z0-9]+):(otp-[a-zA-Z0-9]+)(?::([a-zA-Z0-9_.]+))?\}\}/g;
 	const sourceKeywords = [...userMessage.matchAll(pattern)].map((match) => ({
 		nodeId: NodeId.parse(match[1]),
 		outputId: OutputId.parse(match[2]),
+		path: match[3]?.split("."),
 	}));
 
 	const attachedFiles: (FilePart | ImagePart)[] = [];
@@ -532,7 +542,10 @@ async function buildGenerationMessageForImageGeneration(
 		if (contextNode === undefined) {
 			continue;
 		}
-		const replaceKeyword = `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}}}`;
+		const replaceKeyword =
+			sourceKeyword.path === undefined
+				? `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}}}`
+				: `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}:${sourceKeyword.path.join(".")}}}`;
 		switch (contextNode.content.type) {
 			case "text": {
 				userMessage = userMessage.replace(
@@ -546,6 +559,7 @@ async function buildGenerationMessageForImageGeneration(
 				const result = await textGenerationResolver(
 					contextNode.id,
 					sourceKeyword.outputId,
+					sourceKeyword.path,
 				);
 				if (result !== undefined) {
 					userMessage = userMessage.replace(replaceKeyword, result);
@@ -960,6 +974,7 @@ async function buildGenerationMessageForContentGeneration({
 	generationContentResolver: (
 		nodeId: NodeId,
 		outputId: OutputId,
+		path?: string[],
 	) => Promise<string | undefined>;
 	appEntryResolver: AppEntryResolver;
 	dataStoreSchemaResolver: (
@@ -978,10 +993,12 @@ async function buildGenerationMessageForContentGeneration({
 		userMessage = jsonContentToText(JSON.parse(prompt));
 	}
 
-	const pattern = /\{\{(nd-[a-zA-Z0-9]+):(otp-[a-zA-Z0-9]+)\}\}/g;
+	const pattern =
+		/\{\{(nd-[a-zA-Z0-9]+):(otp-[a-zA-Z0-9]+)(?::([a-zA-Z0-9_.]+))?\}\}/g;
 	const sourceKeywords = [...userMessage.matchAll(pattern)].map((match) => ({
 		nodeId: NodeId.parse(match[1]),
 		outputId: OutputId.parse(match[2]),
+		path: match[3]?.split("."),
 	}));
 
 	const attachedFiles: (FilePart | ImagePart)[] = [];
@@ -993,7 +1010,10 @@ async function buildGenerationMessageForContentGeneration({
 		if (contextNode === undefined) {
 			continue;
 		}
-		const replaceKeyword = `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}}}`;
+		const replaceKeyword =
+			sourceKeyword.path === undefined
+				? `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}}}`
+				: `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}:${sourceKeyword.path.join(".")}}}`;
 
 		switch (contextNode.content.type) {
 			case "text": {
@@ -1009,6 +1029,7 @@ async function buildGenerationMessageForContentGeneration({
 				const result = await generationContentResolver(
 					contextNode.id,
 					sourceKeyword.outputId,
+					sourceKeyword.path,
 				);
 				// If there is no matching Output, replace it with an empty string (remove the pattern string from userMessage)
 				userMessage = userMessage.replace(replaceKeyword, result ?? "");

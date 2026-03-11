@@ -31,6 +31,7 @@ import { getTaskGenerationIndexes } from "../generations/internal/get-task-gener
 import { useGenerationExecutor } from "../generations/internal/use-generation-executor";
 import { getGeneration, getNodeGenerationIndexes } from "../generations/utils";
 import { secretPath } from "../secrets/paths";
+import { resolveGeneratedTextContent } from "../structured-output/utils";
 import type { GiselleContext } from "../types";
 
 /**
@@ -442,6 +443,7 @@ async function resolveQuery(
 	async function generationContentResolver(
 		nodeId: NodeId,
 		outputId: OutputId,
+		path?: string[],
 	): Promise<string | undefined> {
 		const generation = await findGeneration(nodeId);
 		if (generation === undefined || !isCompletedGeneration(generation)) {
@@ -467,7 +469,7 @@ async function resolveQuery(
 			case "generated-image":
 				throw new Error("Generation output type is not supported");
 			case "generated-text":
-				return generationOutput.content;
+				return resolveGeneratedTextContent(generationOutput.content, path);
 			case "query-result":
 				throw new Error("Query result is not supported for Data Query node");
 			case "data-query-result":
@@ -487,11 +489,13 @@ async function resolveQuery(
 		? jsonContentToPlainText(JSON.parse(query))
 		: query;
 
-	// Find all references in the format {{nd-XXXX:otp-XXXX}}
-	const pattern = /\{\{(nd-[a-zA-Z0-9]+):(otp-[a-zA-Z0-9]+)\}\}/g;
+	// Find all references in the format {{nd-XXXX:otp-XXXX}} or {{nd-XXXX:otp-XXXX:field.path}}
+	const pattern =
+		/\{\{(nd-[a-zA-Z0-9]+):(otp-[a-zA-Z0-9]+)(?::([a-zA-Z0-9_.]+))?\}\}/g;
 	const sourceKeywords = [...baseQuery.matchAll(pattern)].map((match) => ({
 		nodeId: NodeId.parse(match[1]),
 		outputId: OutputId.parse(match[2]),
+		path: match[3]?.split("."),
 	}));
 
 	// Collect values for parameterization (user-controlled inputs)
@@ -506,7 +510,10 @@ async function resolveQuery(
 		if (contextNode === undefined) {
 			continue;
 		}
-		const replaceKeyword = `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}}}`;
+		const replaceKeyword =
+			sourceKeyword.path === undefined
+				? `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}}}`
+				: `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}:${sourceKeyword.path.join(".")}}}`;
 		switch (contextNode.content.type) {
 			case "text": {
 				if (!isTextNode(contextNode)) {
@@ -528,6 +535,7 @@ async function resolveQuery(
 				const result = await generationContentResolver(
 					contextNode.id,
 					sourceKeyword.outputId,
+					sourceKeyword.path,
 				);
 				// LLM often outputs SQL wrapped in markdown code blocks (```sql...```),
 				// which would cause syntax errors when executed.

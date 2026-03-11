@@ -38,6 +38,7 @@ import { getDataStore } from "../../data-stores/get-data-store";
 import { UsageLimitError } from "../../error";
 import { filePath } from "../../files/utils";
 import { decryptSecret } from "../../secrets/decrypt-secret";
+import { resolveGeneratedTextContent } from "../../structured-output/utils";
 import type { GiselleContext } from "../../types";
 import type { AppEntryResolver, GenerationMetadata } from "../types";
 import {
@@ -100,6 +101,7 @@ export async function useGenerationExecutor<T>(args: {
 		generationContentResolver: (
 			nodeId: NodeId,
 			outputId: OutputId,
+			path?: string[],
 		) => Promise<string | undefined>;
 		imageGenerationResolver: (
 			nodeId: NodeId,
@@ -281,13 +283,23 @@ export async function useGenerationExecutor<T>(args: {
 		}
 		return undefined;
 	}
-	async function generationContentResolver(nodeId: NodeId, outputId: OutputId) {
-		function formatGenerationOutput(generationOutput: GenerationOutput) {
+	async function generationContentResolver(
+		nodeId: NodeId,
+		outputId: OutputId,
+		path?: string[],
+	) {
+		function formatGenerationOutput(
+			generationOutput: GenerationOutput,
+			targetPath?: string[],
+		) {
 			switch (generationOutput.type) {
 				case "source":
 					return JSON.stringify(generationOutput.sources);
 				case "generated-text":
-					return generationOutput.content;
+					return resolveGeneratedTextContent(
+						generationOutput.content,
+						targetPath,
+					);
 				case "query-result":
 					return queryResultToText(generationOutput);
 				case "data-query-result":
@@ -314,7 +326,7 @@ export async function useGenerationExecutor<T>(args: {
 			return undefined;
 		}
 
-		return formatGenerationOutput(generationOutput);
+		return formatGenerationOutput(generationOutput, path);
 	}
 	async function imageGenerationResolver(
 		nodeId: NodeId,
