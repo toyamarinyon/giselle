@@ -69,6 +69,8 @@ const Component = (props: NodeViewProps) => {
 				)}
 			>
 				{defaultName(node)} / {output?.label}
+				{props.node.attrs.path?.length > 0 &&
+					` / ${props.node.attrs.path.join(".")}`}
 			</span>
 		</NodeViewWrapper>
 	);
@@ -129,9 +131,16 @@ export const SourceExtensionReact = SourceExtension.extend<
 						return false;
 					}
 
+					const dataPath = element.getAttribute("data-path");
+					const path =
+						dataPath !== null && dataPath !== ""
+							? dataPath.split(".")
+							: undefined;
+
 					return {
 						node,
 						outputId,
+						path,
 					};
 				},
 			},
