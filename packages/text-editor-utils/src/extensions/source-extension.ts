@@ -7,21 +7,25 @@ export interface SourceJSONContent extends JSONContent {
 	attrs: {
 		node: NodeReference;
 		outputId: OutputId;
+		path?: string[];
 	};
 }
 
 export function createSourceExtensionJSONContent({
 	node,
 	outputId,
+	path,
 }: {
 	node: NodeReference;
 	outputId: OutputId;
+	path?: string[];
 }) {
 	return {
 		type: "Source",
 		attrs: {
 			node,
 			outputId,
+			path,
 		},
 	} satisfies SourceJSONContent;
 }
@@ -40,19 +44,30 @@ export const SourceExtension = Node.create({
 			outputId: {
 				isRequired: true,
 			},
+			path: {
+				default: undefined,
+			},
 		};
 	},
 	renderHTML({ node }) {
+		const path = node.attrs.path;
+		const pathSuffix = path === undefined ? "" : `:${path.join(".")}`;
+		const attrs: Record<string, string> = {
+			"data-node-id": node.attrs.node.id,
+			"data-output-id": node.attrs.outputId,
+		};
+		if (path !== undefined) {
+			attrs["data-path"] = path.join(".");
+		}
 		return [
 			"span",
-			{
-				"data-node-id": node.attrs.node.id,
-				"data-output-id": node.attrs.outputId,
-			},
-			`{{${node.attrs.node.id}:${node.attrs.outputId}}}`,
+			attrs,
+			`{{${node.attrs.node.id}:${node.attrs.outputId}${pathSuffix}}}`,
 		];
 	},
 	renderText({ node }) {
-		return `{{${node.attrs.node.id}:${node.attrs.outputId}}}`;
+		const path = node.attrs.path;
+		const pathSuffix = path === undefined ? "" : `:${path.join(".")}`;
+		return `{{${node.attrs.node.id}:${node.attrs.outputId}${pathSuffix}}}`;
 	},
 });
