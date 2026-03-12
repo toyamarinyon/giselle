@@ -31,6 +31,7 @@ import {
 	getNodeGenerationIndexes,
 	queryResultToText,
 } from "../generations/utils";
+import { resolveGeneratedTextContent } from "../structured-output/utils";
 import type {
 	DocumentVectorStoreQueryContext,
 	GiselleContext,
@@ -135,7 +136,11 @@ async function resolveQuery(
 ) {
 	const generationContext = GenerationContext.parse(runningGeneration.context);
 
-	async function generationContentResolver(nodeId: NodeId, outputId: OutputId) {
+	async function generationContentResolver(
+		nodeId: NodeId,
+		outputId: OutputId,
+		path?: string[],
+	) {
 		const nodeGenerationIndexes = await getNodeGenerationIndexes({
 			storage: storage,
 			nodeId,
@@ -179,7 +184,7 @@ async function resolveQuery(
 			case "generated-image":
 				throw new Error("Generation output type is not supported");
 			case "generated-text":
-				return generationOutput.content;
+				return resolveGeneratedTextContent(generationOutput.content, path);
 			case "query-result":
 				return queryResultToText(generationOutput);
 			case "data-query-result":
@@ -199,11 +204,13 @@ async function resolveQuery(
 		resolvedQuery = jsonContentToText(JSON.parse(query));
 	}
 
-	// Find all references in the format {{nd-XXXX:otp-XXXX}}
-	const pattern = /\{\{(nd-[a-zA-Z0-9]+):(otp-[a-zA-Z0-9]+)\}\}/g;
+	// Find all references in the format {{nd-XXXX:otp-XXXX}} or {{nd-XXXX:otp-XXXX:field.path}}
+	const pattern =
+		/\{\{(nd-[a-zA-Z0-9]+):(otp-[a-zA-Z0-9]+)(?::([a-zA-Z0-9_.]+))?\}\}/g;
 	const sourceKeywords = [...resolvedQuery.matchAll(pattern)].map((match) => ({
 		nodeId: NodeId.parse(match[1]),
 		outputId: OutputId.parse(match[2]),
+		path: match[3]?.split("."),
 	}));
 
 	for (const sourceKeyword of sourceKeywords) {
@@ -213,7 +220,10 @@ async function resolveQuery(
 		if (contextNode === undefined) {
 			continue;
 		}
-		const replaceKeyword = `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}}}`;
+		const replaceKeyword =
+			sourceKeyword.path === undefined
+				? `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}}}`
+				: `{{${sourceKeyword.nodeId}:${sourceKeyword.outputId}:${sourceKeyword.path.join(".")}}}`;
 
 		switch (contextNode.content.type) {
 			case "text": {
@@ -232,6 +242,7 @@ async function resolveQuery(
 				const result = await generationContentResolver(
 					contextNode.id,
 					sourceKeyword.outputId,
+					sourceKeyword.path,
 				);
 				// If there is no matching Output, replace it with an empty string (remove the pattern string from query)
 				resolvedQuery = resolvedQuery.replace(replaceKeyword, result ?? "");
