@@ -35,6 +35,7 @@ import {
 	hasDuplicateNames,
 	hasEmptyEnumValues,
 	hasEmptyNames,
+	hasInvalidNames,
 } from "../structured-output/validation";
 import { getNodeSchema } from "./get-node-schema";
 import { OutputSourcePicker } from "./output-source-picker";
@@ -288,6 +289,12 @@ export function StructuredOutputDialog({
 			}
 			if (hasEmptyNames(fields)) {
 				setErrorMessage("All properties must have a name.");
+				return;
+			}
+			if (hasInvalidNames(fields)) {
+				setErrorMessage(
+					"Property names can only contain letters, numbers, and underscores.",
+				);
 				return;
 			}
 			if (hasDuplicateNames(fields)) {

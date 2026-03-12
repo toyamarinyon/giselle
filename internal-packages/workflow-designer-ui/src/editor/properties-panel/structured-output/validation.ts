@@ -35,7 +35,7 @@ const VALID_NAME_PATTERN = /^[a-zA-Z0-9_]+$/;
 
 export function hasInvalidNames(fields: FormField[]): boolean {
 	return fields.some((f) => {
-		if (f.name.trim() && !VALID_NAME_PATTERN.test(f.name.trim())) return true;
+		if (f.name && !VALID_NAME_PATTERN.test(f.name)) return true;
 		if (f.type === "object") return hasInvalidNames(f.children);
 		if (f.type === "array") return hasInvalidNames([f.items]);
 		return false;
