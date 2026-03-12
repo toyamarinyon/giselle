@@ -59,6 +59,7 @@ export async function buildMessageObject({
 	generationContentResolver: (
 		nodeId: NodeId,
 		outputId: OutputId,
+		path?: string[],
 	) => Promise<string | undefined>;
 	imageGenerationResolver: (
 		nodeId: NodeId,

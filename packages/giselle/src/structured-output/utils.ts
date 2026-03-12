@@ -14,7 +14,7 @@ export function navigateObjectPath(
 		}
 
 		const record = current as Record<string, unknown>;
-		if (!(segment in record)) {
+		if (!Object.hasOwn(record, segment)) {
 			return undefined;
 		}
 		current = record[segment];
