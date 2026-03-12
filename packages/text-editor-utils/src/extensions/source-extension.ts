@@ -51,12 +51,13 @@ export const SourceExtension = Node.create({
 	},
 	renderHTML({ node }) {
 		const path = node.attrs.path;
-		const pathSuffix = path === undefined ? "" : `:${path.join(".")}`;
+		const hasPath = path !== undefined && path.length > 0;
+		const pathSuffix = hasPath ? `:${path.join(".")}` : "";
 		const attrs: Record<string, string> = {
 			"data-node-id": node.attrs.node.id,
 			"data-output-id": node.attrs.outputId,
 		};
-		if (path !== undefined) {
+		if (hasPath) {
 			attrs["data-path"] = path.join(".");
 		}
 		return [
@@ -67,7 +68,8 @@ export const SourceExtension = Node.create({
 	},
 	renderText({ node }) {
 		const path = node.attrs.path;
-		const pathSuffix = path === undefined ? "" : `:${path.join(".")}`;
+		const hasPath = path !== undefined && path.length > 0;
+		const pathSuffix = hasPath ? `:${path.join(".")}` : "";
 		return `{{${node.attrs.node.id}:${node.attrs.outputId}${pathSuffix}}}`;
 	},
 });
