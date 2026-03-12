@@ -56,8 +56,32 @@ export function createSuggestion(
 				}
 
 				requiredIds.add(item.id);
+
+				// When an object-type item matches, keep its descendants visible
+				if (item.fieldType === "object") {
+					for (const candidate of items) {
+						if (
+							candidate.node.id !== item.node.id ||
+							candidate.output.id !== item.output.id
+						) {
+							continue;
+						}
+
+						const isDescendant =
+							item.path === undefined ||
+							(candidate.path !== undefined &&
+								candidate.path.length > item.path.length &&
+								item.path.every(
+									(segment, index) => candidate.path?.[index] === segment,
+								));
+						if (isDescendant) {
+							requiredIds.add(candidate.id);
+						}
+					}
+				}
+
+				// When a field item matches, keep its ancestors visible
 				if (item.path !== undefined) {
-					// Include all ancestor items so the tree structure is preserved
 					requiredIds.add(item.output.id);
 					for (let i = 1; i < item.path.length; i++) {
 						requiredIds.add(
