@@ -1218,7 +1218,7 @@ MIT-0 permitted
 
 
 <a name="@giselles-ai/agent"></a>
-### @giselles-ai/agent v0.1.24
+### @giselles-ai/agent v0.1.25
 #### 
 
 ##### Paths
@@ -1229,7 +1229,7 @@ MIT-0 permitted
 
 
 <a name="@giselles-ai/browser-tool"></a>
-### @giselles-ai/browser-tool v0.1.24
+### @giselles-ai/browser-tool v0.1.25
 #### 
 
 ##### Paths
@@ -5274,7 +5274,7 @@ FSL-1.1-MIT manually approved
 
 
 <a name="@vercel/sandbox"></a>
-### @vercel/sandbox v1.6.0
+### @vercel/sandbox v1.8.1
 #### 
 
 ##### Paths
