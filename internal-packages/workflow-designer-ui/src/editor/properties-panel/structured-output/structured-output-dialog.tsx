@@ -22,6 +22,7 @@ import {
 	hasDuplicateNames,
 	hasEmptyEnumValues,
 	hasEmptyNames,
+	hasInvalidNames,
 } from "./validation";
 
 interface StructuredOutputDialogProps {
@@ -86,6 +87,12 @@ export function StructuredOutputDialog({
 			}
 			if (hasEmptyNames(fields)) {
 				setErrorMessage("All properties must have a name.");
+				return;
+			}
+			if (hasInvalidNames(fields)) {
+				setErrorMessage(
+					"Property names can only contain letters, numbers, and underscores.",
+				);
 				return;
 			}
 			if (hasDuplicateNames(fields)) {
