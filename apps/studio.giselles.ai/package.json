@@ -28,7 +28,7 @@
 		"@embedpdf/pdfium": "catalog:",
 		"@giselle-internal/ui": "workspace:*",
 		"@giselle-internal/workflow-designer-ui": "workspace:*",
-		"@giselles-ai/agent": "0.1.25",
+		"@giselles-ai/agent": "0.1.26",
 		"@giselles-ai/data-store-registry": "workspace:*",
 		"@giselles-ai/document-preprocessor": "workspace:*",
 		"@giselles-ai/giselle": "workspace:*",
