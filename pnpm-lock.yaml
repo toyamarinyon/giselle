@@ -311,8 +311,8 @@ importers:
         specifier: workspace:*
         version: link:../../internal-packages/workflow-designer-ui
       '@giselles-ai/agent':
-        specifier: 0.1.25
-        version: 0.1.25(ai@5.0.101(zod@4.1.12))(ioredis@5.9.3)(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+        specifier: 0.1.26
+        version: 0.1.26(ai@5.0.101(zod@4.1.12))(ioredis@5.9.3)(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@giselles-ai/data-store-registry':
         specifier: workspace:*
         version: link:../../packages/data-store-registry
@@ -2570,8 +2570,8 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
-  '@giselles-ai/agent@0.1.25':
-    resolution: {integrity: sha512-FlDBb0hT3pFiG2wBaADBtePZJljbAkTBdGhKZDEByth4AY9G6OZIjagAGxdQPhiilcAMC6086bQAfREwRqAi7g==}
+  '@giselles-ai/agent@0.1.26':
+    resolution: {integrity: sha512-uu6w6rbnOdzvY6kHtXJPZQ+p3nLDe7dkvmkVMkn4ufZQavdi5rTyb7WfkoAtjzzMOi1HCWmqoh4Un30+n31qtg==}
     peerDependencies:
       ioredis: '>=5.0.0'
       next: '>=15.0.0'
@@ -2581,8 +2581,8 @@ packages:
       next:
         optional: true
 
-  '@giselles-ai/browser-tool@0.1.25':
-    resolution: {integrity: sha512-sMYrSnj2Pg73fWB8ulgyd9NL+KBHnJwzpyemhyu9Y4NFfrp+fuiFs+Yev72bUxMdOJR2VdRY+ZnQBytKUVRjBQ==}
+  '@giselles-ai/browser-tool@0.1.26':
+    resolution: {integrity: sha512-ZwkY1hZE6x8OoeoWhLGcOYVLOZhE+fPFHQh4HgjaeOV/mHbztrYfxxLazEg63YcRKT+jbuqm+uKdFsR1gb2DSg==}
     peerDependencies:
       ai: '>=4.0.0'
       react: '>=19.0.0'
@@ -2806,6 +2806,11 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@json-render/core@0.13.0':
+    resolution: {integrity: sha512-CXmCsc8BHDRq45ScVd+qgvjTbwZHPVpVD05WnTqgDxqfY3LGXu5vxaQRSwYoEodg/DGcZq/4HSj4ipVvrzy3qQ==}
+    peerDependencies:
+      zod: ^4.0.0
 
   '@jsonhero/path@1.0.21':
     resolution: {integrity: sha512-gVUDj/92acpVoJwsVJ/RuWOaHyG4oFzn898WNGQItLCTQ+hOaVlEaImhwE1WqOTf+l3dGOUkbSiVKlb3q1hd1Q==}
@@ -10412,10 +10417,11 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@giselles-ai/agent@0.1.25(ai@5.0.101(zod@4.1.12))(ioredis@5.9.3)(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@giselles-ai/agent@0.1.26(ai@5.0.101(zod@4.1.12))(ioredis@5.9.3)(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
-      '@giselles-ai/browser-tool': 0.1.25(ai@5.0.101(zod@4.1.12))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@giselles-ai/browser-tool': 0.1.26(ai@5.0.101(zod@4.1.12))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@iarna/toml': 3.0.0
+      '@json-render/core': 0.13.0(zod@4.3.6)
       '@vercel/sandbox': 1.8.1
       zod: 4.3.6
     optionalDependencies:
@@ -10430,7 +10436,7 @@ snapshots:
       - react-native-b4a
       - supports-color
 
-  '@giselles-ai/browser-tool@0.1.25(ai@5.0.101(zod@4.1.12))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@giselles-ai/browser-tool@0.1.26(ai@5.0.101(zod@4.1.12))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.26.0(zod@4.3.6)
       ioredis: 5.9.3
@@ -10597,6 +10603,10 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@json-render/core@0.13.0(zod@4.3.6)':
+    dependencies:
+      zod: 4.3.6
 
   '@jsonhero/path@1.0.21': {}
 
