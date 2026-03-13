@@ -3,7 +3,7 @@
 
 ## Summary
 * 962 MIT
-* 191 Apache 2.0
+* 192 Apache 2.0
 * 44 ISC
 * 24 New BSD
 * 15 Simplified BSD
@@ -1218,7 +1218,7 @@ MIT-0 permitted
 
 
 <a name="@giselles-ai/agent"></a>
-### @giselles-ai/agent v0.1.24
+### @giselles-ai/agent v0.1.26
 #### 
 
 ##### Paths
@@ -1229,7 +1229,7 @@ MIT-0 permitted
 
 
 <a name="@giselles-ai/browser-tool"></a>
-### @giselles-ai/browser-tool v0.1.24
+### @giselles-ai/browser-tool v0.1.26
 #### 
 
 ##### Paths
@@ -1445,6 +1445,17 @@ BlueOak-1.0.0 permitted
 * /home/runner/work/giselle/giselle
 
 <a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
+
+
+
+<a name="@json-render/core"></a>
+### @json-render/core v0.13.0
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> permitted
 
 
 
@@ -5274,7 +5285,7 @@ FSL-1.1-MIT manually approved
 
 
 <a name="@vercel/sandbox"></a>
-### @vercel/sandbox v1.6.0
+### @vercel/sandbox v1.8.1
 #### 
 
 ##### Paths
