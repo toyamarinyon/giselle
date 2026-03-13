@@ -11,7 +11,6 @@ export interface FeatureFlagContextValue {
 	privatePreviewTools: boolean;
 	dataStore: boolean;
 	sdkAvailability: boolean;
-	structuredOutput: boolean;
 }
 export const FeatureFlagContext = createContext<
 	FeatureFlagContextValue | undefined

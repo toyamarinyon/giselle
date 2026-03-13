@@ -21,7 +21,6 @@ import type {
 	Schema,
 } from "@giselles-ai/protocol";
 import { isAppEntryNode } from "@giselles-ai/protocol";
-import { useFeatureFlag } from "@giselles-ai/react";
 import clsx from "clsx/lite";
 import {
 	Braces,
@@ -126,7 +125,6 @@ export function EndNodePropertiesPanel({ node }: { node: EndNode }) {
 		return appEntryNode.content.appId;
 	}, [nodes]);
 
-	const { structuredOutput } = useFeatureFlag();
 	const outputFormat = node.content.output.format;
 
 	const helperTextClassName = "text-[11px] text-text-muted/50";
@@ -311,70 +309,60 @@ export function EndNodePropertiesPanel({ node }: { node: EndNode }) {
 						)}
 					</div>
 
-					{structuredOutput && (
-						<>
-							<div className="flex items-center justify-between gap-[12px]">
-								<SettingLabel className="mb-0">Output Format</SettingLabel>
-								<Select
-									options={outputFormatOptions}
-									placeholder="Select format"
-									value={outputFormat}
-									onValueChange={(value) => {
-										if (value === "object") {
-											updateNodeDataContent(node, {
-												output: {
-													format: "object",
-													schema: defaultSchema,
-													mappings: [],
-												},
-											});
-										} else if (value === "passthrough") {
-											updateNodeDataContent(node, {
-												output: { format: "passthrough" },
-											});
-										}
-									}}
-									widthClassName="w-[100px]"
-								/>
-							</div>
+					<div className="flex items-center justify-between gap-[12px]">
+						<SettingLabel className="mb-0">Output Format</SettingLabel>
+						<Select
+							options={outputFormatOptions}
+							placeholder="Select format"
+							value={outputFormat}
+							onValueChange={(value) => {
+								if (value === "object") {
+									updateNodeDataContent(node, {
+										output: {
+											format: "object",
+											schema: defaultSchema,
+											mappings: [],
+										},
+									});
+								} else if (value === "passthrough") {
+									updateNodeDataContent(node, {
+										output: { format: "passthrough" },
+									});
+								}
+							}}
+							widthClassName="w-[100px]"
+						/>
+					</div>
 
-							{node.content.output.format === "object" && (
-								<div className="flex justify-end">
-									<StructuredOutputDialog
-										schema={node.content.output.schema}
-										mappings={node.content.output.mappings}
-										nodes={connectedOutputsByOutputNode.map(
-											(g) => g.outputNode,
-										)}
-										onUpdate={(schema, mappings) => {
-											updateNodeDataContent(node, {
-												output: { format: "object", schema, mappings },
-											});
-										}}
-										trigger={
-											Object.keys(node.content.output.schema.properties)
-												.length > 0 ? (
-												<Button
-													variant="solid"
-													size="large"
-													leftIcon={<Braces className="text-blue-300" />}
-												>
-													{node.content.output.schema.title}
-												</Button>
-											) : (
-												<Button
-													variant="solid"
-													size="large"
-													leftIcon={<Plus />}
-												>
-													Set Schema
-												</Button>
-											)
-										}
-									/>
-								</div>
-							)}
-						</>
+					{node.content.output.format === "object" && (
+						<div className="flex justify-end">
+							<StructuredOutputDialog
+								schema={node.content.output.schema}
+								mappings={node.content.output.mappings}
+								nodes={connectedOutputsByOutputNode.map((g) => g.outputNode)}
+								onUpdate={(schema, mappings) => {
+									updateNodeDataContent(node, {
+										output: { format: "object", schema, mappings },
+									});
+								}}
+								trigger={
+									Object.keys(node.content.output.schema.properties).length >
+									0 ? (
+										<Button
+											variant="solid"
+											size="large"
+											leftIcon={<Braces className="text-blue-300" />}
+										>
+											{node.content.output.schema.title}
+										</Button>
+									) : (
+										<Button variant="solid" size="large" leftIcon={<Plus />}>
+											Set Schema
+										</Button>
+									)
+								}
+							/>
+						</div>
 					)}
 
 					<TryPlaygroundSection
