@@ -1,5 +1,4 @@
 import type { TextGenerationNode } from "@giselles-ai/protocol";
-import { useFeatureFlag } from "@giselles-ai/react";
 import { ChevronRightIcon } from "lucide-react";
 import { useState } from "react";
 import { useUpdateNodeOutputAndSyncEndNode } from "../../../app-designer";
@@ -10,7 +9,6 @@ import { ToolsPanel } from "./tools";
 export function AdvancedOptions({ node }: { node: TextGenerationNode }) {
 	const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 	const updateNodeOutputAndSyncEndNode = useUpdateNodeOutputAndSyncEndNode();
-	const { structuredOutput } = useFeatureFlag();
 
 	return (
 		<div className="col-span-2 rounded-[8px] bg-[color-mix(in_srgb,var(--color-text-inverse,#fff)_5%,transparent)] px-[8px] py-[8px] mt-[8px]">
@@ -28,17 +26,15 @@ export function AdvancedOptions({ node }: { node: TextGenerationNode }) {
 			</button>
 			{isAdvancedOpen && (
 				<div className="mt-[12px] space-y-[12px]">
-					{structuredOutput && (
-						<div className="flex items-start justify-between gap-[12px]">
-							<SettingDetail>Output Format</SettingDetail>
-							<OutputFormatPanel
-								output={node.content.output}
-								onOutputChange={(output) =>
-									updateNodeOutputAndSyncEndNode(node, output)
-								}
-							/>
-						</div>
-					)}
+					<div className="flex items-start justify-between gap-[12px]">
+						<SettingDetail>Output Format</SettingDetail>
+						<OutputFormatPanel
+							output={node.content.output}
+							onOutputChange={(output) =>
+								updateNodeOutputAndSyncEndNode(node, output)
+							}
+						/>
+					</div>
 					<div>
 						<SettingDetail className="mb-[6px]">Tools</SettingDetail>
 						<ToolsPanel node={node} />

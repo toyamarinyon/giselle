@@ -7,6 +7,7 @@ import type {
 	SubSchema,
 } from "@giselles-ai/protocol";
 import { dataQueryResultToText, queryResultToText } from "../generations/utils";
+import { navigateObjectPath } from "../structured-output/utils";
 
 function isProtoKey(key: string): boolean {
 	return key === "__proto__";
@@ -30,28 +31,6 @@ function parseJson(raw: string): unknown | undefined {
 	} catch {
 		return undefined;
 	}
-}
-
-function navigateObjectPath(
-	value: unknown,
-	path: string[],
-): unknown | undefined {
-	let current: unknown = value;
-	for (const segment of path) {
-		// Navigating into array element properties is not supported
-		if (Array.isArray(current)) {
-			return undefined;
-		}
-		if (current === null || typeof current !== "object") {
-			return undefined;
-		}
-		const record = current as Record<string, unknown>;
-		if (!(segment in record)) {
-			return undefined;
-		}
-		current = record[segment];
-	}
-	return current;
 }
 
 function getRawTextFromOutput(output: GenerationOutput): string | undefined {

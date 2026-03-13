@@ -1,4 +1,9 @@
 import { defaultName } from "@giselles-ai/node-registry";
+import {
+	isContentGenerationNode,
+	isTextGenerationNode,
+	type SubSchema,
+} from "@giselles-ai/protocol";
 import type { UIConnection } from "@giselles-ai/react";
 import { createSourceExtensionJSONContent } from "@giselles-ai/text-editor-utils";
 import { ReactRenderer } from "@tiptap/react";
@@ -19,23 +24,74 @@ export function createSuggestion(
 				return [];
 			}
 
-			const items: SuggestionItem[] = connections.map(
-				({ outputNode, output }) => ({
+			const items: SuggestionItem[] = [];
+
+			for (const connection of connections) {
+				const { outputNode, output } = connection;
+				const schema = getSchema(connection);
+
+				items.push({
 					id: output.id,
 					node: outputNode,
 					output,
-					label: `${outputNode.name ?? defaultName(outputNode)} / ${output.label}`,
-				}),
-			);
+					label: `${defaultName(outputNode)} / ${output.label}`,
+					fieldType: schema !== undefined ? "object" : undefined,
+				});
+
+				if (schema === undefined) {
+					continue;
+				}
+				collectFieldItems(schema.properties, [], outputNode, output, items);
+			}
 
 			if (query === "") {
 				return items;
 			}
 
 			const lowerQuery = query.toLowerCase();
-			return items.filter((item) =>
-				item.label.toLowerCase().includes(lowerQuery),
-			);
+			const requiredIds = new Set<string>();
+			for (const item of items) {
+				if (!item.label.toLowerCase().includes(lowerQuery)) {
+					continue;
+				}
+
+				requiredIds.add(item.id);
+
+				// When an object-type item matches, keep its descendants visible
+				if (item.fieldType === "object") {
+					for (const candidate of items) {
+						if (
+							candidate.node.id !== item.node.id ||
+							candidate.output.id !== item.output.id
+						) {
+							continue;
+						}
+
+						const isDescendant =
+							item.path === undefined ||
+							(candidate.path !== undefined &&
+								candidate.path.length > item.path.length &&
+								item.path.every(
+									(segment, index) => candidate.path?.[index] === segment,
+								));
+						if (isDescendant) {
+							requiredIds.add(candidate.id);
+						}
+					}
+				}
+
+				// When a field item matches, keep its ancestors visible
+				if (item.path !== undefined) {
+					requiredIds.add(item.output.id);
+					for (let i = 1; i < item.path.length; i++) {
+						requiredIds.add(
+							`${item.output.id}:${item.path.slice(0, i).join(".")}`,
+						);
+					}
+				}
+			}
+
+			return items.filter((item) => requiredIds.has(item.id));
 		},
 
 		render: () => {
@@ -134,10 +190,50 @@ export function createSuggestion(
 							content: props.node.content,
 						},
 						outputId: props.output.id,
+						path: props.path,
 					}),
 				)
 				.insertContent(" ")
 				.run();
 		},
 	};
+}
+
+function getSchema(connection: UIConnection) {
+	const { outputNode } = connection;
+	if (
+		!isTextGenerationNode(outputNode) &&
+		!isContentGenerationNode(outputNode)
+	) {
+		return;
+	}
+
+	if (outputNode.content.output.format !== "object") {
+		return;
+	}
+	return outputNode.content.output.schema;
+}
+
+function collectFieldItems(
+	properties: Record<string, SubSchema>,
+	parentPath: string[],
+	node: UIConnection["outputNode"],
+	output: UIConnection["output"],
+	items: SuggestionItem[],
+) {
+	for (const [field, sub] of Object.entries(properties)) {
+		const fieldPath = [...parentPath, field];
+		items.push({
+			id: `${output.id}:${fieldPath.join(".")}`,
+			node,
+			output,
+			label: field,
+			path: fieldPath,
+			fieldType: sub.type,
+		});
+		// Array field access (e.g. items[0].name) is not supported yet
+		if (sub.type === "object") {
+			collectFieldItems(sub.properties, fieldPath, node, output, items);
+		}
+	}
 }
