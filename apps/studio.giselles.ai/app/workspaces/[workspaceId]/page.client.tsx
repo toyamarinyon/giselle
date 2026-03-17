@@ -67,6 +67,7 @@ export function Page({
 					}}
 					usageLimits={data.usageLimits}
 					dataStore={{
+						isAvailable: data.isDataStoreAvailable,
 						workspaceId: data.data.id,
 						initialDataStores: data.teamDataStores,
 						settingPath: "/settings/team/data-stores",
