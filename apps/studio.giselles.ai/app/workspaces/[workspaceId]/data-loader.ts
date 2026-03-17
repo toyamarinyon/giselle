@@ -122,6 +122,7 @@ export async function dataLoader(workspaceId: WorkspaceId) {
 		data,
 		documentVectorStores,
 		teamDataStores,
+		dataStore,
 		featureFlags: {
 			webSearchAction,
 			layoutV3,
@@ -131,7 +132,6 @@ export async function dataLoader(workspaceId: WorkspaceId) {
 			googleUrlContext,
 			generateContentNode,
 			privatePreviewTools,
-			dataStore,
 		},
 		llmProviders,
 	};
