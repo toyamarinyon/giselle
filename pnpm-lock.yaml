@@ -311,8 +311,8 @@ importers:
         specifier: workspace:*
         version: link:../../internal-packages/workflow-designer-ui
       '@giselles-ai/agent':
-        specifier: 0.1.26
-        version: 0.1.26(ai@5.0.101(zod@4.1.12))(ioredis@5.9.3)(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+        specifier: 0.1.27
+        version: 0.1.27(ai@5.0.101(zod@4.1.12))(ioredis@5.9.3)(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@giselles-ai/data-store-registry':
         specifier: workspace:*
         version: link:../../packages/data-store-registry
@@ -2570,8 +2570,8 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
-  '@giselles-ai/agent@0.1.26':
-    resolution: {integrity: sha512-uu6w6rbnOdzvY6kHtXJPZQ+p3nLDe7dkvmkVMkn4ufZQavdi5rTyb7WfkoAtjzzMOi1HCWmqoh4Un30+n31qtg==}
+  '@giselles-ai/agent@0.1.27':
+    resolution: {integrity: sha512-wTum6e//+vcj0rxfaf5S0iS8ZmJZibd/cPkgIRJtmkJRevZpfzu+1symgu+dj7jU6iG41mEzetULFrRTbdvhTA==}
     peerDependencies:
       ioredis: '>=5.0.0'
       next: '>=15.0.0'
@@ -2581,8 +2581,8 @@ packages:
       next:
         optional: true
 
-  '@giselles-ai/browser-tool@0.1.26':
-    resolution: {integrity: sha512-ZwkY1hZE6x8OoeoWhLGcOYVLOZhE+fPFHQh4HgjaeOV/mHbztrYfxxLazEg63YcRKT+jbuqm+uKdFsR1gb2DSg==}
+  '@giselles-ai/browser-tool@0.1.27':
+    resolution: {integrity: sha512-Ilge6fDrIfHm9umbPPTCDaX/kU5lWQM+XAmp60zIObsP9Opd2hkBmVov+7dPdGhozyiYL1uO0MDMXmcNSi0R4A==}
     peerDependencies:
       ai: '>=4.0.0'
       react: '>=19.0.0'
@@ -8218,6 +8218,10 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
+  sandbox@2.5.5:
+    resolution: {integrity: sha512-94LWsk1HVvYvRAXdGW2I2d2/zoaMWfXfPaNtW/4rjrr8rxl9hlV6K3FVty8e6mFFH1zvBgYB2dg86wx4mW7QSw==}
+    hasBin: true
+
   saxes@6.0.0:
     resolution: {integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==}
     engines: {node: '>=v12.22.7'}
@@ -10417,12 +10421,13 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@giselles-ai/agent@0.1.26(ai@5.0.101(zod@4.1.12))(ioredis@5.9.3)(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@giselles-ai/agent@0.1.27(ai@5.0.101(zod@4.1.12))(ioredis@5.9.3)(next@16.1.5(@babel/core@7.26.7)(@opentelemetry/api@1.9.0)(@playwright/test@1.56.1)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
-      '@giselles-ai/browser-tool': 0.1.26(ai@5.0.101(zod@4.1.12))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@giselles-ai/browser-tool': 0.1.27(ai@5.0.101(zod@4.1.12))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       '@iarna/toml': 3.0.0
       '@json-render/core': 0.13.0(zod@4.3.6)
       '@vercel/sandbox': 1.8.1
+      sandbox: 2.5.5
       zod: 4.3.6
     optionalDependencies:
       ioredis: 5.9.3
@@ -10436,7 +10441,7 @@ snapshots:
       - react-native-b4a
       - supports-color
 
-  '@giselles-ai/browser-tool@0.1.26(ai@5.0.101(zod@4.1.12))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
+  '@giselles-ai/browser-tool@0.1.27(ai@5.0.101(zod@4.1.12))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.26.0(zod@4.3.6)
       ioredis: 5.9.3
@@ -16711,6 +16716,16 @@ snapshots:
   safe-stable-stringify@2.5.0: {}
 
   safer-buffer@2.1.2: {}
+
+  sandbox@2.5.5:
+    dependencies:
+      '@vercel/sandbox': 1.8.1
+      debug: 4.4.3
+      zod: 4.3.6
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - react-native-b4a
+      - supports-color
 
   saxes@6.0.0:
     dependencies:
