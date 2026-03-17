@@ -13,7 +13,7 @@ const defaultConfiguration: GoogleImageModelConfiguration = {
 };
 
 const GoogleImageLanguageModelId = z
-	.enum(["gemini-2.5-flash-image"])
+	.enum(["gemini-3.1-flash-image-preview", "gemini-2.5-flash-image"])
 	.catch("gemini-2.5-flash-image");
 
 const GoogleImageLanguageModel = LanguageModelBase.extend({
@@ -22,6 +22,17 @@ const GoogleImageLanguageModel = LanguageModelBase.extend({
 	configurations: GoogleImageModelConfigurations,
 });
 type GoogleImageLanguageModel = z.infer<typeof GoogleImageLanguageModel>;
+
+const gemini31FlashImagePreview: GoogleImageLanguageModel = {
+	provider: "google",
+	id: "gemini-3.1-flash-image-preview",
+	capabilities:
+		Capability.ImageGeneration |
+		Capability.ImageFileInput |
+		Capability.ImageGenerationInput,
+	tier: "pro",
+	configurations: defaultConfiguration,
+};
 
 const gemini25FlashImage: GoogleImageLanguageModel = {
 	provider: "google",
@@ -34,7 +45,7 @@ const gemini25FlashImage: GoogleImageLanguageModel = {
 	configurations: defaultConfiguration,
 };
 
-export const models = [gemini25FlashImage];
+export const models = [gemini31FlashImagePreview, gemini25FlashImage];
 
 export const LanguageModel = GoogleImageLanguageModel;
 export type LanguageModel = GoogleImageLanguageModel;
