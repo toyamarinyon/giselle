@@ -23,7 +23,11 @@ import {
 	createWebPageNode,
 } from "@giselles-ai/node-registry";
 import { FileCategory } from "@giselles-ai/protocol";
-import { useFeatureFlag, useUsageLimits } from "@giselles-ai/react";
+import {
+	useDataStore,
+	useFeatureFlag,
+	useUsageLimits,
+} from "@giselles-ai/react";
 import clsx from "clsx/lite";
 import {
 	CableIcon,
@@ -95,6 +99,7 @@ export function Toolbar() {
 	}));
 	const { aiGatewayUnsupportedModels, generateContentNode, stage } =
 		useFeatureFlag();
+	const { isAvailable: isDataStoreAvailable } = useDataStore();
 	const hasAppRequestNode = useMemo(
 		() => nodes.some((node) => node.content.type === "appEntry"),
 		[nodes],
@@ -524,14 +529,16 @@ export function Toolbar() {
 													<GitHubIcon className="w-[20px] h-[20px]" />
 													<p className="text-[14px]">GitHub Vector Store</p>
 												</ToggleGroup.Item>
-												<ToggleGroup.Item
-													value="dataStore"
-													data-tool
-													className="hover:bg-[rgba(222,233,242,0.10)]"
-												>
-													<DataStoreIcon className="w-[20px] h-[20px]" />
-													<p className="text-[14px]">Data Store</p>
-												</ToggleGroup.Item>
+												{isDataStoreAvailable && (
+													<ToggleGroup.Item
+														value="dataStore"
+														data-tool
+														className="hover:bg-[rgba(222,233,242,0.10)]"
+													>
+														<DataStoreIcon className="w-[20px] h-[20px]" />
+														<p className="text-[14px]">Data Store</p>
+													</ToggleGroup.Item>
+												)}
 											</ToggleGroup.Root>
 
 											<p className="text-[#505D7B] text-[12px] font-medium leading-[170%] mt-[8px] mb-[4px] px-[8px]">
@@ -566,14 +573,16 @@ export function Toolbar() {
 													<DatabaseZapIcon className="w-[20px] h-[20px]" />
 													<p className="text-[14px]">Vector Query</p>
 												</ToggleGroup.Item>
-												<ToggleGroup.Item
-													value="dataQuery"
-													data-tool
-													className="hover:bg-[rgba(222,233,242,0.10)]"
-												>
-													<DataQueryIcon className="w-[20px] h-[20px]" />
-													<p className="text-[14px]">Data Query</p>
-												</ToggleGroup.Item>
+												{isDataStoreAvailable && (
+													<ToggleGroup.Item
+														value="dataQuery"
+														data-tool
+														className="hover:bg-[rgba(222,233,242,0.10)]"
+													>
+														<DataQueryIcon className="w-[20px] h-[20px]" />
+														<p className="text-[14px]">Data Query</p>
+													</ToggleGroup.Item>
+												)}
 											</ToggleGroup.Root>
 										</div>
 									</Popover.Content>
