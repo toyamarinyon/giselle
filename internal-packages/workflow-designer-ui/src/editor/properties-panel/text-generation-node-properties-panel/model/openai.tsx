@@ -27,7 +27,7 @@ import {
  * @see https://platform.openai.com/docs/guides/latest-model#gpt-5-2-parameter-compatibility
  */
 function getReasoningEffortOptions(modelId: string): readonly string[] {
-	if (modelId === "gpt-5.2" || modelId === "gpt-5.1-thinking") {
+	if (modelId === "gpt-5.4" || modelId === "gpt-5.2" || modelId === "gpt-5.1-thinking") {
 		return ["none", "low", "medium", "high", "xhigh"] as const;
 	}
 	if (modelId === "gpt-5.2-codex") {

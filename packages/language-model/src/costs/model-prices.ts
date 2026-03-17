@@ -10,6 +10,21 @@ type GoogleModelId =
 
 export const openAiTokenPricing: ModelPriceTable = {
 	// https://platform.openai.com/docs/pricing#latest-models
+	"gpt-5.4": {
+		prices: [
+			{
+				validFrom: "2026-03-05T00:00:00Z",
+				price: {
+					input: {
+						costPerMegaToken: 2.5,
+					},
+					output: {
+						costPerMegaToken: 15.0,
+					},
+				},
+			},
+		],
+	},
 	"gpt-5.2": {
 		prices: [
 			{
