@@ -45,6 +45,8 @@ function convertTextGenerationLanguageModelIdToContentGenerationLanguageModelId(
 			return "google/gemini-2.5-flash-lite";
 		case "gemini-3-pro-preview":
 			return "google/gemini-3-pro-preview";
+		case "gemini-3.1-pro-preview":
+			return "google/gemini-3.1-pro-preview";
 		case "gemini-3-flash":
 			return "google/gemini-3-flash";
 		case "gemini-2.5-pro":
@@ -95,6 +97,8 @@ function convertContentGenerationLanguageModelIdToTextGenerationLanguageModelId(
 			return "gemini-2.5-flash-lite";
 		case "google/gemini-3-pro-preview":
 			return "gemini-3-pro-preview";
+		case "google/gemini-3.1-pro-preview":
+			return "gemini-3.1-pro-preview";
 		case "google/gemini-3-flash":
 			return "gemini-3-flash";
 		case "google/gemini-2.5-pro":
