@@ -11,6 +11,7 @@ export interface DataStoreItem {
 }
 
 export interface DataStoreContextValue {
+	isAvailable: boolean;
 	dataStores: DataStoreItem[];
 	settingPath: string;
 }
@@ -20,6 +21,7 @@ const DataStoreContext = createContext<DataStoreContextValue | undefined>(
 );
 
 export interface DataStoreProviderProps {
+	isAvailable?: boolean;
 	workspaceId?: WorkspaceId;
 	initialDataStores?: DataStoreItem[];
 	settingPath?: string;
@@ -28,6 +30,7 @@ export interface DataStoreProviderProps {
 
 export function DataStoreProvider({
 	children,
+	isAvailable = false,
 	workspaceId,
 	initialDataStores,
 	settingPath,
@@ -52,6 +55,7 @@ export function DataStoreProvider({
 	return (
 		<DataStoreContext
 			value={{
+				isAvailable,
 				dataStores: data ?? initialDataStores,
 				settingPath,
 			}}
