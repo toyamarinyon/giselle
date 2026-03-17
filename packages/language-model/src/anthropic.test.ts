@@ -4,6 +4,12 @@ import { AnthropicLanguageModelId } from "./anthropic";
 describe("anthropic llm", () => {
 	describe("AnthropicLanguageModelId", () => {
 		it("should parse valid enum values successfully", () => {
+			expect(AnthropicLanguageModelId.parse("claude-sonnet-4.6")).toBe(
+				"claude-sonnet-4.6",
+			);
+			expect(AnthropicLanguageModelId.parse("claude-opus-4.6")).toBe(
+				"claude-opus-4.6",
+			);
 			expect(AnthropicLanguageModelId.parse("claude-opus-4.5")).toBe(
 				"claude-opus-4.5",
 			);
@@ -12,6 +18,30 @@ describe("anthropic llm", () => {
 			);
 			expect(AnthropicLanguageModelId.parse("claude-haiku-4.5")).toBe(
 				"claude-haiku-4.5",
+			);
+		});
+
+		it("should fallback claude-sonnet-4-6-* to claude-sonnet-4.6", () => {
+			expect(AnthropicLanguageModelId.parse("claude-sonnet-4-6-foo")).toBe(
+				"claude-sonnet-4.6",
+			);
+		});
+
+		it("should fallback claude-sonnet-4-6-20260217 to claude-sonnet-4.6", () => {
+			expect(
+				AnthropicLanguageModelId.parse("claude-sonnet-4-6-20260217"),
+			).toBe("claude-sonnet-4.6");
+		});
+
+		it("should fallback claude-opus-4-6-* to claude-opus-4.6", () => {
+			expect(AnthropicLanguageModelId.parse("claude-opus-4-6-foo")).toBe(
+				"claude-opus-4.6",
+			);
+		});
+
+		it("should fallback claude-opus-4-6-20260205 to claude-opus-4.6", () => {
+			expect(AnthropicLanguageModelId.parse("claude-opus-4-6-20260205")).toBe(
+				"claude-opus-4.6",
 			);
 		});
 
