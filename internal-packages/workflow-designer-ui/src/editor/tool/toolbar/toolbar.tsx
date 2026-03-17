@@ -93,12 +93,8 @@ export function Toolbar() {
 		llmProviders: s.llmProviders,
 		nodes: s.nodes,
 	}));
-	const {
-		aiGatewayUnsupportedModels,
-		generateContentNode,
-		stage,
-		dataStore: dataStoreFlag,
-	} = useFeatureFlag();
+	const { aiGatewayUnsupportedModels, generateContentNode, stage } =
+		useFeatureFlag();
 	const hasAppRequestNode = useMemo(
 		() => nodes.some((node) => node.content.type === "appEntry"),
 		[nodes],
@@ -528,16 +524,14 @@ export function Toolbar() {
 													<GitHubIcon className="w-[20px] h-[20px]" />
 													<p className="text-[14px]">GitHub Vector Store</p>
 												</ToggleGroup.Item>
-												{dataStoreFlag && (
-													<ToggleGroup.Item
-														value="dataStore"
-														data-tool
-														className="hover:bg-[rgba(222,233,242,0.10)]"
-													>
-														<DataStoreIcon className="w-[20px] h-[20px]" />
-														<p className="text-[14px]">Data Store</p>
-													</ToggleGroup.Item>
-												)}
+												<ToggleGroup.Item
+													value="dataStore"
+													data-tool
+													className="hover:bg-[rgba(222,233,242,0.10)]"
+												>
+													<DataStoreIcon className="w-[20px] h-[20px]" />
+													<p className="text-[14px]">Data Store</p>
+												</ToggleGroup.Item>
 											</ToggleGroup.Root>
 
 											<p className="text-[#505D7B] text-[12px] font-medium leading-[170%] mt-[8px] mb-[4px] px-[8px]">
@@ -572,16 +566,14 @@ export function Toolbar() {
 													<DatabaseZapIcon className="w-[20px] h-[20px]" />
 													<p className="text-[14px]">Vector Query</p>
 												</ToggleGroup.Item>
-												{dataStoreFlag && (
-													<ToggleGroup.Item
-														value="dataQuery"
-														data-tool
-														className="hover:bg-[rgba(222,233,242,0.10)]"
-													>
-														<DataQueryIcon className="w-[20px] h-[20px]" />
-														<p className="text-[14px]">Data Query</p>
-													</ToggleGroup.Item>
-												)}
+												<ToggleGroup.Item
+													value="dataQuery"
+													data-tool
+													className="hover:bg-[rgba(222,233,242,0.10)]"
+												>
+													<DataQueryIcon className="w-[20px] h-[20px]" />
+													<p className="text-[14px]">Data Query</p>
+												</ToggleGroup.Item>
 											</ToggleGroup.Root>
 										</div>
 									</Popover.Content>
