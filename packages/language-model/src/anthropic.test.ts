@@ -28,9 +28,9 @@ describe("anthropic llm", () => {
 		});
 
 		it("should fallback claude-sonnet-4-6-20260217 to claude-sonnet-4.6", () => {
-			expect(
-				AnthropicLanguageModelId.parse("claude-sonnet-4-6-20260217"),
-			).toBe("claude-sonnet-4.6");
+			expect(AnthropicLanguageModelId.parse("claude-sonnet-4-6-20260217")).toBe(
+				"claude-sonnet-4.6",
+			);
 		});
 
 		it("should fallback claude-opus-4-6-* to claude-opus-4.6", () => {
