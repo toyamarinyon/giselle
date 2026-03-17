@@ -10,7 +10,7 @@ import {
 	isEndNode,
 	type UploadedFileData,
 } from "@giselles-ai/protocol";
-import { useFeatureFlag, useGiselle } from "@giselles-ai/react";
+import { useGiselle } from "@giselles-ai/react";
 import { clsx } from "clsx/lite";
 import {
 	LoaderIcon,
@@ -48,7 +48,6 @@ export function AppEntryInputDialog({
 	node: AppEntryNode;
 }) {
 	const client = useGiselle();
-	const { sdkAvailability } = useFeatureFlag();
 	const { isLoading, data } = useSWR(
 		node.content.status === "configured"
 			? { namespace: "getApp", appId: node.content.appId }
@@ -75,7 +74,7 @@ export function AppEntryInputDialog({
 
 	const apiSampleCode = useMemo(
 		() =>
-			!data?.app || !sdkAvailability
+			!data?.app
 				? ""
 				: endNodeOutputSchema !== undefined
 					? generateApiSampleCodeWithResponse(
@@ -84,7 +83,7 @@ export function AppEntryInputDialog({
 							schemaLibrary,
 						)
 					: generateApiSampleCode(data.app),
-		[data?.app, sdkAvailability, endNodeOutputSchema, schemaLibrary],
+		[data?.app, endNodeOutputSchema, schemaLibrary],
 	);
 
 	const handleSubmit = useCallback<FormEventHandler<HTMLFormElement>>(
@@ -276,7 +275,7 @@ export function AppEntryInputDialog({
 				<TabsList className="mb-[14px]">
 					<TabsTrigger value="workspace">Workspace</TabsTrigger>
 					<TabsTrigger value="playground">Playground</TabsTrigger>
-					{sdkAvailability && <TabsTrigger value="code">Code</TabsTrigger>}
+					<TabsTrigger value="code">Code</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="workspace" className="flex-1 overflow-y-auto">
@@ -413,64 +412,62 @@ export function AppEntryInputDialog({
 					</div>
 				</TabsContent>
 
-				{sdkAvailability && (
-					<TabsContent value="code" className="flex-1 overflow-y-auto">
-						<div className="flex flex-col gap-[16px] text-inverse">
-							<div className="flex flex-col gap-[8px]">
-								<p className="text-[14px] text-inverse">
-									You can use the following code to start integrating current
-									app into your application.
-								</p>
-								<p className="text-[14px] text-inverse">
-									Your API key can be found{" "}
-									<Link
-										href="/settings/team/api-keys"
-										target="_blank"
-										rel="noopener noreferrer"
-										className="text-blue-400 hover:text-blue-300 underline"
-									>
-										here
-									</Link>
-									. Use environment variables or a secret-management tool to
-									inject it into your application.
-								</p>
-							</div>
-
-							{endNodeOutputSchema !== undefined && (
-								<div className="flex items-center gap-[8px] justify-end">
-									<label
-										htmlFor="schema-library-select"
-										className="text-[12px] text-text-muted font-sans font-semibold"
-									>
-										Validation Library
-									</label>
-									<Select
-										id="schema-library-select"
-										options={[
-											{ value: "zod", label: "Zod" },
-											{ value: "valibot", label: "Valibot" },
-											{ value: "arktype", label: "ArkType" },
-											{ value: "yup", label: "Yup" },
-											{ value: "effect", label: "Effect Schema" },
-										]}
-										value={schemaLibrary}
-										onValueChange={(v) => setSchemaLibrary(v as SchemaLibrary)}
-										placeholder="Validation Library"
-										widthClassName="w-[150px]"
-										triggerClassName="h-auto py-[4px] text-[12px]"
-									/>
-								</div>
-							)}
-							<Streamdown
-								key={schemaLibrary}
-								mode="static"
-								className="markdown-renderer"
-							>
-								{apiSampleCode}
-							</Streamdown>
+				<TabsContent value="code" className="flex-1 overflow-y-auto">
+					<div className="flex flex-col gap-[16px] text-inverse">
+						<div className="flex flex-col gap-[8px]">
+							<p className="text-[14px] text-inverse">
+								You can use the following code to start integrating current app
+								into your application.
+							</p>
+							<p className="text-[14px] text-inverse">
+								Your API key can be found{" "}
+								<Link
+									href="/settings/team/api-keys"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-blue-400 hover:text-blue-300 underline"
+								>
+									here
+								</Link>
+								. Use environment variables or a secret-management tool to
+								inject it into your application.
+							</p>
 						</div>
-					</TabsContent>
-				)}
+
+						{endNodeOutputSchema !== undefined && (
+							<div className="flex items-center gap-[8px] justify-end">
+								<label
+									htmlFor="schema-library-select"
+									className="text-[12px] text-text-muted font-sans font-semibold"
+								>
+									Validation Library
+								</label>
+								<Select
+									id="schema-library-select"
+									options={[
+										{ value: "zod", label: "Zod" },
+										{ value: "valibot", label: "Valibot" },
+										{ value: "arktype", label: "ArkType" },
+										{ value: "yup", label: "Yup" },
+										{ value: "effect", label: "Effect Schema" },
+									]}
+									value={schemaLibrary}
+									onValueChange={(v) => setSchemaLibrary(v as SchemaLibrary)}
+									placeholder="Validation Library"
+									widthClassName="w-[150px]"
+									triggerClassName="h-auto py-[4px] text-[12px]"
+								/>
+							</div>
+						)}
+						<Streamdown
+							key={schemaLibrary}
+							mode="static"
+							className="markdown-renderer"
+						>
+							{apiSampleCode}
+						</Streamdown>
+					</div>
+				</TabsContent>
 			</Tabs>
 		</div>
 	);

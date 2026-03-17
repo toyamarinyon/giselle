@@ -1,11 +1,5 @@
-import { notFound, redirect } from "next/navigation";
-import { fetchCurrentTeam } from "@/services/teams";
-import { isInternalPlan } from "@/services/teams/utils";
+import { redirect } from "next/navigation";
 
-export default async function ApiKeysPage() {
-	const team = await fetchCurrentTeam();
-	if (!isInternalPlan(team)) {
-		notFound();
-	}
+export default function ApiKeysPage() {
 	redirect("/settings/team/api-keys");
 }
