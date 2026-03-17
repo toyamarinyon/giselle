@@ -63,7 +63,7 @@ export async function dataLoader(workspaceId: WorkspaceId) {
 	const data = await giselle.getWorkspace(workspaceId);
 	const generateContentNode = await generateContentNodeFlag();
 	const privatePreviewTools = await privatePreviewToolsFlag();
-	const dataStore = canUseDataStore(workspaceTeam.plan);
+	const isDataStoreAvailable = canUseDataStore(workspaceTeam.plan);
 	const [teamGitHubRepositoryIndexes, officialGitHubRepositoryIndexes] =
 		await Promise.all([
 			getGitHubRepositoryIndexes(workspaceTeam.dbId),
@@ -122,7 +122,7 @@ export async function dataLoader(workspaceId: WorkspaceId) {
 		data,
 		documentVectorStores,
 		teamDataStores,
-		dataStore,
+		isDataStoreAvailable,
 		featureFlags: {
 			webSearchAction,
 			layoutV3,
