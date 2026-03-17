@@ -32,8 +32,8 @@ export function DataStoreProvider({
 	children,
 	isAvailable = false,
 	workspaceId,
-	initialDataStores,
-	settingPath,
+	initialDataStores = [],
+	settingPath = "",
 	fetchDataStores,
 }: PropsWithChildren<DataStoreProviderProps>) {
 	const isConfigured =
@@ -47,10 +47,6 @@ export function DataStoreProvider({
 		fetchDataStores ?? null,
 		{ fallbackData: initialDataStores },
 	);
-
-	if (!isConfigured) {
-		return <>{children}</>;
-	}
 
 	return (
 		<DataStoreContext
