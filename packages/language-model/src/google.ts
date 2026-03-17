@@ -20,8 +20,7 @@ const defaultConfigurations: GoogleLanguageModelConfigurations = {
 	urlContext: false,
 };
 
-const gemini31ProPreviewPattern =
-	/^gemini-3\.1-pro(?:-preview)?(?:-[\w-]+)?$/;
+const gemini31ProPreviewPattern = /^gemini-3\.1-pro(?:-preview)?(?:-[\w-]+)?$/;
 const gemini3ProPreviewPattern =
 	/^gemini-3(?:\.\d+)?-pro(?:-preview)?(?:-[\w-]+)?$/;
 const gemini3FlashPattern = /^gemini-3(?:\.\d+)?-flash(?:-[\w-]+)?$/;
