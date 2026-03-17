@@ -47,6 +47,7 @@ const gpt51CodexConfigurations: OpenAILanguageModelConfigurations = {
 
 export const OpenAILanguageModelId = z
 	.enum([
+		"gpt-5.3-codex",
 		"gpt-5.2",
 		"gpt-5.2-codex",
 		"gpt-5.1-thinking",
@@ -60,6 +61,10 @@ export const OpenAILanguageModelId = z
 			return "gpt-5-nano";
 		}
 		const v = ctx.value;
+
+		if (/^gpt-5\.3-codex(?:-.+)?$/.test(v)) {
+			return "gpt-5.3-codex";
+		}
 
 		if (/^gpt-5\.2-codex(?:-.+)?$/.test(v)) {
 			return "gpt-5.2-codex";
@@ -168,6 +173,18 @@ const gpt52codex: OpenAILanguageModel = {
 	configurations: gpt51CodexConfigurations,
 };
 
+const gpt53codex: OpenAILanguageModel = {
+	provider: "openai",
+	id: "gpt-5.3-codex",
+	capabilities:
+		Capability.ImageFileInput |
+		Capability.TextGeneration |
+		Capability.OptionalSearchGrounding |
+		Capability.Reasoning,
+	tier: Tier.enum.pro,
+	configurations: gpt51CodexConfigurations,
+};
+
 const gpt5: OpenAILanguageModel = {
 	provider: "openai",
 	id: "gpt-5",
@@ -205,6 +222,7 @@ const gpt5nano: OpenAILanguageModel = {
 
 export const models = [
 	gpt52,
+	gpt53codex,
 	gpt52codex,
 	gpt51Thinking,
 	gpt51codex,
