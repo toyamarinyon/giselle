@@ -16,6 +16,41 @@ const anthropicProvider = {
 } as const satisfies LanguageModelProviderDefinition<"anthropic">;
 
 export const anthropic = {
+	"anthropic/claude-sonnet-4.6": defineLanguageModel({
+		provider: anthropicProvider,
+		id: "anthropic/claude-sonnet-4.6",
+		name: "Claude Sonnet 4.6",
+		description:
+			"Claude Sonnet 4.6 is the latest model in the Sonnet series, offering improvements in coding, reasoning, and agentic tasks with a 1M context window.",
+		contextWindow: 1_000_000,
+		maxOutputTokens: 64_000,
+		knowledgeCutoff: new Date(2025, 4, 31).getTime(),
+		pricing: {
+			input: definePricing(3.0),
+			output: definePricing(15.0),
+		},
+		requiredTier: "pro",
+		configurationOptions: {
+			temperature: {
+				description: "Amount of randomness injected into the response.",
+				schema: z.number().min(0).max(1),
+				ui: {
+					min: 0.0,
+					max: 1.0,
+					step: 0.1,
+				},
+			},
+			thinking: {
+				description: "Whether to include reasoning text in the response.",
+				schema: z.boolean(),
+			},
+		},
+		defaultConfiguration: {
+			temperature: 1.0,
+			thinking: false,
+		},
+		url: "https://www.anthropic.com/claude/sonnet",
+	}),
 	"anthropic/claude-opus-4.6": defineLanguageModel({
 		provider: anthropicProvider,
 		id: "anthropic/claude-opus-4.6",
