@@ -23,8 +23,8 @@ export const anthropic = {
 		description:
 			"Claude Sonnet 4.6 is the latest model in the Sonnet series, offering improvements in coding, reasoning, and agentic tasks with a 1M context window.",
 		contextWindow: 1_000_000,
-		maxOutputTokens: 128_000,
-		knowledgeCutoff: new Date(2025, 4, 31).getTime(),
+		maxOutputTokens: 64_000,
+		knowledgeCutoff: new Date(2025, 7, 31).getTime(),
 		pricing: {
 			input: definePricing(3.0),
 			output: definePricing(15.0),
