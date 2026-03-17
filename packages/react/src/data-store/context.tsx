@@ -37,10 +37,7 @@ export function DataStoreProvider({
 	fetchDataStores,
 }: PropsWithChildren<DataStoreProviderProps>) {
 	const isConfigured =
-		workspaceId !== undefined &&
-		initialDataStores !== undefined &&
-		settingPath !== undefined &&
-		fetchDataStores !== undefined;
+		workspaceId !== undefined && fetchDataStores !== undefined;
 
 	const { data } = useSWR<DataStoreItem[]>(
 		isConfigured ? ["data-stores", workspaceId] : null,
