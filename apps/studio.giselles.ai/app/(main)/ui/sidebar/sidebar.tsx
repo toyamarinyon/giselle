@@ -6,8 +6,6 @@ import {
 } from "lucide-react";
 import type { IconName } from "lucide-react/dynamic";
 import { Accordion } from "radix-ui";
-import { fetchCurrentTeam } from "@/services/teams";
-import { isInternalPlan } from "@/services/teams/utils";
 import { stageV2Flag } from "../../../../flags";
 import { CreateAppButton } from "./create-app-button";
 import { SidebarLink } from "./sidebar-link";
@@ -94,9 +92,7 @@ function createStagePart(isStageV2Enabled: boolean): SidebarPart {
 	};
 }
 
-function createBaseSidebarParts(
-	isApiPublishingEnabled: boolean,
-): SidebarPart[] {
+function createBaseSidebarParts(): SidebarPart[] {
 	return [
 		{
 			type: "linkGroup",
@@ -149,16 +145,12 @@ function createBaseSidebarParts(
 					href: "/settings/team/usage",
 					activeMatchPattern: "/settings/team/usage*",
 				},
-				...(isApiPublishingEnabled
-					? [
-							{
-								id: "api-keys",
-								label: "API keys",
-								href: "/settings/team/api-keys",
-								activeMatchPattern: "/settings/team/api-keys*",
-							},
-						]
-					: []),
+				{
+					id: "api-keys",
+					label: "API keys",
+					href: "/settings/team/api-keys",
+					activeMatchPattern: "/settings/team/api-keys*",
+				},
 				{
 					id: "team-settings",
 					label: "Team Settings",
@@ -179,12 +171,8 @@ function createBaseSidebarParts(
 }
 
 export async function Sidebar() {
-	const [isStageV2Enabled, team] = await Promise.all([
-		stageV2Flag(),
-		fetchCurrentTeam(),
-	]);
-	const isApiPublishingEnabled = isInternalPlan(team);
-	const baseSidebarParts = createBaseSidebarParts(isApiPublishingEnabled);
+	const isStageV2Enabled = await stageV2Flag();
+	const baseSidebarParts = createBaseSidebarParts();
 	const sidebarParts = [createStagePart(isStageV2Enabled), ...baseSidebarParts];
 
 	return (
