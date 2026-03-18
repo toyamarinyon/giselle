@@ -134,6 +134,21 @@ export const openAiTokenPricing: ModelPriceTable = {
 
 export const anthropicTokenPricing: ModelPriceTable = {
 	// https://www.anthropic.com/pricing
+	"claude-sonnet-4.6": {
+		prices: [
+			{
+				validFrom: "2026-02-17T00:00:00Z",
+				price: {
+					input: {
+						costPerMegaToken: 3.0,
+					},
+					output: {
+						costPerMegaToken: 15.0,
+					},
+				},
+			},
+		],
+	},
 	"claude-opus-4.6": {
 		prices: [
 			{
