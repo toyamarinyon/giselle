@@ -1,3 +1,4 @@
+import type dns from "node:dns";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { scrapeUrl } from "./self-made";
 
@@ -9,6 +10,18 @@ const TEST_UPPERCASE_TXT_URL = "https://example.com/TEST.TXT";
 const TEST_UPPERCASE_MD_URL = "https://example.com/README.MD";
 
 const hasExternalApiEnv = process.env.VITEST_WITH_EXTERNAL_API === "1";
+
+const mockLookup: typeof dns.promises.lookup = vi
+	.fn()
+	.mockResolvedValue([{ address: "93.184.216.34", family: 4 }]);
+
+vi.mock("node:dns", () => ({
+	default: {
+		promises: {
+			lookup: (...args: Parameters<typeof mockLookup>) => mockLookup(...args),
+		},
+	},
+}));
 
 describe("scrapeUrl (invalid URL)", () => {
 	it("should throw on invalid URL", async () => {
@@ -178,5 +191,78 @@ describe("scrapeUrl (edge cases with mocks)", () => {
 		expect(result.markdown).toBe(mockContent);
 		expect(result.markdown).toContain("https://example.com/url");
 		expect(result.markdown).not.toContain("\\#");
+	});
+});
+
+describe("scrapeUrl (redirect SSRF protection)", () => {
+	it("should block redirects to private IP addresses", async () => {
+		global.fetch = vi.fn().mockResolvedValueOnce({
+			status: 302,
+			headers: {
+				get: (name: string) =>
+					name === "location"
+						? "http://169.254.169.254/latest/meta-data/"
+						: null,
+			},
+		} as unknown as Response);
+
+		await expect(
+			scrapeUrl("https://evil.example.com/redirect"),
+		).rejects.toThrow("private");
+	});
+
+	it("should block redirects to loopback addresses", async () => {
+		global.fetch = vi.fn().mockResolvedValueOnce({
+			status: 301,
+			headers: {
+				get: (name: string) =>
+					name === "location" ? "http://127.0.0.1/admin" : null,
+			},
+		} as unknown as Response);
+
+		await expect(
+			scrapeUrl("https://evil.example.com/redirect"),
+		).rejects.toThrow("private");
+	});
+
+	it("should follow safe redirects successfully", async () => {
+		const mockContent =
+			"<html><head><title>Redirected</title></head><body>OK</body></html>";
+
+		global.fetch = vi
+			.fn()
+			.mockResolvedValueOnce({
+				status: 301,
+				headers: {
+					get: (name: string) =>
+						name === "location" ? "https://example.com/final" : null,
+				},
+			} as unknown as Response)
+			.mockResolvedValueOnce({
+				ok: true,
+				status: 200,
+				headers: {
+					get: (name: string) => (name === "content-type" ? "text/html" : null),
+				},
+				text: () => Promise.resolve(mockContent),
+			} as unknown as Response);
+
+		const result = await scrapeUrl("https://example.com/start", ["html"]);
+		expect(result.html).toBe(mockContent);
+		expect(result.title).toBe("Redirected");
+	});
+
+	it("should throw on too many redirects", async () => {
+		global.fetch = vi.fn().mockResolvedValue({
+			status: 302,
+			headers: {
+				get: (name: string) =>
+					name === "location" ? "https://example.com/loop" : null,
+			},
+		} as unknown as Response);
+
+		await expect(scrapeUrl("https://example.com/loop")).rejects.toThrow(
+			"Too many redirects",
+		);
 	});
 });

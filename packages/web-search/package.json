@@ -29,7 +29,8 @@
 	},
 	"dependencies": {
 		"defuddle": "catalog:",
-		"happy-dom": "catalog:"
+		"happy-dom": "catalog:",
+		"ipaddr.js": "catalog:"
 	},
 	"peerDependencies": {
 		"zod": "catalog:"
