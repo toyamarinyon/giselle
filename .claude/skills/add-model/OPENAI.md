@@ -6,7 +6,7 @@ Patterns specific to OpenAI models (GPT-5.x family).
 
 | Model | Options | Default |
 |-------|---------|---------|
-| gpt-5.2, gpt-5.1-thinking | none, low, medium, high, xhigh | none |
+| gpt-5.4, gpt-5.2, gpt-5.1-thinking | none, low, medium, high, xhigh | none |
 | gpt-5.2-codex | low, medium, high, xhigh | medium |
 | gpt-5.1-codex | low, medium, high | medium |
 | gpt-5, gpt-5-mini, gpt-5-nano | minimal, low, medium, high | medium |
@@ -23,8 +23,8 @@ Patterns specific to OpenAI models (GPT-5.x family).
 Use existing configuration objects from the file:
 
 ```typescript
-// For gpt-5.2 and gpt-5.1-thinking (default: none reasoning)
-const gpt52And51ThinkingConfigurations = {
+// For models that default to none reasoning effort (e.g. gpt-5.4, gpt-5.2, gpt-5.1-thinking)
+const noneReasoningEffortConfigurations = {
   ...defaultConfigurations,
   reasoningEffort: "none",
 };
@@ -80,7 +80,7 @@ Update `getReasoningEffortOptions()` in `openai.tsx`:
 
 ```typescript
 function getReasoningEffortOptions(modelId: string): readonly string[] {
-  if (modelId === "gpt-5.2" || modelId === "gpt-5.1-thinking") {
+  if (modelId === "gpt-5.4" || modelId === "gpt-5.2" || modelId === "gpt-5.1-thinking") {
     return ["none", "low", "medium", "high", "xhigh"] as const;
   }
   if (modelId === "gpt-5.2-codex") {
@@ -166,7 +166,7 @@ const gpt53: OpenAILanguageModel = {
     Capability.OptionalSearchGrounding |
     Capability.Reasoning,
   tier: Tier.enum.pro,
-  configurations: gpt52And51ThinkingConfigurations,
+  configurations: noneReasoningEffortConfigurations,
 };
 
 // Add to models array (first position)
