@@ -10,7 +10,7 @@ export const maxDuration = 800;
 export async function POST(request: Request) {
 	const secret =
 		giselle.getContext().integrationConfigs?.github?.authV2.webhookSecret;
-	if (secret === undefined) {
+	if (!secret) {
 		return new Response("Webhook secret not configured.", { status: 500 });
 	}
 
