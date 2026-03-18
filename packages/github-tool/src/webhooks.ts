@@ -50,12 +50,13 @@ export async function verifyRequest({
 	secret: string;
 	request: Request;
 }) {
+	const signature = request.headers.get("x-hub-signature-256");
+	if (signature == null) {
+		throw new GitHubWebhookUnauthorizedError();
+	}
+
 	const webhooks = new Webhooks({ secret });
-
-	const signature = request.headers.get("x-hub-signature-256") ?? "";
-
 	const body = await request.clone().text();
-
 	const verified = await webhooks.verify(body, signature);
 
 	if (!verified) {
