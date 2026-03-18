@@ -1,5 +1,6 @@
 import type dns from "node:dns";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import type { fetch } from "undici";
+import { describe, expect, it, vi } from "vitest";
 import { scrapeUrl } from "./self-made";
 
 const TEST_URL = "https://example.com/";
@@ -11,17 +12,26 @@ const TEST_UPPERCASE_MD_URL = "https://example.com/README.MD";
 
 const hasExternalApiEnv = process.env.VITEST_WITH_EXTERNAL_API === "1";
 
-const mockLookup: typeof dns.promises.lookup = vi
-	.fn()
-	.mockResolvedValue([{ address: "93.184.216.34", family: 4 }]);
-
 vi.mock("node:dns", () => ({
 	default: {
-		promises: {
-			lookup: (...args: Parameters<typeof mockLookup>) => mockLookup(...args),
+		lookup: (
+			_hostname: string,
+			_options: dns.LookupOptions,
+			callback: (err: null, address: string, family: number) => void,
+		) => {
+			callback(null, "93.184.216.34", 4);
 		},
 	},
 }));
+
+let mockFetch: typeof fetch;
+vi.mock("undici", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("undici")>();
+	return {
+		...actual,
+		fetch: (...args: Parameters<typeof fetch>) => mockFetch(...args),
+	};
+});
 
 describe("scrapeUrl (invalid URL)", () => {
 	it("should throw on invalid URL", async () => {
@@ -108,21 +118,18 @@ describe("scrapeUrl (invalid URL)", () => {
 
 // Unit tests for edge cases with mocked fetch
 describe("scrapeUrl (edge cases with mocks)", () => {
-	afterEach(() => {
-		vi.restoreAllMocks();
-	});
-
 	it("should handle uppercase .TXT file extensions", async () => {
 		const mockContent = "# Test Content\nThis is a test markdown file.";
 
 		const mockHeaders = {
 			get: (name: string) => (name === "content-type" ? "text/plain" : null),
 		};
-		global.fetch = vi.fn().mockResolvedValue({
+		mockFetch = vi.fn().mockResolvedValueOnce({
 			ok: true,
+			status: 200,
 			headers: mockHeaders,
 			text: () => Promise.resolve(mockContent),
-		} as unknown as Response);
+		});
 
 		const result = await scrapeUrl(TEST_UPPERCASE_TXT_URL, ["markdown"]);
 
@@ -137,11 +144,12 @@ describe("scrapeUrl (edge cases with mocks)", () => {
 		const mockHeaders = {
 			get: (name: string) => (name === "content-type" ? "text/plain" : null),
 		};
-		global.fetch = vi.fn().mockResolvedValue({
+		mockFetch = vi.fn().mockResolvedValueOnce({
 			ok: true,
+			status: 200,
 			headers: mockHeaders,
 			text: () => Promise.resolve(mockContent),
-		} as unknown as Response);
+		});
 
 		const result = await scrapeUrl(TEST_UPPERCASE_MD_URL, ["markdown"]);
 
@@ -158,11 +166,12 @@ describe("scrapeUrl (edge cases with mocks)", () => {
 			get: (name: string) =>
 				name === "content-type" ? "text/x-markdown; charset=utf-8" : null,
 		};
-		global.fetch = vi.fn().mockResolvedValue({
+		mockFetch = vi.fn().mockResolvedValueOnce({
 			ok: true,
+			status: 200,
 			headers: mockHeaders,
 			text: () => Promise.resolve(mockContent),
-		} as unknown as Response);
+		});
 
 		const result = await scrapeUrl("https://example.com/test.unknown", [
 			"markdown",
@@ -180,11 +189,12 @@ describe("scrapeUrl (edge cases with mocks)", () => {
 			get: (name: string) =>
 				name === "content-type" ? "application/markdown" : null,
 		};
-		global.fetch = vi.fn().mockResolvedValue({
+		mockFetch = vi.fn().mockResolvedValueOnce({
 			ok: true,
+			status: 200,
 			headers: mockHeaders,
 			text: () => Promise.resolve(mockContent),
-		} as unknown as Response);
+		});
 
 		const result = await scrapeUrl("https://example.com/doc", ["markdown"]);
 
@@ -196,7 +206,7 @@ describe("scrapeUrl (edge cases with mocks)", () => {
 
 describe("scrapeUrl (redirect SSRF protection)", () => {
 	it("should block redirects to private IP addresses", async () => {
-		global.fetch = vi.fn().mockResolvedValueOnce({
+		mockFetch = vi.fn().mockResolvedValueOnce({
 			status: 302,
 			headers: {
 				get: (name: string) =>
@@ -204,7 +214,7 @@ describe("scrapeUrl (redirect SSRF protection)", () => {
 						? "http://169.254.169.254/latest/meta-data/"
 						: null,
 			},
-		} as unknown as Response);
+		});
 
 		await expect(
 			scrapeUrl("https://evil.example.com/redirect"),
@@ -212,13 +222,13 @@ describe("scrapeUrl (redirect SSRF protection)", () => {
 	});
 
 	it("should block redirects to loopback addresses", async () => {
-		global.fetch = vi.fn().mockResolvedValueOnce({
+		mockFetch = vi.fn().mockResolvedValueOnce({
 			status: 301,
 			headers: {
 				get: (name: string) =>
 					name === "location" ? "http://127.0.0.1/admin" : null,
 			},
-		} as unknown as Response);
+		});
 
 		await expect(
 			scrapeUrl("https://evil.example.com/redirect"),
@@ -229,7 +239,7 @@ describe("scrapeUrl (redirect SSRF protection)", () => {
 		const mockContent =
 			"<html><head><title>Redirected</title></head><body>OK</body></html>";
 
-		global.fetch = vi
+		mockFetch = vi
 			.fn()
 			.mockResolvedValueOnce({
 				status: 301,
@@ -237,7 +247,7 @@ describe("scrapeUrl (redirect SSRF protection)", () => {
 					get: (name: string) =>
 						name === "location" ? "https://example.com/final" : null,
 				},
-			} as unknown as Response)
+			})
 			.mockResolvedValueOnce({
 				ok: true,
 				status: 200,
@@ -245,7 +255,7 @@ describe("scrapeUrl (redirect SSRF protection)", () => {
 					get: (name: string) => (name === "content-type" ? "text/html" : null),
 				},
 				text: () => Promise.resolve(mockContent),
-			} as unknown as Response);
+			});
 
 		const result = await scrapeUrl("https://example.com/start", ["html"]);
 		expect(result.html).toBe(mockContent);
@@ -253,13 +263,13 @@ describe("scrapeUrl (redirect SSRF protection)", () => {
 	});
 
 	it("should throw on too many redirects", async () => {
-		global.fetch = vi.fn().mockResolvedValue({
+		mockFetch = vi.fn().mockResolvedValue({
 			status: 302,
 			headers: {
 				get: (name: string) =>
 					name === "location" ? "https://example.com/loop" : null,
 			},
-		} as unknown as Response);
+		});
 
 		await expect(scrapeUrl("https://example.com/loop")).rejects.toThrow(
 			"Too many redirects",

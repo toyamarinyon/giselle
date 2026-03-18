@@ -30,7 +30,8 @@
 	"dependencies": {
 		"defuddle": "catalog:",
 		"happy-dom": "catalog:",
-		"ipaddr.js": "catalog:"
+		"ipaddr.js": "catalog:",
+		"undici": "catalog:"
 	},
 	"peerDependencies": {
 		"zod": "catalog:"

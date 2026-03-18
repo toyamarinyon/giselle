@@ -1,5 +1,6 @@
+import { fetch } from "undici";
 import { z } from "zod";
-import { validateUrlForFetch } from "./validate-url";
+import { createSsrfSafeAgent, validateUrl } from "./validate-url";
 
 export const selfMadeProviderName = "self-made" as const;
 
@@ -37,13 +38,15 @@ export async function scrapeUrl(
 	let res!: Response;
 
 	for (let redirectCount = 0; ; redirectCount++) {
-		await validateUrlForFetch(currentUrl);
+		validateUrl(currentUrl);
+
 		res = await fetch(currentUrl, {
 			headers: {
 				"User-Agent":
 					"Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Giselle-User/1.0; +support@giselles.ai)",
 			},
 			redirect: "manual",
+			dispatcher: createSsrfSafeAgent(),
 		});
 
 		const isRedirect = [301, 302, 303, 307, 308].includes(res.status);

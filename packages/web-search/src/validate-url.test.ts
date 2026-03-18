@@ -1,14 +1,12 @@
 import type dns from "node:dns";
+import { fetch } from "undici";
 import { describe, expect, it, vi } from "vitest";
-import { isPrivateIP, validateUrlForFetch } from "./validate-url";
+import { createSsrfSafeAgent, isPrivateIP, validateUrl } from "./validate-url";
 
-let mockLookup: typeof dns.promises.lookup;
-
+let mockLookup: typeof dns.lookup;
 vi.mock("node:dns", () => ({
 	default: {
-		promises: {
-			lookup: (...args: Parameters<typeof mockLookup>) => mockLookup(...args),
-		},
+		lookup: (...args: Parameters<typeof mockLookup>) => mockLookup(...args),
 	},
 }));
 
@@ -28,56 +26,49 @@ describe("isPrivateIP", () => {
 	});
 });
 
-describe("validateUrlForFetch", () => {
-	it("should reject invalid URLs", async () => {
-		await expect(validateUrlForFetch("not-a-url")).rejects.toThrow(
-			"Invalid URL",
-		);
+describe("validateUrl", () => {
+	it("should reject invalid URLs", () => {
+		expect(() => validateUrl("not-a-url")).toThrow("Invalid URL");
 	});
 
-	it("should reject file:// scheme", async () => {
-		await expect(validateUrlForFetch("file:///etc/passwd")).rejects.toThrow(
-			"not allowed",
-		);
+	it("should reject file:// scheme", () => {
+		expect(() => validateUrl("file:///etc/passwd")).toThrow("not allowed");
 	});
 
-	it("should reject ftp:// scheme", async () => {
-		await expect(validateUrlForFetch("ftp://example.com/file")).rejects.toThrow(
-			"not allowed",
-		);
+	it("should reject ftp:// scheme", () => {
+		expect(() => validateUrl("ftp://example.com/file")).toThrow("not allowed");
 	});
 
-	it("should reject private IP addresses directly", async () => {
-		await expect(validateUrlForFetch("http://127.0.0.1")).rejects.toThrow(
-			"private",
-		);
+	it("should allow http URLs", () => {
+		expect(() => validateUrl("http://example.com")).not.toThrow();
 	});
 
+	it("should allow https URLs", () => {
+		expect(() => validateUrl("https://example.com")).not.toThrow();
+	});
+
+	it("should reject private IPv4 addresses", () => {
+		expect(() => validateUrl("http://127.0.0.1")).toThrow("private");
+	});
+
+	it("should reject IPv6 loopback", () => {
+		expect(() => validateUrl("http://[::1]")).toThrow("private");
+	});
+
+	it("should allow public IP addresses", () => {
+		expect(() => validateUrl("http://93.184.216.34")).not.toThrow();
+	});
+});
+
+describe("createSsrfSafeAgent", () => {
 	it("should block when DNS resolves to a private IP", async () => {
-		mockLookup = vi
-			.fn()
-			.mockResolvedValue([{ address: "10.0.0.1", family: 4 }]);
+		mockLookup = vi.fn((_hostname, _options, callback) => {
+			callback(null, "10.0.0.1", 4);
+		}) as unknown as typeof dns.lookup;
 
+		const agent = createSsrfSafeAgent();
 		await expect(
-			validateUrlForFetch("http://evil.example.com"),
-		).rejects.toThrow("private");
-	});
-
-	it("should allow when DNS resolves to a public IP", async () => {
-		mockLookup = vi
-			.fn()
-			.mockResolvedValue([{ address: "93.184.216.34", family: 4 }]);
-
-		await expect(
-			validateUrlForFetch("http://example.com"),
-		).resolves.toBeUndefined();
-	});
-
-	it("should reject when hostname cannot be resolved", async () => {
-		mockLookup = vi.fn().mockRejectedValue(new Error("ENOTFOUND"));
-
-		await expect(
-			validateUrlForFetch("http://nonexistent.invalid"),
-		).rejects.toThrow("Unable to resolve");
+			fetch("http://evil.example.com", { dispatcher: agent }),
+		).rejects.toThrow();
 	});
 });

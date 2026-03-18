@@ -1,5 +1,6 @@
 import dns from "node:dns";
 import ipaddr from "ipaddr.js";
+import { Agent } from "undici";
 
 export function isPrivateIP(ip: string): boolean {
 	if (!ipaddr.isValid(ip)) {
@@ -9,7 +10,7 @@ export function isPrivateIP(ip: string): boolean {
 	return addr.range() !== "unicast";
 }
 
-export async function validateUrlForFetch(url: string): Promise<void> {
+export function validateUrl(url: string): void {
 	let parsed: URL;
 	try {
 		parsed = new URL(url);
@@ -21,10 +22,11 @@ export async function validateUrlForFetch(url: string): Promise<void> {
 		throw new Error(`URL scheme "${parsed.protocol}" is not allowed`);
 	}
 
+	rejectPrivateIPLiteral(parsed);
+}
+
+function rejectPrivateIPLiteral(parsed: URL): void {
 	const rawHostname = parsed.hostname;
-	if (!rawHostname) {
-		throw new Error("URL must include a host");
-	}
 
 	// URL.hostname wraps IPv6 literals in brackets (e.g. "[::1]"),
 	// which ipaddr.js cannot parse. Strip them before validation.
@@ -33,27 +35,37 @@ export async function validateUrlForFetch(url: string): Promise<void> {
 			? rawHostname.slice(1, -1)
 			: rawHostname;
 
-	if (ipaddr.isValid(hostname)) {
-		if (isPrivateIP(hostname)) {
-			throw new Error(
-				"Connection to private or internal IP addresses is not allowed",
-			);
-		}
-		return;
+	if (ipaddr.isValid(hostname) && isPrivateIP(hostname)) {
+		throw new Error(
+			"Connection to private or internal IP addresses is not allowed",
+		);
 	}
+}
 
-	let addresses: dns.LookupAddress[];
-	try {
-		addresses = await dns.promises.lookup(hostname, { all: true });
-	} catch {
-		throw new Error(`Unable to resolve hostname: ${hostname}`);
-	}
+export function createSsrfSafeAgent(): Agent {
+	return new Agent({
+		connect: {
+			lookup: (hostname, options, callback) => {
+				dns.lookup(
+					hostname,
+					{ ...options, all: false },
+					(err, address, family) => {
+						if (err) return callback(err, address, family);
 
-	for (const { address } of addresses) {
-		if (isPrivateIP(address)) {
-			throw new Error(
-				"Connection to private or internal IP addresses is not allowed",
-			);
-		}
-	}
+						if (isPrivateIP(address)) {
+							return callback(
+								new Error(
+									"Connection to private or internal IP addresses is not allowed",
+								),
+								address,
+								family,
+							);
+						}
+
+						return callback(null, address, family);
+					},
+				);
+			},
+		},
+	});
 }
