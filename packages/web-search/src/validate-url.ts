@@ -21,10 +21,17 @@ export async function validateUrlForFetch(url: string): Promise<void> {
 		throw new Error(`URL scheme "${parsed.protocol}" is not allowed`);
 	}
 
-	const hostname = parsed.hostname;
-	if (!hostname) {
+	const rawHostname = parsed.hostname;
+	if (!rawHostname) {
 		throw new Error("URL must include a host");
 	}
+
+	// URL.hostname wraps IPv6 literals in brackets (e.g. "[::1]"),
+	// which ipaddr.js cannot parse. Strip them before validation.
+	const hostname =
+		rawHostname.startsWith("[") && rawHostname.endsWith("]")
+			? rawHostname.slice(1, -1)
+			: rawHostname;
 
 	if (ipaddr.isValid(hostname)) {
 		if (isPrivateIP(hostname)) {

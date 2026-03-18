@@ -13,7 +13,7 @@ vi.mock("node:dns", () => ({
 }));
 
 describe("isPrivateIP", () => {
-	it("should return true for non-unicast addresses", () => {
+	it("should return true for private/internal addresses", () => {
 		expect(isPrivateIP("127.0.0.1")).toBe(true);
 		expect(isPrivateIP("::1")).toBe(true);
 	});
