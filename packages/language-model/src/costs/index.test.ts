@@ -16,6 +16,19 @@ describe("calculateDisplayCost", () => {
 			});
 		});
 
+		it("should calculate display cost for OpenAI gpt-5.4 model", async () => {
+			const result = await calculateDisplayCost("openai", "gpt-5.4", {
+				inputTokens: 1000,
+				outputTokens: 500,
+			});
+
+			expect(result).toEqual({
+				inputCostForDisplay: 0.0025, // 1000 tokens * 2.5 per mega token
+				outputCostForDisplay: 0.0075, // 500 tokens * 15.0 per mega token
+				totalCostForDisplay: 0.01,
+			});
+		});
+
 		it("should calculate display cost for OpenAI gpt-5.2 model", async () => {
 			const result = await calculateDisplayCost("openai", "gpt-5.2", {
 				inputTokens: 1000,

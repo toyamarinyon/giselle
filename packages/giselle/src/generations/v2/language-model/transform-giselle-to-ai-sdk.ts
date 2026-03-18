@@ -13,6 +13,7 @@ export function transformGiselleLanguageModelToAiSdkLanguageModelCallOptions(
 ): Pick<LanguageModelV2CallOptions, "temperature" | "providerOptions"> {
 	const languageModel = getEntry(content.languageModel.id);
 	switch (languageModel.id) {
+		case "openai/gpt-5.4":
 		case "openai/gpt-5":
 		case "openai/gpt-5-codex":
 		case "openai/gpt-5-mini":

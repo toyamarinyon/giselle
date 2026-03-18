@@ -28,10 +28,10 @@ const defaultConfigurations: OpenAILanguageModelConfigurations = {
 };
 
 /**
- * GPT-5.2 and GPT-5.1-thinking default to "none" for lower latency.
+ * GPT-5.4, GPT-5.2, and GPT-5.1-thinking default to "none" for lower latency.
  * @see https://platform.openai.com/docs/guides/latest-model#gpt-5-2-parameter-compatibility
  */
-const gpt52And51ThinkingConfigurations: OpenAILanguageModelConfigurations = {
+const noneReasoningEffortConfigurations: OpenAILanguageModelConfigurations = {
 	...defaultConfigurations,
 	reasoningEffort: "none",
 };
@@ -47,6 +47,7 @@ const gpt51CodexConfigurations: OpenAILanguageModelConfigurations = {
 
 export const OpenAILanguageModelId = z
 	.enum([
+		"gpt-5.4",
 		"gpt-5.2",
 		"gpt-5.2-codex",
 		"gpt-5.1-thinking",
@@ -60,6 +61,10 @@ export const OpenAILanguageModelId = z
 			return "gpt-5-nano";
 		}
 		const v = ctx.value;
+
+		if (/^gpt-5\.4(?:-.+)?$/.test(v)) {
+			return "gpt-5.4";
+		}
 
 		if (/^gpt-5\.2-codex(?:-.+)?$/.test(v)) {
 			return "gpt-5.2-codex";
@@ -120,6 +125,18 @@ const OpenAILanguageModel = LanguageModelBase.extend({
 });
 type OpenAILanguageModel = z.infer<typeof OpenAILanguageModel>;
 
+const gpt54: OpenAILanguageModel = {
+	provider: "openai",
+	id: "gpt-5.4",
+	capabilities:
+		Capability.ImageFileInput |
+		Capability.TextGeneration |
+		Capability.OptionalSearchGrounding |
+		Capability.Reasoning,
+	tier: Tier.enum.pro,
+	configurations: noneReasoningEffortConfigurations,
+};
+
 const gpt52: OpenAILanguageModel = {
 	provider: "openai",
 	id: "gpt-5.2",
@@ -129,7 +146,7 @@ const gpt52: OpenAILanguageModel = {
 		Capability.OptionalSearchGrounding |
 		Capability.Reasoning,
 	tier: Tier.enum.pro,
-	configurations: gpt52And51ThinkingConfigurations,
+	configurations: noneReasoningEffortConfigurations,
 };
 
 const gpt51Thinking: OpenAILanguageModel = {
@@ -141,7 +158,7 @@ const gpt51Thinking: OpenAILanguageModel = {
 		Capability.OptionalSearchGrounding |
 		Capability.Reasoning,
 	tier: Tier.enum.pro,
-	configurations: gpt52And51ThinkingConfigurations,
+	configurations: noneReasoningEffortConfigurations,
 };
 
 const gpt51codex: OpenAILanguageModel = {
@@ -204,6 +221,7 @@ const gpt5nano: OpenAILanguageModel = {
 };
 
 export const models = [
+	gpt54,
 	gpt52,
 	gpt52codex,
 	gpt51Thinking,
