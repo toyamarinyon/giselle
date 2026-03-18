@@ -5,60 +5,78 @@
 - Add SSRF protection to `scrapeUrl` in the web-search package using `ipaddr.js` instead of hand-rolled IP range checks
 - Use `ipaddr.js` `range()` API to block all non-unicast addresses (private, loopback, link-local, reserved, multicast, etc.)
 - Allow IPv6 public addresses (unlike the existing `validate-connection-string.ts` which blocks all IPv6)
+- Close SSRF TOCTOU gap by using undici `Agent` with `connect.lookup` to validate DNS results at connection time
 
 ## Goal (incl. success criteria)
 
 - `scrapeUrl` rejects URLs pointing to private/internal IPs before making any HTTP request
 - Validation uses `ipaddr.js` `range() !== "unicast"` for both IPv4 and IPv6
 - IPv4-mapped IPv6 addresses (e.g. `::ffff:127.0.0.1`) are correctly handled via `ipaddr.process()`
+- TOCTOU gap closed: DNS resolution and IP validation happen in the same callback via undici `connect.lookup`
 - All quality checks pass: format, build-sdk, check-types, tidy, test
 
 ## Constraints/Assumptions
 
 - Follow existing codebase patterns (reference: `validate-connection-string.ts`)
 - IP range exhaustiveness is `ipaddr.js`'s responsibility; tests cover representative cases only
-- DNS lookup uses `{ all: true }` to check all resolved addresses
+- undici `connect.lookup` is not called for IP literal hostnames, so `validateUrl` checks IP literals synchronously as a two-layer defense
 
 ## Key decisions
 
 - Used `ipaddr.js@2.3.0` (added to pnpm catalog)
+- Added `undici@7.24.4` to pnpm catalog and web-search dependencies
 - `isPrivateIP` returns `true` for invalid strings (safe side)
-- `validateUrlForFetch` throws errors (not result types) to match `scrapeUrl`'s existing error handling style; caller `addWebPage` catches via `try/catch` and re-throws with context
-- Replaced the inline `try { new URL(url) } catch` block in `scrapeUrl` with `await validateUrlForFetch(url)`
+- Renamed `validateUrlForFetch` (async) to `validateUrl` (sync): removed DNS lookup, keeps URL parse + scheme + IP literal checks only
+- Added `createSsrfSafeAgent()` returning undici `Agent` with `connect.lookup` that validates resolved IPs against `isPrivateIP`
+- `self-made.ts` uses `import { fetch } from "undici"` instead of global `fetch` to avoid type mismatch between undici@7.24.4 and Node's built-in undici-types
+- `createSsrfSafeAgent()` is called per-fetch inside `scrapeUrl`'s redirect loop (each request gets a fresh agent)
 - Redirect SSRF bypass fix: `redirect: "manual"` + re-validate each redirect target before following (max 10 redirects, specific status codes 301/302/303/307/308)
+- Two-layer SSRF defense: (1) `validateUrl` sync check catches IP literal URLs before any network call; (2) `createSsrfSafeAgent` validates DNS-resolved IPs at connection time to close TOCTOU gap
 
 ## State
 
-- Implementation complete, all checks pass (20 passed, 6 skipped in web-search)
+- Implementation complete, all checks pass (22 passed, 6 skipped in web-search)
 
 ## Done
 
 - Added `ipaddr.js: 2.3.0` to pnpm catalog and `packages/web-search/package.json`
-- Created `packages/web-search/src/validate-url.ts` with `isPrivateIP` and `validateUrlForFetch`
-- Updated `packages/web-search/src/self-made.ts` to call `validateUrlForFetch` before fetching
-- Created `packages/web-search/src/validate-url.test.ts` (10 tests: isPrivateIP + validateUrlForFetch)
-- Added SSRF smoke tests to `packages/web-search/src/self-made.test.ts`
-- Fixed redirect-based SSRF bypass: `scrapeUrl` now uses `redirect: "manual"` and re-validates each redirect target via `validateUrlForFetch` before following it (max 10 redirects)
-- Added redirect SSRF tests: block redirect to private IP (169.254.169.254), block redirect to loopback (127.0.0.1), follow safe redirects, reject too many redirects
+- Added `undici: 7.24.4` to pnpm catalog and `packages/web-search/package.json`
+- Refactored `packages/web-search/src/validate-url.ts`:
+  - Renamed `validateUrlForFetch` (async, DNS-resolving) → `validateUrl` (sync, URL parse + scheme + IP literal only)
+  - Extracted `rejectPrivateIPLiteral` helper for IPv4/IPv6 literal hostname checks (strips `[` `]` brackets for IPv6)
+  - Added `createSsrfSafeAgent()` returning undici `Agent` with `connect.lookup` callback for DNS-time IP validation
+- Updated `packages/web-search/src/self-made.ts`:
+  - Switched from global `fetch` to `import { fetch } from "undici"`
+  - `scrapeUrl` calls `validateUrl(currentUrl)` synchronously + passes `dispatcher: createSsrfSafeAgent()` per fetch
+  - Redirect loop uses `redirect: "manual"` and re-validates each hop
+- Updated `packages/web-search/src/validate-url.test.ts` (12 tests across 3 describe blocks: `isPrivateIP`, `validateUrl` sync, `createSsrfSafeAgent`)
+  - Mocks switched from `dns.promises.lookup` to `dns.lookup` (callback-based)
+  - Tests now synchronous for `validateUrl` (no `async`/`rejects`)
+  - Added `createSsrfSafeAgent` test using undici `fetch` + `dispatcher`
+- Updated `packages/web-search/src/self-made.test.ts`:
+  - DNS mock switched from `dns.promises.lookup` to `dns.lookup` (callback)
+  - `global.fetch` mocks replaced with `vi.mock("undici")` partial mock via `mockFetch` variable
+  - Mock responses include `status` field for redirect detection compatibility
 - All quality checks pass: format, build-sdk, check-types, tidy, test
 
 ## Now
 
-- Implementation complete
+- Implementation complete; ready for PR / review
 
 ## Next
 
-- (none)
+- Create PR for review
+- Consider whether `createSsrfSafeAgent()` should be shared as a module-level singleton instead of being created per-fetch (current approach is simpler and avoids connection pooling across unrelated requests)
 
 ## Open questions (UNCONFIRMED if needed)
 
-- (none)
+- Performance: creating a new undici `Agent` per fetch call is safe but may have overhead for high-throughput scenarios. Acceptable for now since `scrapeUrl` is not called at high frequency.
 
 ## Working set (files/ids/commands)
 
-- `pnpm-workspace.yaml` (catalog entry)
-- `packages/web-search/package.json` (dependency)
-- `packages/web-search/src/validate-url.ts` (new)
-- `packages/web-search/src/validate-url.test.ts` (new)
-- `packages/web-search/src/self-made.ts` (modified)
-- `packages/web-search/src/self-made.test.ts` (modified)
+- `pnpm-workspace.yaml` (catalog entries: ipaddr.js, undici)
+- `packages/web-search/package.json` (dependencies: ipaddr.js, undici)
+- `packages/web-search/src/validate-url.ts` (isPrivateIP, validateUrl, createSsrfSafeAgent)
+- `packages/web-search/src/validate-url.test.ts` (updated tests)
+- `packages/web-search/src/self-made.ts` (uses validateUrl + undici fetch + dispatcher)
+- `packages/web-search/src/self-made.test.ts` (updated mocks)
