@@ -50,9 +50,15 @@ export async function verifyRequest({
 	secret: string;
 	request: Request;
 }) {
+	if (!secret.trim()) {
+		throw new Error("GitHub webhook secret is not configured.");
+	}
+
 	const signature = request.headers.get("x-hub-signature-256");
 	if (signature == null) {
-		throw new GitHubWebhookUnauthorizedError();
+		throw new GitHubWebhookUnauthorizedError({
+			message: "Missing x-hub-signature-256 header",
+		});
 	}
 
 	const webhooks = new Webhooks({ secret });
@@ -60,7 +66,9 @@ export async function verifyRequest({
 	const verified = await webhooks.verify(body, signature);
 
 	if (!verified) {
-		throw new GitHubWebhookUnauthorizedError();
+		throw new GitHubWebhookUnauthorizedError({
+			message: "Invalid webhook signature",
+		});
 	}
 }
 
