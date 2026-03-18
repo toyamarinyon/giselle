@@ -19,7 +19,7 @@ import {
 /**
  * Returns the available reasoning effort options for the given OpenAI model.
  *
- * GPT-5.2 and GPT-5.1-thinking support: none/low/medium/high/xhigh
+ * GPT-5.4, GPT-5.2, and GPT-5.1-thinking support: none/low/medium/high/xhigh
  * GPT-5.2-codex supports: low/medium/high/xhigh
  * GPT-5.1-codex supports: low/medium/high
  * Older models (gpt-5, gpt-5-mini, gpt-5-nano) support: minimal/low/medium/high
