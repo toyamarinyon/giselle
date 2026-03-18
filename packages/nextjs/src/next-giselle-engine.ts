@@ -160,7 +160,7 @@ export function createHttpHandler({
 			/** Handle GitHub webhooks with Giselle */
 			if (routerPath === "github-webhook") {
 				const secret = config.integrationConfigs?.github?.authV2.webhookSecret;
-				if (secret === undefined) {
+				if (!secret) {
 					return new Response("Webhook secret not configured.", {
 						status: 500,
 					});
