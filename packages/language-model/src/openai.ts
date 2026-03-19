@@ -239,8 +239,8 @@ const gpt5nano: OpenAILanguageModel = {
 
 export const models = [
 	gpt54,
-	gpt52,
 	gpt53codex,
+	gpt52,
 	gpt52codex,
 	gpt51Thinking,
 	gpt51codex,
