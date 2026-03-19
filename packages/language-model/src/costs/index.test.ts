@@ -76,6 +76,23 @@ describe("calculateDisplayCost", () => {
 			});
 		});
 
+		it("should calculate display cost for Google Gemini 3.1 Flash Image Preview model", async () => {
+			const result = await calculateDisplayCost(
+				"google",
+				"gemini-3.1-flash-image-preview",
+				{
+					inputTokens: 1000,
+					outputTokens: 500,
+				},
+			);
+
+			expect(result).toEqual({
+				inputCostForDisplay: 0.0005, // 1000 tokens * 0.5 per mega token
+				outputCostForDisplay: 0.03, // 500 tokens * 60.0 per mega token
+				totalCostForDisplay: 0.0305,
+			});
+		});
+
 		it("should calculate display cost for OpenAI model with zero tokens", async () => {
 			const result = await calculateDisplayCost("openai", "gpt-5", {
 				inputTokens: 0,

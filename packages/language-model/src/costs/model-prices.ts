@@ -267,7 +267,7 @@ export const googleTokenPricing: ModelPriceTable = {
 						costPerMegaToken: 0.5,
 					},
 					output: {
-						costPerMegaToken: 3.0,
+						costPerMegaToken: 60.0,
 					},
 				},
 			},
