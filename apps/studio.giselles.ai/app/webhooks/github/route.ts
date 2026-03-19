@@ -8,13 +8,14 @@ import { giselle, githubWebhookCallbacks } from "@/app/giselle";
 export const maxDuration = 800;
 
 export async function POST(request: Request) {
+	const secret =
+		giselle.getContext().integrationConfigs?.github?.authV2.webhookSecret;
+	if (!secret) {
+		return new Response("Webhook secret not configured.", { status: 500 });
+	}
+
 	try {
-		await verifyRequest({
-			secret:
-				giselle.getContext().integrationConfigs?.github?.authV2.webhookSecret ??
-				"",
-			request,
-		});
+		await verifyRequest({ secret, request });
 	} catch (e) {
 		if (GitHubWebhookUnauthorizedError.isInstance(e)) {
 			return new Response("Unauthorized", { status: 401 });

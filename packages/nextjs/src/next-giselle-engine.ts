@@ -159,12 +159,15 @@ export function createHttpHandler({
 			}
 			/** Handle GitHub webhooks with Giselle */
 			if (routerPath === "github-webhook") {
-				try {
-					await verifyRequestAsGitHubWebook({
-						secret:
-							config.integrationConfigs?.github?.authV2.webhookSecret ?? "",
-						request,
+				const secret = config.integrationConfigs?.github?.authV2.webhookSecret;
+				if (!secret) {
+					return new Response("Webhook secret not configured.", {
+						status: 500,
 					});
+				}
+
+				try {
+					await verifyRequestAsGitHubWebook({ secret, request });
 				} catch (e) {
 					if (GitHubWebhookUnauthorizedError.isInstance(e)) {
 						return new Response("Unauthorized", { status: 401 });

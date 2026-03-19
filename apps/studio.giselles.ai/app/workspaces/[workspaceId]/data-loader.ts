@@ -26,7 +26,6 @@ import { getUsageLimitsForTeam } from "@/packages/lib/usage-limits";
 import { fetchCurrentUser } from "@/services/accounts";
 import { fetchWorkspaceTeam, isMemberOfTeam } from "@/services/teams";
 import { canUseDataStore } from "@/services/teams/plan-features/data-store";
-import { isInternalPlan } from "@/services/teams/utils";
 
 export async function dataLoader(workspaceId: WorkspaceId) {
 	logger.debug("Loading workspace");
@@ -54,7 +53,6 @@ export async function dataLoader(workspaceId: WorkspaceId) {
 		return notFound();
 	}
 
-	const sdkAvailability = isInternalPlan(workspaceTeam);
 	const usageLimits = await getUsageLimitsForTeam(workspaceTeam);
 	const webSearchAction = await webSearchActionFlag();
 	const layoutV3 = await layoutV3Flag();
@@ -65,7 +63,7 @@ export async function dataLoader(workspaceId: WorkspaceId) {
 	const data = await giselle.getWorkspace(workspaceId);
 	const generateContentNode = await generateContentNodeFlag();
 	const privatePreviewTools = await privatePreviewToolsFlag();
-	const dataStore = canUseDataStore(workspaceTeam.plan);
+	const isDataStoreAvailable = canUseDataStore(workspaceTeam.plan);
 	const [teamGitHubRepositoryIndexes, officialGitHubRepositoryIndexes] =
 		await Promise.all([
 			getGitHubRepositoryIndexes(workspaceTeam.dbId),
@@ -124,6 +122,7 @@ export async function dataLoader(workspaceId: WorkspaceId) {
 		data,
 		documentVectorStores,
 		teamDataStores,
+		isDataStoreAvailable,
 		featureFlags: {
 			webSearchAction,
 			layoutV3,
@@ -133,8 +132,6 @@ export async function dataLoader(workspaceId: WorkspaceId) {
 			googleUrlContext,
 			generateContentNode,
 			privatePreviewTools,
-			dataStore,
-			sdkAvailability,
 		},
 		llmProviders,
 	};

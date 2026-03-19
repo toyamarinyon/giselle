@@ -10,14 +10,18 @@ type Provider = "openai" | "anthropic" | "google";
 /**
  * Returns the default reasoningEffort for the given OpenAI model.
  *
- * GPT-5.2 and GPT-5.1-thinking default to "none" for lower latency.
+ * GPT-5.4, GPT-5.2, and GPT-5.1-thinking default to "none" for lower latency.
  * GPT-5.1-codex only supports low/medium/high, so it defaults to "medium".
  * Older models (gpt-5, gpt-5-mini, gpt-5-nano) default to "medium".
  *
  * @see https://platform.openai.com/docs/guides/latest-model#gpt-5-2-parameter-compatibility
  */
 function getDefaultReasoningEffort(modelId: string): string {
-	if (modelId === "gpt-5.2" || modelId === "gpt-5.1-thinking") {
+	if (
+		modelId === "gpt-5.4" ||
+		modelId === "gpt-5.2" ||
+		modelId === "gpt-5.1-thinking"
+	) {
 		return "none";
 	}
 	return "medium";

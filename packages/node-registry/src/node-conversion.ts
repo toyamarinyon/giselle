@@ -28,6 +28,8 @@ function convertTextGenerationLanguageModelIdToContentGenerationLanguageModelId(
 	from: TextGenerationModelIdWithLegacy,
 ): LanguageModelId {
 	switch (from) {
+		case "claude-sonnet-4.6":
+			return "anthropic/claude-sonnet-4.6";
 		case "claude-opus-4.6":
 			return "anthropic/claude-opus-4.6";
 		case "claude-haiku-4.5":
@@ -45,6 +47,8 @@ function convertTextGenerationLanguageModelIdToContentGenerationLanguageModelId(
 			return "google/gemini-2.5-flash-lite";
 		case "gemini-3-pro-preview":
 			return "google/gemini-3-pro-preview";
+		case "gemini-3.1-pro-preview":
+			return "google/gemini-3.1-pro-preview";
 		case "gemini-3-flash":
 			return "google/gemini-3-flash";
 		case "gemini-2.5-pro":
@@ -55,6 +59,8 @@ function convertTextGenerationLanguageModelIdToContentGenerationLanguageModelId(
 			return "openai/gpt-5.2-codex";
 		case "gpt-5.3-codex":
 			return "openai/gpt-5.3-codex";
+		case "gpt-5.4":
+			return "openai/gpt-5.4";
 		case "gpt-5.1-thinking":
 			return "openai/gpt-5.1-thinking";
 		case "gpt-5":
@@ -83,6 +89,8 @@ function convertContentGenerationLanguageModelIdToTextGenerationLanguageModelId(
 	from: LanguageModelId,
 ): TextGenerationNode["content"]["llm"]["id"] {
 	switch (from) {
+		case "anthropic/claude-sonnet-4.6":
+			return "claude-sonnet-4.6";
 		case "anthropic/claude-opus-4.6":
 			return "claude-opus-4.6";
 		case "anthropic/claude-haiku-4.5":
@@ -97,6 +105,8 @@ function convertContentGenerationLanguageModelIdToTextGenerationLanguageModelId(
 			return "gemini-2.5-flash-lite";
 		case "google/gemini-3-pro-preview":
 			return "gemini-3-pro-preview";
+		case "google/gemini-3.1-pro-preview":
+			return "gemini-3.1-pro-preview";
 		case "google/gemini-3-flash":
 			return "gemini-3-flash";
 		case "google/gemini-2.5-pro":
@@ -107,6 +117,8 @@ function convertContentGenerationLanguageModelIdToTextGenerationLanguageModelId(
 			return "gpt-5.2-codex";
 		case "openai/gpt-5.3-codex":
 			return "gpt-5.3-codex";
+		case "openai/gpt-5.4":
+			return "gpt-5.4";
 		case "openai/gpt-5.1-thinking":
 			return "gpt-5.1-thinking";
 		case "openai/gpt-5":
