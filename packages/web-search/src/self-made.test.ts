@@ -1,4 +1,3 @@
-import type dns from "node:dns";
 import type { fetch } from "undici";
 import { describe, expect, it, vi } from "vitest";
 import { scrapeUrl } from "./self-made";
@@ -11,18 +10,6 @@ const TEST_UPPERCASE_TXT_URL = "https://example.com/TEST.TXT";
 const TEST_UPPERCASE_MD_URL = "https://example.com/README.MD";
 
 const hasExternalApiEnv = process.env.VITEST_WITH_EXTERNAL_API === "1";
-
-vi.mock("node:dns", () => ({
-	default: {
-		lookup: (
-			_hostname: string,
-			_options: dns.LookupOptions,
-			callback: (err: null, address: string, family: number) => void,
-		) => {
-			callback(null, "93.184.216.34", 4);
-		},
-	},
-}));
 
 let mockFetch: typeof fetch;
 vi.mock("undici", async (importOriginal) => {
