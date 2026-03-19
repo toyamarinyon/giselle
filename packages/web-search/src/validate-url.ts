@@ -46,25 +46,37 @@ export function createSsrfSafeAgent(): Agent {
 	return new Agent({
 		connect: {
 			lookup: (hostname, options, callback) => {
-				dns.lookup(
-					hostname,
-					{ ...options, all: false },
-					(err, address, family) => {
-						if (err) return callback(err, address, family);
+				dns.lookup(hostname, options, (err, addressOrAddresses, family) => {
+					if (err) return callback(err, addressOrAddresses, family);
 
-						if (isPrivateIP(address)) {
-							return callback(
-								new Error(
-									"Connection to private or internal IP addresses is not allowed",
-								),
-								address,
-								family,
-							);
+					if (Array.isArray(addressOrAddresses)) {
+						for (const entry of addressOrAddresses) {
+							if (isPrivateIP(entry.address)) {
+								return callback(
+									new Error(
+										"Connection to private or internal IP addresses is not allowed",
+									),
+									addressOrAddresses,
+									family,
+								);
+							}
 						}
 
-						return callback(null, address, family);
-					},
-				);
+						return callback(null, addressOrAddresses, family);
+					}
+
+					if (isPrivateIP(addressOrAddresses)) {
+						return callback(
+							new Error(
+								"Connection to private or internal IP addresses is not allowed",
+							),
+							addressOrAddresses,
+							family,
+						);
+					}
+
+					return callback(null, addressOrAddresses, family);
+				});
 			},
 		},
 	});
