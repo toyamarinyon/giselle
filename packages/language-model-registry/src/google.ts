@@ -16,6 +16,42 @@ const googleProvider = {
 } as const satisfies LanguageModelProviderDefinition<"google">;
 
 export const google = {
+	"google/gemini-3.1-pro-preview": defineLanguageModel({
+		provider: googleProvider,
+		id: "google/gemini-3.1-pro-preview",
+		name: "Gemini 3.1 Pro Preview",
+		description:
+			"This model improves upon Gemini 3 Pro Preview for challenging SWE, agentic tasks, and complex reasoning. It also adds expanded thinking controls for cost and latency trade-offs.",
+		contextWindow: 1_048_576,
+		maxOutputTokens: 65_536,
+		knowledgeCutoff: new Date(2025, 0, 31).getTime(),
+		pricing: {
+			input: definePricing(2.0),
+			output: definePricing(12.0),
+		},
+		requiredTier: "pro",
+		configurationOptions: {
+			temperature: {
+				description: "Controls the randomness of the output.",
+				schema: z.number().min(0.0).max(2.0),
+				ui: {
+					min: 0.0,
+					max: 2.0,
+					step: 0.05,
+				},
+			},
+			thinkingLevel: {
+				description:
+					"Control thinking behavior. 'low' reduces latency and cost, while 'medium' balances speed and reasoning depth. 'high' increases reasoning effort.",
+				schema: z.enum(["low", "medium", "high"]),
+			},
+		},
+		defaultConfiguration: {
+			temperature: 1.0,
+			thinkingLevel: "high",
+		},
+		url: "https://ai.google.dev/gemini-api/docs/models",
+	}),
 	"google/gemini-3-pro-preview": defineLanguageModel({
 		provider: googleProvider,
 		id: "google/gemini-3-pro-preview",

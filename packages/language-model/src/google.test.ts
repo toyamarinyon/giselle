@@ -4,6 +4,9 @@ import { GoogleLanguageModelId } from "./google";
 describe("google llm", () => {
 	describe("GoogleLanguageModelId", () => {
 		it("should parse valid enum values successfully", () => {
+			expect(GoogleLanguageModelId.parse("gemini-3.1-pro-preview")).toBe(
+				"gemini-3.1-pro-preview",
+			);
 			expect(GoogleLanguageModelId.parse("gemini-3-pro-preview")).toBe(
 				"gemini-3-pro-preview",
 			);
@@ -15,6 +18,21 @@ describe("google llm", () => {
 			);
 			expect(GoogleLanguageModelId.parse("gemini-2.5-flash-lite")).toBe(
 				"gemini-2.5-flash-lite",
+			);
+		});
+
+		it("should fallback gemini-3.1-pro-preview variants to gemini-3.1-pro-preview", () => {
+			expect(GoogleLanguageModelId.parse("gemini-3.1-pro-preview")).toBe(
+				"gemini-3.1-pro-preview",
+			);
+			expect(GoogleLanguageModelId.parse("gemini-3.1-pro-preview-10-15")).toBe(
+				"gemini-3.1-pro-preview",
+			);
+			expect(
+				GoogleLanguageModelId.parse("gemini-3.1-pro-preview-20261015"),
+			).toBe("gemini-3.1-pro-preview");
+			expect(GoogleLanguageModelId.parse("gemini-3.1-pro")).toBe(
+				"gemini-3.1-pro-preview",
 			);
 		});
 

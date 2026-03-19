@@ -69,6 +69,7 @@ export function transformGiselleLanguageModelToAiSdkLanguageModelCallOptions(
 			} as Partial<LanguageModelV2CallOptions>;
 		}
 		case "google/gemini-3-pro-preview":
+		case "google/gemini-3.1-pro-preview":
 		case "google/gemini-3-flash": {
 			const config = parseConfiguration(
 				languageModel,
