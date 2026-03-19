@@ -146,6 +146,55 @@ describe("calculateDisplayCost", () => {
 		});
 	});
 
+	describe("Provider-prefixed model IDs", () => {
+		it("should handle provider-prefixed Google model ID", async () => {
+			const result = await calculateDisplayCost(
+				"google",
+				"google/gemini-3.1-pro-preview",
+				{
+					inputTokens: 1000,
+					outputTokens: 500,
+				},
+			);
+
+			expect(result).toEqual({
+				inputCostForDisplay: 0.002,
+				outputCostForDisplay: 0.006,
+				totalCostForDisplay: 0.008,
+			});
+		});
+
+		it("should handle provider-prefixed OpenAI model ID", async () => {
+			const result = await calculateDisplayCost("openai", "openai/gpt-5", {
+				inputTokens: 1000,
+				outputTokens: 500,
+			});
+
+			expect(result).toEqual({
+				inputCostForDisplay: 0.00125,
+				outputCostForDisplay: 0.005,
+				totalCostForDisplay: 0.00625,
+			});
+		});
+
+		it("should handle provider-prefixed Anthropic model ID", async () => {
+			const result = await calculateDisplayCost(
+				"anthropic",
+				"anthropic/claude-sonnet-4.6",
+				{
+					inputTokens: 1000,
+					outputTokens: 500,
+				},
+			);
+
+			expect(result).toEqual({
+				inputCostForDisplay: 0.003,
+				outputCostForDisplay: 0.0075,
+				totalCostForDisplay: 0.0105,
+			});
+		});
+	});
+
 	describe("Floating point precision", () => {
 		it("should handle very small token counts precisely", async () => {
 			const result = await calculateDisplayCost("openai", "gpt-5", {
