@@ -1548,7 +1548,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@next/env"></a>
-### @next/env v16.0.10
+### @next/env v16.1.7
 #### 
 
 ##### Paths
@@ -1559,7 +1559,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@next/swc-linux-x64-gnu"></a>
-### @next/swc-linux-x64-gnu v16.1.5
+### @next/swc-linux-x64-gnu v16.1.7
 #### 
 
 ##### Paths
@@ -1570,7 +1570,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@next/third-parties"></a>
-### @next/third-parties v16.0.10
+### @next/third-parties v16.1.7
 #### 
 
 ##### Paths
@@ -10129,7 +10129,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="next"></a>
-### next v16.1.5
+### next v16.1.7
 #### 
 
 ##### Paths
