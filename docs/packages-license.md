@@ -1548,7 +1548,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@next/env"></a>
-### @next/env v16.0.10
+### @next/env v16.1.7
 #### 
 
 ##### Paths
@@ -1559,7 +1559,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@next/swc-linux-x64-gnu"></a>
-### @next/swc-linux-x64-gnu v16.1.5
+### @next/swc-linux-x64-gnu v16.1.7
 #### 
 
 ##### Paths
@@ -1570,7 +1570,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@next/third-parties"></a>
-### @next/third-parties v16.0.10
+### @next/third-parties v16.1.7
 #### 
 
 ##### Paths
@@ -5916,7 +5916,7 @@ Python-2.0 manually approved
 
 
 <a name="baseline-browser-mapping"></a>
-### baseline-browser-mapping v2.9.8
+### baseline-browser-mapping v2.10.0
 #### 
 
 ##### Paths
@@ -6125,7 +6125,7 @@ Python-2.0 manually approved
 
 
 <a name="caniuse-lite"></a>
-### caniuse-lite v1.0.30001760
+### caniuse-lite v1.0.30001774
 #### 
 
 ##### Paths
@@ -10129,7 +10129,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="next"></a>
-### next v16.1.5
+### next v16.1.7
 #### 
 
 ##### Paths
