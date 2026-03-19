@@ -10,6 +10,21 @@ type GoogleModelId =
 
 export const openAiTokenPricing: ModelPriceTable = {
 	// https://platform.openai.com/docs/pricing#latest-models
+	"gpt-5.4": {
+		prices: [
+			{
+				validFrom: "2026-03-05T00:00:00Z",
+				price: {
+					input: {
+						costPerMegaToken: 2.5,
+					},
+					output: {
+						costPerMegaToken: 15.0,
+					},
+				},
+			},
+		],
+	},
 	"gpt-5.2": {
 		prices: [
 			{
@@ -29,6 +44,21 @@ export const openAiTokenPricing: ModelPriceTable = {
 		prices: [
 			{
 				validFrom: "2026-01-15T00:00:00Z",
+				price: {
+					input: {
+						costPerMegaToken: 1.75,
+					},
+					output: {
+						costPerMegaToken: 14.0,
+					},
+				},
+			},
+		],
+	},
+	"gpt-5.3-codex": {
+		prices: [
+			{
+				validFrom: "2026-02-05T00:00:00Z",
 				price: {
 					input: {
 						costPerMegaToken: 1.75,
@@ -134,6 +164,21 @@ export const openAiTokenPricing: ModelPriceTable = {
 
 export const anthropicTokenPricing: ModelPriceTable = {
 	// https://www.anthropic.com/pricing
+	"claude-sonnet-4.6": {
+		prices: [
+			{
+				validFrom: "2026-02-17T00:00:00Z",
+				price: {
+					input: {
+						costPerMegaToken: 3.0,
+					},
+					output: {
+						costPerMegaToken: 15.0,
+					},
+				},
+			},
+		],
+	},
 	"claude-opus-4.6": {
 		prices: [
 			{
@@ -198,6 +243,21 @@ export const anthropicTokenPricing: ModelPriceTable = {
 
 export const googleTokenPricing: ModelPriceTable = {
 	// https://ai.google.dev/gemini-api/docs/pricing
+	"gemini-3.1-pro-preview": {
+		prices: [
+			{
+				validFrom: "2026-02-19T00:00:00Z",
+				price: {
+					input: {
+						costPerMegaToken: 2.0,
+					},
+					output: {
+						costPerMegaToken: 12.0,
+					},
+				},
+			},
+		],
+	},
 	"gemini-3.1-flash-image-preview": {
 		prices: [
 			{

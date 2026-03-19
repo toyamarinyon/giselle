@@ -13,6 +13,7 @@ export function transformGiselleLanguageModelToAiSdkLanguageModelCallOptions(
 ): Pick<LanguageModelV2CallOptions, "temperature" | "providerOptions"> {
 	const languageModel = getEntry(content.languageModel.id);
 	switch (languageModel.id) {
+		case "openai/gpt-5.4":
 		case "openai/gpt-5":
 		case "openai/gpt-5-codex":
 		case "openai/gpt-5-mini":
@@ -20,7 +21,8 @@ export function transformGiselleLanguageModelToAiSdkLanguageModelCallOptions(
 		case "openai/gpt-5.1-codex":
 		case "openai/gpt-5.1-thinking":
 		case "openai/gpt-5.2":
-		case "openai/gpt-5.2-codex": {
+		case "openai/gpt-5.2-codex":
+		case "openai/gpt-5.3-codex": {
 			const config = parseConfiguration(
 				languageModel,
 				content.languageModel.configuration,
@@ -34,6 +36,7 @@ export function transformGiselleLanguageModelToAiSdkLanguageModelCallOptions(
 				},
 			} satisfies Partial<LanguageModelV2CallOptions>;
 		}
+		case "anthropic/claude-sonnet-4.6":
 		case "anthropic/claude-opus-4.6":
 		case "anthropic/claude-haiku-4.5":
 		case "anthropic/claude-opus-4.5":
@@ -67,6 +70,7 @@ export function transformGiselleLanguageModelToAiSdkLanguageModelCallOptions(
 			} as Partial<LanguageModelV2CallOptions>;
 		}
 		case "google/gemini-3-pro-preview":
+		case "google/gemini-3.1-pro-preview":
 		case "google/gemini-3-flash": {
 			const config = parseConfiguration(
 				languageModel,

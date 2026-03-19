@@ -4,6 +4,10 @@ import { OpenAILanguageModelId } from "./openai";
 describe("openai llm", () => {
 	describe("OpenAILanguageModelId", () => {
 		it("should map GPT-5 models correctly", () => {
+			expect(OpenAILanguageModelId.parse("gpt-5.4")).toBe("gpt-5.4");
+			expect(OpenAILanguageModelId.parse("gpt-5.3-codex")).toBe(
+				"gpt-5.3-codex",
+			);
 			expect(OpenAILanguageModelId.parse("gpt-5.2")).toBe("gpt-5.2");
 			expect(OpenAILanguageModelId.parse("gpt-5.1-thinking")).toBe(
 				"gpt-5.1-thinking",
@@ -18,6 +22,10 @@ describe("openai llm", () => {
 		});
 
 		it("should fallback deprecated models to GPT-5 series", () => {
+			expect(OpenAILanguageModelId.parse("gpt-5.4-20260305")).toBe("gpt-5.4");
+			expect(OpenAILanguageModelId.parse("gpt-5.3-codex-20260205")).toBe(
+				"gpt-5.3-codex",
+			);
 			expect(OpenAILanguageModelId.parse("gpt-5.2-20251201")).toBe("gpt-5.2");
 			expect(OpenAILanguageModelId.parse("gpt-5.1-thinking-20251001")).toBe(
 				"gpt-5.1-thinking",

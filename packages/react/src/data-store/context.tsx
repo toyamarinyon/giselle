@@ -11,6 +11,7 @@ export interface DataStoreItem {
 }
 
 export interface DataStoreContextValue {
+	isAvailable: boolean;
 	dataStores: DataStoreItem[];
 	settingPath: string;
 }
@@ -20,6 +21,7 @@ const DataStoreContext = createContext<DataStoreContextValue | undefined>(
 );
 
 export interface DataStoreProviderProps {
+	isAvailable?: boolean;
 	workspaceId?: WorkspaceId;
 	initialDataStores?: DataStoreItem[];
 	settingPath?: string;
@@ -28,16 +30,14 @@ export interface DataStoreProviderProps {
 
 export function DataStoreProvider({
 	children,
+	isAvailable = false,
 	workspaceId,
-	initialDataStores,
-	settingPath,
+	initialDataStores = [],
+	settingPath = "",
 	fetchDataStores,
 }: PropsWithChildren<DataStoreProviderProps>) {
 	const isConfigured =
-		workspaceId !== undefined &&
-		initialDataStores !== undefined &&
-		settingPath !== undefined &&
-		fetchDataStores !== undefined;
+		workspaceId !== undefined && fetchDataStores !== undefined;
 
 	const { data } = useSWR<DataStoreItem[]>(
 		isConfigured ? ["data-stores", workspaceId] : null,
@@ -45,13 +45,10 @@ export function DataStoreProvider({
 		{ fallbackData: initialDataStores },
 	);
 
-	if (!isConfigured) {
-		return <>{children}</>;
-	}
-
 	return (
 		<DataStoreContext
 			value={{
+				isAvailable,
 				dataStores: data ?? initialDataStores,
 				settingPath,
 			}}

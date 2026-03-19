@@ -20,12 +20,14 @@ const defaultConfigurations: GoogleLanguageModelConfigurations = {
 	urlContext: false,
 };
 
+const gemini31ProPreviewPattern = /^gemini-3\.1-pro(?:-preview)?(?:-[\w-]+)?$/;
 const gemini3ProPreviewPattern =
 	/^gemini-3(?:\.\d+)?-pro(?:-preview)?(?:-[\w-]+)?$/;
 const gemini3FlashPattern = /^gemini-3(?:\.\d+)?-flash(?:-[\w-]+)?$/;
 
 export const GoogleLanguageModelId = z
 	.enum([
+		"gemini-3.1-pro-preview",
 		"gemini-3-pro-preview",
 		"gemini-3-flash",
 		"gemini-2.5-pro",
@@ -35,6 +37,9 @@ export const GoogleLanguageModelId = z
 	.catch((ctx) => {
 		if (typeof ctx.value !== "string") {
 			return "gemini-2.5-flash-lite";
+		}
+		if (gemini31ProPreviewPattern.test(ctx.value)) {
+			return "gemini-3.1-pro-preview";
 		}
 		if (gemini3ProPreviewPattern.test(ctx.value)) {
 			return "gemini-3-pro-preview";
@@ -60,6 +65,19 @@ const GoogleLanguageModel = LanguageModelBase.extend({
 	configurations: GoogleLanguageModelConfigurations,
 });
 type GoogleLanguageModel = z.infer<typeof GoogleLanguageModel>;
+
+const gemini31ProPreview: GoogleLanguageModel = {
+	provider: "google",
+	id: "gemini-3.1-pro-preview",
+	capabilities:
+		Capability.TextGeneration |
+		Capability.GenericFileInput |
+		Capability.OptionalSearchGrounding |
+		Capability.UrlContext |
+		Capability.Reasoning,
+	tier: Tier.enum.pro,
+	configurations: defaultConfigurations,
+};
 
 const gemini3ProPreview: GoogleLanguageModel = {
 	provider: "google",
@@ -126,6 +144,7 @@ const gemini25FlashLite: GoogleLanguageModel = {
 };
 
 export const models = [
+	gemini31ProPreview,
 	gemini3ProPreview,
 	gemini3Flash,
 	gemini25Pro,
