@@ -146,6 +146,53 @@ describe("calculateDisplayCost", () => {
 		});
 	});
 
+	describe("Provider-prefixed model IDs", () => {
+		it.each([
+			{
+				provider: "google",
+				modelId: "gemini-3.1-pro-preview",
+				expected: {
+					inputCostForDisplay: 0.002,
+					outputCostForDisplay: 0.006,
+					totalCostForDisplay: 0.008,
+				},
+			},
+			{
+				provider: "openai",
+				modelId: "gpt-5",
+				expected: {
+					inputCostForDisplay: 0.00125,
+					outputCostForDisplay: 0.005,
+					totalCostForDisplay: 0.00625,
+				},
+			},
+			{
+				provider: "anthropic",
+				modelId: "claude-sonnet-4.6",
+				expected: {
+					inputCostForDisplay: 0.003,
+					outputCostForDisplay: 0.0075,
+					totalCostForDisplay: 0.0105,
+				},
+			},
+		])(
+			"should produce the same cost for $provider/$modelId as $modelId",
+			async ({ provider, modelId, expected }) => {
+				const usage = { inputTokens: 1000, outputTokens: 500 };
+				const prefixed = await calculateDisplayCost(
+					provider,
+					`${provider}/${modelId}`,
+					usage,
+				);
+				const unprefixed = await calculateDisplayCost(provider, modelId, usage);
+
+				expect(prefixed).toEqual(expected);
+				expect(unprefixed).toEqual(expected);
+				expect(prefixed).toEqual(unprefixed);
+			},
+		);
+	});
+
 	describe("Floating point precision", () => {
 		it("should handle very small token counts precisely", async () => {
 			const result = await calculateDisplayCost("openai", "gpt-5", {
