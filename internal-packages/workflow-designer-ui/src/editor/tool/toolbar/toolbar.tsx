@@ -165,19 +165,19 @@ export function Toolbar() {
 	// Recommended models for each provider - adjust based on user tier
 	const isFreeUser = userTier === Tier.enum.free;
 	const openaiModels = getAvailableModels(
-		isFreeUser ? ["gpt-5-nano"] : ["gpt-5.2"],
+		isFreeUser ? ["gpt-5-nano"] : ["gpt-5.4"],
 		"openai",
 		llmProviders,
 		availableLanguageModels,
 	);
 	const anthropicModels = getAvailableModels(
-		isFreeUser ? ["claude-haiku-4.5"] : ["claude-opus-4.5"],
+		isFreeUser ? ["claude-haiku-4.5"] : ["claude-opus-4.6"],
 		"anthropic",
 		llmProviders,
 		availableLanguageModels,
 	);
 	const googleModels = getAvailableModels(
-		isFreeUser ? ["gemini-2.5-flash-lite"] : ["gemini-3-flash"],
+		isFreeUser ? ["gemini-2.5-flash-lite"] : ["gemini-3.1-pro-preview"],
 		"google",
 		llmProviders,
 		availableLanguageModels,
