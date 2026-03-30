@@ -30,7 +30,7 @@ jobs:
         id: fork-check
         run: echo "is_fork=${{ github.event.pull_request.head.repo.fork }}" >> "$GITHUB_OUTPUT"
       - name: Create GitHub App Token for non-fork PRs
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
         if: steps.fork-check.outputs.is_fork != 'true'
         id: app-token
         with:
@@ -38,17 +38,17 @@ jobs:
           private-key: ${{ secrets.LICENSE_CI_TRIGGER_APP_PRIVATE_KEY }}
       - name: Checkout code for non-fork PRs
         if: steps.fork-check.outputs.is_fork != 'true'
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ steps.app-token.outputs.token }}
       - name: Checkout code for forked PRs
         if: steps.fork-check.outputs.is_fork == 'true'
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       # To make the success of this job a prerequisite for merging into the main branch,
       # set a filter here instead of on: to determine whether or not to proceed to the next step.
       - name: Cache dependency files
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         id: cache
         with:
           path: |
