@@ -153,8 +153,8 @@ const withAnalyzer = createBundleAnalyzer({
 	enabled: process.env.ANALYZE === "true",
 });
 export default async function () {
-	const enableSentry = process.env.SENTRY_ENABLE === "true";
-	if (enableSentry) {
+	const isSentryEnabled = process.env.SENTRY_ENABLE === "true";
+	if (isSentryEnabled) {
 		return await import("@sentry/nextjs").then((mod) =>
 			withAnalyzer(mod.withSentryConfig(nextConfig, sentryBuildOptions)),
 		);
