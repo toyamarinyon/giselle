@@ -8,10 +8,10 @@
 * 24 New BSD
 * 15 Simplified BSD
 * 10 BlueOak-1.0.0
-* 2 Mozilla Public License 2.0
+* 3 MIT OR Apache-2.0
+* 3 Mozilla Public License 2.0
 * 2 FSL-1.1-MIT
 * 2 MIT-0
-* 2 MIT OR Apache-2.0
 * 1 (Apache-2.0 AND BSD-3-Clause)
 * 1 LGPL-3.0-or-later
 * 1 Python-2.0
@@ -812,6 +812,17 @@ MIT OR Apache-2.0 permitted
 
 <a name="@biomejs/cli-linux-x64"></a>
 ### @biomejs/cli-linux-x64 v2.0.6
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+MIT OR Apache-2.0 permitted
+
+
+
+<a name="@biomejs/cli-linux-x64-musl"></a>
+### @biomejs/cli-linux-x64-musl v2.0.6
 #### 
 
 ##### Paths
@@ -8050,7 +8061,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="happy-dom"></a>
-### happy-dom v20.0.2
+### happy-dom v20.8.8
 #### 
 
 ##### Paths
@@ -9041,6 +9052,17 @@ BlueOak-1.0.0 permitted
 
 <a name="lightningcss-linux-x64-gnu"></a>
 ### lightningcss-linux-x64-gnu v1.30.2
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="https://www.mozilla.org/media/MPL/2.0/index.815ca599c9df.txt">Mozilla Public License 2.0</a> permitted
+
+
+
+<a name="lightningcss-linux-x64-musl"></a>
+### lightningcss-linux-x64-musl v1.30.2
 #### 
 
 ##### Paths
@@ -13235,7 +13257,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="undici-types"></a>
-### undici-types v6.21.0
+### undici-types v7.16.0
 #### 
 
 ##### Paths
