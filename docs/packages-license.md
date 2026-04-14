@@ -2,16 +2,16 @@
 
 
 ## Summary
-* 962 MIT
-* 193 Apache 2.0
+* 961 MIT
+* 194 Apache 2.0
 * 43 ISC
 * 24 New BSD
 * 15 Simplified BSD
 * 10 BlueOak-1.0.0
-* 3 MIT OR Apache-2.0
-* 3 Mozilla Public License 2.0
+* 2 Mozilla Public License 2.0
 * 2 FSL-1.1-MIT
 * 2 MIT-0
+* 2 MIT OR Apache-2.0
 * 1 (Apache-2.0 AND BSD-3-Clause)
 * 1 LGPL-3.0-or-later
 * 1 Python-2.0
@@ -812,17 +812,6 @@ MIT OR Apache-2.0 permitted
 
 <a name="@biomejs/cli-linux-x64"></a>
 ### @biomejs/cli-linux-x64 v2.0.6
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-MIT OR Apache-2.0 permitted
-
-
-
-<a name="@biomejs/cli-linux-x64-musl"></a>
-### @biomejs/cli-linux-x64-musl v2.0.6
 #### 
 
 ##### Paths
@@ -1877,8 +1866,30 @@ BlueOak-1.0.0 permitted
 
 
 
+<a name="@opentelemetry/exporter-metrics-otlp-http"></a>
+### @opentelemetry/exporter-metrics-otlp-http v0.203.0
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> permitted
+
+
+
 <a name="@opentelemetry/exporter-trace-otlp-http"></a>
 ### @opentelemetry/exporter-trace-otlp-http v0.203.0
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> permitted
+
+
+
+<a name="@opentelemetry/host-metrics"></a>
+### @opentelemetry/host-metrics v0.37.0
 #### 
 
 ##### Paths
@@ -3407,13 +3418,13 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@s2-dev/streamstore"></a>
-### @s2-dev/streamstore v0.17.3
+### @s2-dev/streamstore v0.22.5
 #### 
 
 ##### Paths
 * /home/runner/work/giselle/giselle
 
-<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> permitted
+<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
 
 
 
@@ -4757,7 +4768,7 @@ FSL-1.1-MIT manually approved
 
 
 <a name="@trigger.dev/core"></a>
-### @trigger.dev/core v4.3.0
+### @trigger.dev/core v4.4.4
 #### 
 
 ##### Paths
@@ -4768,7 +4779,7 @@ FSL-1.1-MIT manually approved
 
 
 <a name="@trigger.dev/sdk"></a>
-### @trigger.dev/sdk v4.3.0
+### @trigger.dev/sdk v4.4.4
 #### 
 
 ##### Paths
@@ -6522,17 +6533,6 @@ BlueOak-1.0.0 permitted
 
 <a name="cookie-signature"></a>
 ### cookie-signature v1.2.2
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
-<a name="copy-anything"></a>
-### copy-anything v3.0.5
 #### 
 
 ##### Paths
@@ -8720,17 +8720,6 @@ BlueOak-1.0.0 permitted
 
 
 
-<a name="is-what"></a>
-### is-what v4.1.16
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
 <a name="is-windows"></a>
 ### is-windows v1.0.2
 #### 
@@ -9052,17 +9041,6 @@ BlueOak-1.0.0 permitted
 
 <a name="lightningcss-linux-x64-gnu"></a>
 ### lightningcss-linux-x64-gnu v1.30.2
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="https://www.mozilla.org/media/MPL/2.0/index.815ca599c9df.txt">Mozilla Public License 2.0</a> permitted
-
-
-
-<a name="lightningcss-linux-x64-musl"></a>
-### lightningcss-linux-x64-musl v1.30.2
 #### 
 
 ##### Paths
@@ -12399,7 +12377,7 @@ Unknown manually approved
 
 
 <a name="std-env"></a>
-### std-env v3.9.0
+### std-env v3.10.0
 #### 
 
 ##### Paths
@@ -12596,17 +12574,6 @@ Unknown manually approved
 
 
 
-<a name="superjson"></a>
-### superjson v2.2.2
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
 <a name="supports-color"></a>
 ### supports-color v8.1.1
 #### 
@@ -12642,6 +12609,17 @@ Unknown manually approved
 
 <a name="symbol-tree"></a>
 ### symbol-tree v3.2.4
+#### 
+
+##### Paths
+* /home/runner/work/giselle/giselle
+
+<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
+
+
+
+<a name="systeminformation"></a>
+### systeminformation v5.23.8
 #### 
 
 ##### Paths
