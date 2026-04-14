@@ -1317,7 +1317,7 @@ MIT-0 permitted
 
 
 <a name="@img/sharp-libvips-linux-x64"></a>
-### @img/sharp-libvips-linux-x64 v1.2.3
+### @img/sharp-libvips-linux-x64 v1.2.4
 #### 
 
 ##### Paths
@@ -1328,7 +1328,7 @@ LGPL-3.0-or-later permitted
 
 
 <a name="@img/sharp-linux-x64"></a>
-### @img/sharp-linux-x64 v0.34.4
+### @img/sharp-linux-x64 v0.34.5
 #### 
 
 ##### Paths
@@ -1548,7 +1548,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@next/env"></a>
-### @next/env v16.1.7
+### @next/env v16.2.3
 #### 
 
 ##### Paths
@@ -1559,7 +1559,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@next/swc-linux-x64-gnu"></a>
-### @next/swc-linux-x64-gnu v16.1.7
+### @next/swc-linux-x64-gnu v16.2.3
 #### 
 
 ##### Paths
@@ -1570,7 +1570,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="@next/third-parties"></a>
-### @next/third-parties v16.1.7
+### @next/third-parties v16.2.3
 #### 
 
 ##### Paths
@@ -10129,7 +10129,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="next"></a>
-### next v16.1.7
+### next v16.2.3
 #### 
 
 ##### Paths
@@ -12032,7 +12032,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="sharp"></a>
-### sharp v0.34.4
+### sharp v0.34.5
 #### 
 
 ##### Paths
