@@ -13224,7 +13224,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="undici"></a>
-### undici v7.22.0
+### undici v7.24.4
 #### 
 
 ##### Paths
