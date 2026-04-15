@@ -5,6 +5,8 @@ on:
   schedule:
     - cron: "0 0 1 6,12 *" # Every year on 6/1 and 12/1 at 9:00am JST
 
+permissions: {}
+
 jobs:
   get_date:
     runs-on: ubuntu-latest
