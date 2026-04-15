@@ -8072,7 +8072,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="happy-dom"></a>
-### happy-dom v20.8.8
+### happy-dom v20.8.9
 #### 
 
 ##### Paths
