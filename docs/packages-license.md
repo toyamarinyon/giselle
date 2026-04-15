@@ -2,7 +2,7 @@
 
 
 ## Summary
-* 963 MIT
+* 962 MIT
 * 194 Apache 2.0
 * 43 ISC
 * 24 New BSD
@@ -1152,7 +1152,7 @@ MIT-0 permitted
 
 
 <a name="@esbuild/linux-x64"></a>
-### @esbuild/linux-x64 v0.25.6
+### @esbuild/linux-x64 v0.25.10
 #### 
 
 ##### Paths
@@ -6983,7 +6983,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="drizzle-kit"></a>
-### drizzle-kit v0.31.4
+### drizzle-kit v0.31.10
 #### 
 
 ##### Paths
@@ -6994,7 +6994,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="drizzle-orm"></a>
-### drizzle-orm v0.44.2
+### drizzle-orm v0.45.2
 #### 
 
 ##### Paths
@@ -7214,18 +7214,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="esbuild"></a>
-### esbuild v0.25.6
-#### 
-
-##### Paths
-* /home/runner/work/giselle/giselle
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
-<a name="esbuild-register"></a>
-### esbuild-register v3.6.0
+### esbuild v0.25.10
 #### 
 
 ##### Paths
