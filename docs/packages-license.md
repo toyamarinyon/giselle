@@ -12230,7 +12230,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="socket.io-parser"></a>
-### socket.io-parser v4.2.4
+### socket.io-parser v4.2.6
 #### 
 
 ##### Paths
