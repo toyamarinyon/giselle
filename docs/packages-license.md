@@ -5571,7 +5571,7 @@ FSL-1.1-MIT manually approved
 
 
 <a name="@xmldom/xmldom"></a>
-### @xmldom/xmldom v0.8.10
+### @xmldom/xmldom v0.8.12
 #### 
 
 ##### Paths
