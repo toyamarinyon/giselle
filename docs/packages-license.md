@@ -7434,7 +7434,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="express-rate-limit"></a>
-### express-rate-limit v8.2.1
+### express-rate-limit v8.2.2
 #### 
 
 ##### Paths
@@ -8512,7 +8512,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="ip-address"></a>
-### ip-address v10.0.1
+### ip-address v10.1.0
 #### 
 
 ##### Paths
