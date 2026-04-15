@@ -10613,7 +10613,7 @@ BlueOak-1.0.0 permitted
 
 
 <a name="path-to-regexp"></a>
-### path-to-regexp v8.3.0
+### path-to-regexp v8.4.2
 #### 
 
 ##### Paths
